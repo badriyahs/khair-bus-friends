@@ -196,7 +196,7 @@
     sparkle(li, 12);
   }
 
-  function setPick(id, n, typed) {
+  function setPick(id, n, typed, from) {
     const it = (ini.items || []).find(x => x.id === id);
     if (!it || !isOpen()) return;
     const max = remaining(it);
@@ -207,8 +207,10 @@
     if (n) pick[id] = n; else delete pick[id];
     renderItems();
     renderBasket();
+    renderList();
     bump(id);
-    if (more) { cheer(); sparkle(cards.get(id)); }
+    // the list was just redrawn, so find the + again to sparkle from it
+    if (more) { cheer(); sparkle(from === 'list' ? $(`#leftList .row[data-id="${CSS.escape(id)}"] .plus`) : cards.get(id)); }
   }
 
   /* ---------- the chef cheers you on ---------- */
@@ -238,7 +240,7 @@
   // a little pop of their sparkles out of the food you tapped
   function sparkle(card, n = 7) {
     if (!card || !motionOK()) return;
-    const r = card.querySelector('.choice-img').getBoundingClientRect();
+    const r = (card.querySelector('.choice-img') || card).getBoundingClientRect();
     const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
     for (let i = 0; i < n; i++) {
       const s = document.createElement('img');
@@ -270,6 +272,13 @@
     const id = e.target.closest('.choice').dataset.id;
     setPick(id, parseInt(e.target.value, 10) || 0, true);
     e.target.value = pick[id] || 0;
+  });
+
+  $('#leftList').addEventListener('click', e => {
+    const b = e.target.closest('.step-btn');
+    if (!b) return;
+    const id = b.closest('.row').dataset.id;
+    setPick(id, (pick[id] || 0) + (b.classList.contains('plus') ? 1 : -1), false, 'list');
   });
 
   /* ---------- something else ---------- */
@@ -334,10 +343,19 @@
     }).join(''));
     const left = items.filter(it => remaining(it) > 0);
     setHTML($('#leftList'), left.length
-      ? left.map(it => `<li class="row">
+      ? left.map(it => {
+          // add straight from the list too: + (and − once you've picked some)
+          const n = pick[it.id] || 0;
+          const step = !isOpen() ? '' : `<span class="row-step">
+            ${n ? `<button type="button" class="step-btn minus" aria-label="إنقاص ${esc(it.name)}">−</button><b class="row-mine">${n}</b>` : ''}
+            <button type="button" class="step-btn plus" aria-label="أضف ${esc(it.name)}"${n >= remaining(it) ? ' disabled' : ''}>+</button>
+          </span>`;
+          return `<li class="row${n ? ' is-picked' : ''}" data-id="${esc(it.id)}">
           <span class="row-main"><b>${esc(it.name)}</b>${it.unit ? `<span class="row-sub">${esc(it.unit)}</span>` : ''}</span>
+          ${step}
           <span class="count">${remaining(it)}</span>
-        </li>`).join('')
+        </li>`;
+        }).join('')
       : `<li class="row all-done">${icon('check', 18)} اكتملت كل الأصناف</li>`);
     $('#listCard').hidden = !items.length && !rows.length;
   }
