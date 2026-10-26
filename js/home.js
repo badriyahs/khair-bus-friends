@@ -1,6 +1,6 @@
 /* Home: one card per initiative (picture, name, date, progress), past ones below. */
 (function () {
-  const { $, esc, tally, enDate, itemsLeft, byDate, icon } = UI;
+  const { $, esc, tally, arDate, itemsLeft, byDate, icon } = UI;
   let initiatives = null;
   const pledgesFor = {};
   const subs = new Map();
@@ -44,19 +44,31 @@
 
   function card(ini, i, past) {
     const t = tally(ini, pledgesFor[ini.id] || []);
-    const progress = past ? '' : `
-        <span class="bar"><span class="bar-fill" style="width:${t.pct}%"></span></span>
-        <span class="ev-left">${t.open ? itemsLeft(t.open) : 'اكتملت كل الأصناف'}</span>`;
     const soon = past ? '' : countdown(ini.date);
+    // same details as the event page: date and time chips
+    const chips = [
+      ini.date ? `<span class="info-chip">${icon('cal', 16)}${esc(arDate(ini.date))}</span>` : '',
+      ini.time ? `<span class="info-chip">${icon('clock', 16)}${esc(ini.time)}</span>` : ''
+    ].join('');
+    const progress = past ? '' : `
+        <span class="bar-ride" style="--p:${t.pct}">
+          <span class="bar"><span class="bar-fill" style="width:${t.pct}%"></span></span>
+          <img class="ride-bus" src="img/logo-sticker.png" alt="">
+        </span>
+        <span class="ev-foot">
+          <span class="ev-left">${t.open ? itemsLeft(t.open) : 'اكتملت كل الأصناف'}</span>
+          <span class="btn btn-primary btn-sm ev-btn">يلا!</span>
+        </span>`;
     return `<li style="--i:${i}"><a class="ev-card" href="initiative.html?id=${encodeURIComponent(ini.id)}">
       ${soon ? `<span class="sticker">${soon}</span>` : ''}
       <span class="ev-icon"><img src="${esc(ini.photo || 'img/logo-180.png')}" alt=""></span>
       <span class="ev-main">
         <b class="ev-title">${esc(ini.title)}</b>
-        ${ini.date ? `<span class="ev-date" dir="ltr">${esc(enDate(ini.date))}</span>` : ''}
+        ${chips ? `<span class="ev-chips">${chips}</span>` : ''}
         ${progress}
       </span>
-      <span class="ev-go">${icon(past ? 'check' : 'chev', 22)}</span>
+      ${past ? `<span class="ev-go">${icon('check', 22)}</span>` : ''}
     </a></li>`;
   }
+
 })();
