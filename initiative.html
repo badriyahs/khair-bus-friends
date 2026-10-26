@@ -4,47 +4,41 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>أصدقاء باص الخير</title>
-  <meta name="theme-color" content="#1db3f7">
+  <meta name="theme-color" content="#ffffff">
   <link rel="icon" href="img/logo-96.png" type="image/png">
   <link rel="apple-touch-icon" href="img/logo-touch.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
-  <header class="site-head">
-    <div class="wrap head-in">
-      <a class="brand" href="index.html"><img src="img/logo-96.png" alt=""><img class="logo-official" src="img/logo-official.png" alt="باص الخير"><span>أصدقاء باص الخير</span></a>
-    </div>
-    <div class="ini-sticky" id="sticky" hidden>
-      <div class="wrap sticky-in">
-        <b id="stickyTitle"></b>
-        <div class="bar"><span class="bar-fill" id="stickyBar"></span></div>
+<body class="lesson-page">
+  <!-- like a lesson: close on one side, progress across the top, event name once you scroll -->
+  <header class="lesson-bar">
+    <div class="wrap lesson-in">
+      <a class="close-btn" href="index.html" aria-label="رجوع"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
+      <div class="lesson-mid">
+        <b class="sticky-title" id="stickyTitle" hidden></b>
+        <div class="bar big"><span class="bar-fill" id="ovBar"></span></div>
       </div>
     </div>
   </header>
 
-  <main>
+  <main class="wrap lesson">
     <section class="ini-hero">
-      <div class="wrap">
-        <div class="ini-head">
-          <img class="ini-photo" id="iniPhoto" alt="" hidden>
-          <div class="ini-text">
-            <h1 class="fun-title" id="iniTitle">جارٍ التحميل…</h1>
-            <p class="post-date" id="iniDate" dir="ltr" hidden></p>
-            <div class="bar" id="ovBarWrap" hidden><span class="bar-fill" id="ovBar"></span></div>
-            <p class="post-left" id="ovLeft"></p>
-          </div>
-        </div>
+      <h1 class="fun-title" id="iniTitle">جارٍ التحميل…</h1>
+      <p class="ev-date" id="iniDate" dir="ltr" hidden></p>
+      <div class="prompt" id="prompt" hidden>
+        <img class="prompt-char" id="iniPhoto" alt="">
+        <div class="bubble">شنو بتييب؟</div>
       </div>
     </section>
 
-    <section class="section wrap" id="content" hidden>
+    <div id="content" hidden>
       <p class="notice" id="closedNote" hidden>المبادرة مغلقة</p>
       <ul class="items" id="items"></ul>
 
-      <div class="panel-card extra-card" id="extraCard">
+      <div class="card extra-card" id="extraCard">
         <h3>شيء آخر؟</h3>
         <form class="extra-form" id="extraForm" autocomplete="off">
           <input class="input" id="exName" maxlength="80" placeholder="الصنف" aria-label="الصنف" required>
@@ -55,48 +49,50 @@
         <ul class="tag-list" id="others" aria-label="سيحضرها آخرون"></ul>
       </div>
 
-      <div class="list-card" id="listCard" hidden>
-        <img class="list-friend" src="img/deco/friend.png" alt="">
+      <section class="board" id="listCard" hidden>
         <div id="whoWrap">
-          <h3><img class="h-icon" src="img/deco/heart-hands.png" alt="">مين بيجيب شنو؟</h3>
-          <ol class="who-list" id="whoList"></ol>
+          <h2 class="section-title">مين بيجيب شنو؟</h2>
+          <ol class="rows who-list" id="whoList"></ol>
         </div>
         <div>
-          <h3>شنو باقي؟</h3>
-          <ul class="left-list" id="leftList"></ul>
+          <h2 class="section-title">شنو باقي؟</h2>
+          <ul class="rows left-list" id="leftList"></ul>
         </div>
-      </div>
-    </section>
+      </section>
+    </div>
   </main>
 
-  <div class="basket" id="basket">
-    <form class="basket-in" id="sendForm">
+  <!-- bottom bar: grey until something is chosen, then green -->
+  <footer class="lesson-foot" id="basket">
+    <form class="wrap foot-form" id="sendForm">
       <input class="input" id="name" autocomplete="name" maxlength="80" placeholder="اسمك" aria-label="اسمك" required>
-      <button class="btn btn-primary" type="submit" id="sendBtn">تأكيد</button>
+      <button class="btn btn-primary" type="submit" id="sendBtn" disabled>تأكيد</button>
     </form>
-  </div>
+  </footer>
 
-  <dialog class="sheet" id="thanks" aria-labelledby="thanksTitle">
-    <div class="sheet-body thanks">
-      <img class="deco thanks-stars" src="img/deco/stars-blue.png" alt="">
-      <div class="hero-logo thanks-bus">
-        <img src="img/logo.png" alt="">
-        <img class="rays" src="img/deco/rays.png" alt="">
-        <svg class="hand" viewBox="0 0 640 640" aria-hidden="true">
-          <defs>
-            <filter id="crayon"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="3"/></filter>
-          </defs>
-          <g class="wave-hand" filter="url(#crayon)" fill="none" stroke="#4fa775" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M302 184C318 168 328 150 330 128"/>
-            <circle cx="334" cy="112" r="13"/>
-            <path d="M324 101l-5-12M334 98V85M344 101l6-11M347 117l10-6"/>
-          </g>
-        </svg>
-      </div>
-      <h2 id="thanksTitle">شكراً!</h2>
-      <button class="btn btn-primary" type="button" id="doneBtn">تم</button>
+  <!-- done screen -->
+  <section class="complete" id="thanks" hidden aria-live="polite">
+    <div class="hero-logo">
+      <img src="img/logo.png" alt="">
+      <img class="rays" src="img/deco/rays.png" alt="">
+      <svg class="hand" viewBox="0 0 640 640" aria-hidden="true">
+        <defs>
+          <filter id="crayon"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="3"/></filter>
+        </defs>
+        <g class="wave-hand" filter="url(#crayon)" fill="none" stroke="#4fa775" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M302 184C318 168 328 150 330 128"/>
+          <circle cx="334" cy="112" r="13"/>
+          <path d="M324 101l-5-12M334 98V85M344 101l6-11M347 117l10-6"/>
+        </g>
+      </svg>
     </div>
-  </dialog>
+    <h2 class="fun-title" id="thanksTitle">شكراً!</h2>
+    <div class="stats">
+      <div class="stat" style="--c: var(--blue)"><span class="stat-label">أصناف</span><b class="stat-val" id="statKinds">0</b></div>
+      <div class="stat" style="--c: var(--green)"><span class="stat-label">قطع</span><b class="stat-val" id="statPieces">0</b></div>
+    </div>
+    <button class="btn btn-primary btn-wide" type="button" id="doneBtn">متابعة</button>
+  </section>
 
   <script src="js/config.js"></script>
   <script src="js/store.js"></script>

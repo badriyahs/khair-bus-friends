@@ -4,12 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>أصدقاء باص الخير</title>
-  <meta name="theme-color" content="#1db3f7">
+  <meta name="theme-color" content="#ffffff">
   <link rel="icon" href="img/logo-96.png" type="image/png">
   <link rel="apple-touch-icon" href="img/logo-touch.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -19,43 +19,32 @@
     </div>
   </header>
 
-  <main>
-    <section class="hero">
-      <div class="wrap">
-        <div class="hero-in">
-          <img class="deco deco-stars" src="img/deco/stars-green.png" alt="">
-          <h1 class="fun-title"><span class="w1">لنصنع</span> الخير معاً</h1>
-          <div class="hero-logo">
-            <img src="img/logo.png" alt="باص الخير">
-            <img class="rays" src="img/deco/rays.png" alt="">
-            <!-- the little guy waves out of his window -->
-            <svg class="hand" viewBox="0 0 640 640" aria-hidden="true">
-              <defs>
-                <filter id="crayon"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="3"/></filter>
-              </defs>
-              <g class="wave-hand" filter="url(#crayon)" fill="none" stroke="#4fa775" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M302 184C318 168 328 150 330 128"/>
-                <circle cx="334" cy="112" r="13"/>
-                <path d="M324 101l-5-12M334 98V85M344 101l6-11M347 117l10-6"/>
-              </g>
-            </svg>
-          </div>
-        </div>
+  <main class="wrap">
+    <section class="welcome">
+      <div class="hero-logo">
+        <img src="img/logo.png" alt="باص الخير">
+        <img class="rays" src="img/deco/rays.png" alt="">
+        <!-- the little guy waves out of his window -->
+        <svg class="hand" viewBox="0 0 640 640" aria-hidden="true">
+          <defs>
+            <filter id="crayon"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="3"/></filter>
+          </defs>
+          <g class="wave-hand" filter="url(#crayon)" fill="none" stroke="#4fa775" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M302 184C318 168 328 150 330 128"/>
+            <circle cx="334" cy="112" r="13"/>
+            <path d="M324 101l-5-12M334 98V85M344 101l6-11M347 117l10-6"/>
+          </g>
+        </svg>
       </div>
+      <h1 class="fun-title"><span class="w1">لنصنع</span> الخير معاً</h1>
     </section>
 
-    <section class="section wrap">
-      <ul class="posts" id="openList"></ul>
-      <div id="pastWrap" hidden>
-        <h2 class="mt-lg">مبادرات سابقة</h2>
-        <ul class="posts past" id="pastList"></ul>
-      </div>
-    </section>
+    <ul class="ev-list" id="openList"></ul>
+    <div id="pastWrap" hidden>
+      <h2 class="section-title">مبادرات سابقة</h2>
+      <ul class="ev-list past" id="pastList"></ul>
+    </div>
   </main>
-
-  <footer class="site-foot">
-    <div class="wrap foot-in"><img class="foot-hug" src="img/deco/hug-hands.png" alt=""></div>
-  </footer>
 
   <script src="js/config.js"></script>
   <script src="js/store.js"></script>

@@ -1,8 +1,8 @@
-/* One initiative: tap + on what you'll bring, add your name, confirm. */
+/* One initiative, like a lesson: tap the foods you'll bring, add your name, confirm. */
 (function () {
-  const { $, esc, tally, enDate, itemsLeft, twoTone, icon, toast } = UI;
+  const { $, $$, esc, tally, enDate, twoTone, icon, toast } = UI;
   const iid = new URLSearchParams(location.search).get('id');
-  const thanks = $('#thanks');
+  const done = $('#thanks');
   const cards = new Map();
   const pick = {};          // item id -> how many I'll bring
   let extras = [];          // my own extra items [{name, qty}]
@@ -50,24 +50,27 @@
     if (changed.length) toast(`تم التحديث، أحد سجّل للتو: ${changed.join('، ')}`);
   }
 
-  // Top: small photo, name, English date, overall progress
   function renderHead(t) {
     document.title = `${ini.title} · أصدقاء باص الخير`;
     $('#iniTitle').innerHTML = twoTone(ini.title);
     $('#iniDate').textContent = enDate(ini.date);
     $('#iniDate').hidden = !ini.date;
-    const photo = $('#iniPhoto');
-    if (ini.photo && photo.getAttribute('src') !== ini.photo) photo.src = ini.photo;
-    photo.hidden = !ini.photo;
+    const photo = $('#iniPhoto'), src = ini.photo || 'img/logo.png';
+    if (photo.getAttribute('src') !== src) photo.src = src;
+    $('#prompt').hidden = !isOpen();
     $('#stickyTitle').textContent = ini.title;
-    $('#stickyBar').style.width = t.pct + '%';
-    const any = (ini.items || []).length > 0;
-    $('#ovBarWrap').hidden = !any;
     $('#ovBar').style.width = t.pct + '%';
-    $('#ovLeft').textContent = !any ? '' : t.open ? itemsLeft(t.open) : 'اكتملت كل الأصناف';
     $('#content').hidden = false;
     $('#closedNote').hidden = isOpen();
   }
+
+  // once the big title scrolls away, keep the event name on the top bar
+  if (window.IntersectionObserver) {
+    new IntersectionObserver(([e]) => { $('#stickyTitle').hidden = e.isIntersecting || !ini; })
+      .observe($('#iniTitle'));
+  }
+
+  /* ---------- the foods: tap a card to add one ---------- */
 
   function renderItems() {
     const list = $('#items');
@@ -82,7 +85,7 @@
     const seen = new Set();
     items.forEach((it, i) => {
       let card = cards.get(it.id);
-      if (!card) { card = makeCard(it.id); cards.set(it.id, card); }
+      if (!card) { card = makeCard(it.id, i); cards.set(it.id, card); }
       updateCard(card, it);
       if (list.children[i] !== card) list.insertBefore(card, list.children[i] || null);
       seen.add(it.id);
@@ -90,57 +93,68 @@
     for (const [id, card] of cards) if (!seen.has(id)) { card.remove(); cards.delete(id); }
   }
 
-  function makeCard(id) {
+  function makeCard(id, i) {
     const li = document.createElement('li');
-    li.className = 'item';
+    li.className = 'choice';
     li.dataset.id = id;
+    li.style.setProperty('--i', i);
     li.innerHTML = `
-      <div class="item-photo">
-        <img class="item-img" alt="">
-        <span class="mine-badge" hidden></span>
-      </div>
-      <div class="item-body">
-        <h3 class="item-name"></h3>
-        <p class="item-unit"></p>
+      <button type="button" class="choice-hit">
+        <span class="choice-img"><img alt=""></span>
+        <span class="choice-name"></span>
+        <span class="choice-unit"></span>
+      </button>
+      <span class="mine-badge" dir="ltr" hidden></span>
+      <div class="choice-foot">
         <div class="bar"><span class="bar-fill"></span><span class="bar-mine"></span></div>
-        <p class="item-left"></p>
-      </div>
-      <div class="stepper">
-        <button type="button" class="step-btn minus">−</button>
-        <input class="qty" type="number" inputmode="numeric" min="0" value="0">
-        <button type="button" class="step-btn plus">+</button>
+        <p class="choice-left"></p>
+        <div class="stepper" hidden>
+          <button type="button" class="step-btn minus">−</button>
+          <input class="qty" type="number" inputmode="numeric" min="0" value="0">
+          <button type="button" class="step-btn plus">+</button>
+        </div>
       </div>`;
     return li;
   }
 
   function updateCard(li, it) {
     const need = +it.needed || 0, g = got[it.id] || 0, left = remaining(it);
-    const mine = Math.min(pick[it.id] || 0, left);
+    const mineQty = Math.min(pick[it.id] || 0, left);
     const full = left === 0;
     li.classList.toggle('is-full', full);
-    li.classList.toggle('is-picked', mine > 0);
-    li.querySelector('.item-name').textContent = it.name;
-    li.querySelector('.item-unit').textContent = it.unit || '';
-    const img = li.querySelector('.item-img'), src = it.img || 'img/logo-180.png';
+    li.classList.toggle('is-picked', mineQty > 0);
+    li.querySelector('.choice-name').textContent = it.name;
+    li.querySelector('.choice-unit').textContent = it.unit || '';
+    const img = li.querySelector('.choice-img img'), src = it.img || 'img/logo-180.png';
     if (img.getAttribute('src') !== src) img.src = src;
     img.classList.toggle('placeholder', !it.img);
-    const leftEl = li.querySelector('.item-left');
+    const hit = li.querySelector('.choice-hit');
+    hit.disabled = full || !isOpen();
+    hit.setAttribute('aria-label', `أضف ${it.name}`);
+    li.querySelector('.bar-fill').style.width = pct(Math.min(g, need), need);
+    li.querySelector('.bar-mine').style.width = mineQty ? `calc(${pct(mineQty, need)} + 10px)` : '0';
+    const leftEl = li.querySelector('.choice-left');
     leftEl.classList.toggle('done', full);
     leftEl.innerHTML = full ? `${icon('check', 16)} اكتمل` : `باقي <b>${left}</b>`;
-    const mineBadge = li.querySelector('.mine-badge');
-    mineBadge.hidden = !mine;
-    mineBadge.textContent = `+${mine}`;
-    li.querySelector('.bar-fill').style.width = pct(Math.min(g, need), need);
-    li.querySelector('.bar-mine').style.width = pct(mine, need);
-    li.querySelector('.stepper').hidden = !isOpen() || full;
+    const badge = li.querySelector('.mine-badge');
+    badge.hidden = !mineQty;
+    badge.textContent = `+${mineQty}`;
+    li.querySelector('.stepper').hidden = !mineQty || !isOpen();
     const q = li.querySelector('.qty'), minus = li.querySelector('.minus'), plus = li.querySelector('.plus');
-    if (document.activeElement !== q) q.value = mine;
+    if (document.activeElement !== q) q.value = mineQty;
     q.max = left;
     q.setAttribute('aria-label', `عدد ${it.name}`);
     minus.setAttribute('aria-label', `إنقاص ${it.name}`);
     plus.setAttribute('aria-label', `زيادة ${it.name}`);
-    minus.disabled = mine <= 0;
-    plus.disabled = mine >= left;
+    plus.disabled = mineQty >= left;
+  }
+
+  function bump(id) {
+    const card = cards.get(id);
+    if (!card) return;
+    card.classList.remove('bump');
+    void card.offsetWidth;   // restart the animation
+    card.classList.add('bump');
   }
 
   function setPick(id, n, typed) {
@@ -149,20 +163,23 @@
     const max = remaining(it);
     if (typed && n > max) toast(`المطلوب ${max} فقط`);
     n = Math.max(0, Math.min(n, max));
+    if (n === (pick[id] || 0)) return;
     if (n) pick[id] = n; else delete pick[id];
     renderItems();
     renderBasket();
+    bump(id);
   }
 
   $('#items').addEventListener('click', e => {
-    const b = e.target.closest('.step-btn');
-    if (!b) return;
-    const id = b.closest('.item').dataset.id;
-    setPick(id, (pick[id] || 0) + (b.classList.contains('plus') ? 1 : -1));
+    const card = e.target.closest('.choice');
+    if (!card) return;
+    const id = card.dataset.id;
+    if (e.target.closest('.choice-hit') || e.target.closest('.plus')) setPick(id, (pick[id] || 0) + 1);
+    else if (e.target.closest('.minus')) setPick(id, (pick[id] || 0) - 1);
   });
   $('#items').addEventListener('change', e => {
     if (!e.target.classList.contains('qty')) return;
-    const id = e.target.closest('.item').dataset.id;
+    const id = e.target.closest('.choice').dataset.id;
     setPick(id, parseInt(e.target.value, 10) || 0, true);
     e.target.value = pick[id] || 0;
   });
@@ -204,6 +221,9 @@
 
   /* ---------- the list at the end: who's bringing what, and what's still needed ---------- */
 
+  const AVATAR = ['#1cb0f6', '#58c322', '#ff9600', '#ce82ff', '#ff4b4b', '#2b70c9'];
+  const avatarColor = name => AVATAR[[...String(name)].reduce((n, c) => n + c.codePointAt(0), 0) % AVATAR.length];
+
   function renderList() {
     const items = ini.items || [];
     const names = Object.fromEntries(people.map(p => [p.id, p.name]));
@@ -215,16 +235,20 @@
         ...(p.items || []).filter(x => byId[x.id]).map(x => `${esc(byId[x.id].name)} × ${x.qty}`),
         ...(p.extras || []).map(x => `${esc(x.name)} × ${x.qty}`)
       ].join('، ');
-      const me = mine.has(p.id);
-      return `<li class="${me ? 'mine' : ''}" data-pid="${esc(p.id)}">
-        <b>${esc(names[p.id])}</b>${me ? ' <span class="pill">أنت</span>' : ''}
-        <span class="who-what">${what}</span>
+      const me = mine.has(p.id), name = names[p.id];
+      return `<li class="row${me ? ' mine' : ''}" data-pid="${esc(p.id)}">
+        <span class="avatar" style="--c:${avatarColor(name)}">${esc([...name.trim()][0] || '؟')}</span>
+        <span class="row-main"><b>${esc(name)}</b><span class="row-sub">${what}</span></span>
+        ${me ? '<span class="pill">أنت</span>' : ''}
       </li>`;
     }).join('');
     const left = items.filter(it => remaining(it) > 0);
     $('#leftList').innerHTML = left.length
-      ? left.map(it => `<li><span>${esc(it.name)}${it.unit ? ` <span class="muted small">${esc(it.unit)}</span>` : ''}</span><b>${remaining(it)}</b></li>`).join('')
-      : '<li class="all-done">اكتملت كل الأصناف</li>';
+      ? left.map(it => `<li class="row">
+          <span class="row-main"><b>${esc(it.name)}</b>${it.unit ? `<span class="row-sub">${esc(it.unit)}</span>` : ''}</span>
+          <span class="count">${remaining(it)}</span>
+        </li>`).join('')
+      : `<li class="row all-done">${icon('check', 18)} اكتملت كل الأصناف</li>`;
     $('#listCard').hidden = !items.length && !rows.length;
   }
 
@@ -232,21 +256,21 @@
 
   function chosen() {
     const items = Object.entries(pick).map(([id, qty]) => ({ id, qty }));
-    return { items, extras, count: items.length + extras.length };
+    const pieces = items.reduce((n, x) => n + x.qty, 0) + extras.reduce((n, x) => n + x.qty, 0);
+    return { items, extras, count: items.length + extras.length, pieces };
   }
 
   function renderBasket() {
-    const show = isOpen() && chosen().count > 0;
-    $('#basket').classList.toggle('show', show);
-    $('#basket').inert = !show;
-    document.body.classList.toggle('has-basket', show);
+    $('#basket').hidden = !isOpen();
+    document.body.classList.toggle('has-basket', isOpen());
+    $('#sendBtn').disabled = !chosen().count;
   }
 
   $('#sendForm').addEventListener('submit', async e => {
     e.preventDefault();
     const name = $('#name').value.trim();
     if (!name) { $('#name').focus(); return; }
-    const { items, count } = chosen();
+    const { items, count, pieces } = chosen();
     if (!count) return;
     const send = $('#sendBtn');
     submitting = true;
@@ -260,40 +284,61 @@
       } catch (_) {}
       for (const id of Object.keys(pick)) delete pick[id];
       extras = [];
-      $('#thanksTitle').textContent = `شكراً يا ${name}!`;
-      thanks.showModal();
+      showDone(name, count, pieces);
     } catch (err) {
       toast(isOpen() ? 'لم يتم الحفظ، حاول مرة أخرى' : 'أُغلقت هذه المبادرة');
     } finally {
       submitting = false;
-      send.disabled = false;
       render();
     }
   });
 
-  // Done: show where you are in the list
-  // once the big title scrolls away, keep the event name stuck on top
-  if (window.IntersectionObserver) {
-    new IntersectionObserver(([e]) => { $('#sticky').hidden = e.isIntersecting || !ini; })
-      .observe($('.ini-hero'));
+  function showDone(name, kinds, pieces) {
+    $('#thanksTitle').innerHTML = twoTone(`شكراً يا ${name}!`);
+    $('#statKinds').textContent = kinds;
+    $('#statPieces').textContent = pieces;
+    done.hidden = false;
+    document.body.classList.add('no-scroll');
+    $('#doneBtn').focus();
+    confetti();
   }
 
+  // Continue: back to the page, at your row in the list
   $('#doneBtn').addEventListener('click', () => {
-    thanks.close();
-    const rows = document.querySelectorAll('#whoList li.mine');
+    done.hidden = true;
+    document.body.classList.remove('no-scroll');
+    const rows = $$('#whoList .row.mine');
     const row = rows[rows.length - 1];
     if (!row) return;
     row.scrollIntoView({ behavior: 'smooth', block: 'center' });
     row.classList.add('flash');
     setTimeout(() => row.classList.remove('flash'), 1800);
   });
-  thanks.addEventListener('click', e => { if (e.target === thanks) thanks.close(); });
+
+  // a quick burst of colour behind the done screen
+  function confetti() {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !Element.prototype.animate) return;
+    const colors = ['#1cb0f6', '#58c322', '#ffc800', '#ff9600', '#ce82ff'];
+    for (let i = 0; i < 70; i++) {
+      const p = document.createElement('i');
+      p.className = 'confetti';
+      p.style.background = colors[i % colors.length];
+      p.style.left = 50 + (Math.random() - .5) * 30 + 'vw';
+      done.appendChild(p);
+      const dx = (Math.random() - .5) * 90, rise = 30 + Math.random() * 40, spin = (Math.random() - .5) * 1080;
+      p.animate([
+        { transform: 'translate(0, 0) rotate(0deg)', opacity: 1 },
+        { transform: `translate(${dx / 2}vw, -${rise}vh) rotate(${spin / 2}deg)`, opacity: 1, offset: .35 },
+        { transform: `translate(${dx}vw, 20vh) rotate(${spin}deg)`, opacity: 0 }
+      ], { duration: 1600 + Math.random() * 900, easing: 'cubic-bezier(.2, .7, .4, 1)' }).onfinish = () => p.remove();
+    }
+  }
 
   function notFound() {
     document.title = 'غير موجودة · أصدقاء باص الخير';
     $('#iniTitle').textContent = 'المبادرة غير موجودة';
-    $('#ovLeft').innerHTML = '<a class="btn btn-primary" href="index.html">رجوع</a>';
     $('#content').hidden = true;
+    $('#basket').hidden = true;
   }
 
   function loadFailed() {

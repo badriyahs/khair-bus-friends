@@ -1,6 +1,6 @@
-/* Home: each initiative as a square post in their squiggly frame (name, date, progress), past ones below. */
+/* Home: one card per initiative (picture, name, date, progress), past ones below. */
 (function () {
-  const { $, esc, tally, enDate, itemsLeft, twoTone, byDate } = UI;
+  const { $, esc, tally, enDate, itemsLeft, byDate, icon } = UI;
   let initiatives = null;
   const pledgesFor = {};
   const subs = new Map();
@@ -23,24 +23,25 @@
     const open = initiatives.filter(i => i.status === 'open').sort(byDate);
     const past = initiatives.filter(i => i.status !== 'open').sort((a, b) => byDate(b, a));
     $('#openList').innerHTML = open.length
-      ? open.map((ini, i) => post(ini, i, false)).join('')
+      ? open.map((ini, i) => card(ini, i, false)).join('')
       : '<li class="empty">لا توجد مبادرات حالياً</li>';
     $('#pastWrap').hidden = !past.length;
-    $('#pastList').innerHTML = past.map((ini, i) => post(ini, i, true)).join('');
+    $('#pastList').innerHTML = past.map((ini, i) => card(ini, i, true)).join('');
   }
 
-  function post(ini, i, past) {
+  function card(ini, i, past) {
     const t = tally(ini, pledgesFor[ini.id] || []);
     const progress = past ? '' : `
-        <div class="bar"><span class="bar-fill" style="width:${t.pct}%"></span></div>
-        <p class="post-left">${t.open ? itemsLeft(t.open) : 'اكتملت كل الأصناف'}</p>`;
-    return `<li><a class="post ${past ? 'frame-stars' : 'frame-squiggle'}" href="initiative.html?id=${encodeURIComponent(ini.id)}">
-      ${past ? '' : '<img class="post-stars" src="img/deco/stars-blue.png" alt="">'}
-      <div class="post-in">
-        <h3 class="fun-title">${twoTone(ini.title)}</h3>
-        ${ini.date ? `<p class="post-date" dir="ltr">${esc(enDate(ini.date))}</p>` : ''}
+        <span class="bar"><span class="bar-fill" style="width:${t.pct}%"></span></span>
+        <span class="ev-left">${t.open ? itemsLeft(t.open) : 'اكتملت كل الأصناف'}</span>`;
+    return `<li style="--i:${i}"><a class="ev-card" href="initiative.html?id=${encodeURIComponent(ini.id)}">
+      <span class="ev-icon"><img src="${esc(ini.photo || 'img/logo-180.png')}" alt=""></span>
+      <span class="ev-main">
+        <b class="ev-title">${esc(ini.title)}</b>
+        ${ini.date ? `<span class="ev-date" dir="ltr">${esc(enDate(ini.date))}</span>` : ''}
         ${progress}
-      </div>
+      </span>
+      <span class="ev-go">${icon(past ? 'check' : 'chev', 22)}</span>
     </a></li>`;
   }
 })();
