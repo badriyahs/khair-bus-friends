@@ -15,7 +15,7 @@
     for (const [id, off] of subs) if (!open.has(id)) { off(); subs.delete(id); }
     render();
   }, () => {
-    $('#openList').innerHTML = '<li class="empty">We couldn\'t load the list. Please check your connection and refresh.</li>';
+    $('#openList').innerHTML = '<li class="empty">Couldn\'t load. Please refresh.</li>';
   });
 
   function render() {
@@ -24,7 +24,7 @@
     const past = initiatives.filter(i => i.status !== 'open').sort((a, b) => byDate(b, a));
     $('#openList').innerHTML = open.length
       ? open.map(openCard).join('')
-      : '<li class="empty">No open initiatives right now — check back soon.</li>';
+      : '<li class="empty">Nothing open right now.</li>';
     $('#pastWrap').hidden = !past.length;
     $('#pastList').innerHTML = past.map(pastCard).join('');
   }
@@ -40,21 +40,17 @@
 
   function openCard(ini) {
     const t = tally(ini, pledgesFor[ini.id] || []);
-    const left = t.open ? `${t.open} ${t.open === 1 ? 'item' : 'items'} still needed` : 'Everything is covered!';
+    const left = t.open ? `${t.open} ${t.open === 1 ? 'item' : 'items'} needed` : 'All covered';
     return `<li><a class="ini-card" href="initiative.html?id=${encodeURIComponent(ini.id)}">
       ${top(ini)}
       <div>
         <div class="bar"><span class="bar-fill" style="width:${t.pct}%"></span></div>
-        <p class="bar-label"><span>${t.pct}% covered</span><span>${left}</span></p>
+        <p class="bar-label"><span>${left}</span>${icon('arrow', 18)}</p>
       </div>
-      <span class="go">See what's needed ${icon('arrow', 16)}</span>
     </a></li>`;
   }
 
   function pastCard(ini) {
-    return `<li><a class="ini-card" href="initiative.html?id=${encodeURIComponent(ini.id)}">
-      ${top(ini)}
-      <p class="muted small" style="margin:0">Thank you to everyone who helped.</p>
-    </a></li>`;
+    return `<li><a class="ini-card" href="initiative.html?id=${encodeURIComponent(ini.id)}">${top(ini)}</a></li>`;
   }
 })();

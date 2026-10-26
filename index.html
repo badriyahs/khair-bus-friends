@@ -4,7 +4,6 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Khair Bus Friends</title>
-  <meta name="description" content="See what our next initiative needs and choose what you'd like to bring.">
   <meta name="theme-color" content="#dcf2e7">
   <link rel="icon" href="img/logo.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,19 +15,13 @@
   <header class="site-head">
     <div class="wrap head-in">
       <a class="brand" href="index.html"><img src="img/logo.svg" alt=""><span>Khair Bus Friends</span></a>
-      <nav class="head-nav"><a href="#initiatives">Initiatives</a></nav>
     </div>
   </header>
 
   <main>
     <section class="hero">
       <div class="wrap hero-in">
-        <div>
-          <p class="eyebrow">Khair Bus Friends</p>
-          <h1>Bring what you can. Together, we fill the bus.</h1>
-          <p class="lead">See what our next initiative needs, choose what you'd like to bring, and the list updates for everyone — so nothing runs short and nothing doubles up.</p>
-          <a class="btn btn-primary" href="#initiatives">See what's needed</a>
-        </div>
+        <h1>Bring what you can.</h1>
         <div class="hero-art" aria-hidden="true">
           <svg viewBox="0 0 360 250" fill="none">
             <ellipse cx="180" cy="226" rx="150" ry="10" fill="#16324a" opacity=".08"/>
@@ -62,33 +55,17 @@
       <svg class="wave" viewBox="0 0 1440 56" preserveAspectRatio="none" aria-hidden="true"><path d="M0 28c240 28 480 28 720 8s480-28 720 0v28H0z" fill="#f5faf8"/></svg>
     </section>
 
-    <div class="wrap">
-      <ol class="steps">
-        <li class="step"><span class="step-num">1</span>Pick what you'd like to bring</li>
-        <li class="step"><span class="step-num">2</span>Choose how many</li>
-        <li class="step"><span class="step-num">3</span>Add your name — that's it</li>
-      </ol>
-    </div>
-
-    <section class="section wrap" id="initiatives">
-      <div class="section-head">
-        <h2>Coming up</h2>
-        <p class="muted">No account needed. Pick an initiative to see what's still needed.</p>
-      </div>
-      <ul class="cards" id="openList"><li class="empty">Loading…</li></ul>
-
+    <section class="section wrap">
+      <ul class="cards" id="openList"></ul>
       <div id="pastWrap" hidden>
-        <h2 class="mt-lg">Past initiatives</h2>
+        <h2 class="mt-lg">Past</h2>
         <ul class="cards past" id="pastList"></ul>
       </div>
     </section>
   </main>
 
   <footer class="site-foot">
-    <div class="wrap foot-in">
-      <span>Khair Bus Friends · Bring what you can.</span>
-      <a href="admin.html">Team login</a>
-    </div>
+    <div class="wrap foot-in"><a href="admin.html">Team</a></div>
   </footer>
 
   <script src="js/config.js"></script>

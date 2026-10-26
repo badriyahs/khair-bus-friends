@@ -3,7 +3,7 @@
    with sample data, so the site can be tried straight away.
    Live mode (Firebase config in js/config.js): Firestore, updating live for everyone.
 
-   initiatives/{id}                 title, date, time, place, note, status, items[{id,name,unit,needed}]
+   initiatives/{id}                 title, date, time, place, status, items[{id,name,unit,needed}]
    initiatives/{id}/pledges/{pid}   items[{id,qty}], extras[{name,qty}]   (public, no names)
    initiatives/{id}/people/{pid}    name                                  (team only) */
 window.Store = (function () {
@@ -62,7 +62,6 @@ window.Store = (function () {
         'friday-meal-bus': {
           id: 'friday-meal-bus', title: 'Friday Meal Bus', date: inDays((5 - new Date().getDay() + 7) % 7 || 7),
           time: '4:00 PM', place: 'Meeting point to be confirmed', status: 'open', createdAt: t,
-          note: 'Sample initiative to try the site. Pick what you can bring — every pack helps.',
           items: [
             { id: 'bread', name: 'Bread', unit: 'packs', needed: 20 },
             { id: 'water', name: 'Bottled water', unit: 'cartons', needed: 12 },
@@ -74,7 +73,7 @@ window.Store = (function () {
         },
         'winter-blankets': {
           id: 'winter-blankets', title: 'Winter Blanket Drive', date: inDays(-24), time: '', place: '',
-          note: 'Sample past initiative.', status: 'closed', createdAt: t - 1,
+          status: 'closed', createdAt: t - 1,
           items: [{ id: 'blankets', name: 'Blankets', unit: 'pieces', needed: 40 }]
         }
       },

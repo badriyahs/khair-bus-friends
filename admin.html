@@ -28,7 +28,6 @@
 
     <section class="login" id="loginView" hidden>
       <h2>Team login</h2>
-      <p class="muted">For the Khair Bus Friends team. Participants don't need an account.</p>
       <form id="loginForm">
         <div class="field"><label for="email">Email</label><input class="input" id="email" type="email" autocomplete="username" required></div>
         <div class="field"><label for="password">Password</label><input class="input" id="password" type="password" autocomplete="current-password" required></div>
@@ -39,8 +38,8 @@
     </section>
 
     <section class="login" id="notAdminView" hidden>
-      <h2>Almost there</h2>
-      <p>You're signed in, but this account isn't on the team list yet. Ask whoever manages the site to add this ID:</p>
+      <h2>Not on the team list yet</h2>
+      <p class="muted">Add this ID to <b>admins</b> in Firebase:</p>
       <code id="uid"></code>
       <button class="btn btn-ghost" type="button" id="signOut2">Sign out</button>
     </section>

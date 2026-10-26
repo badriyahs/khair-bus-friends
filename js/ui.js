@@ -79,10 +79,10 @@ window.UI = (function () {
 
   // Preview-mode notice at the top of every page
   document.addEventListener('DOMContentLoaded', () => {
-    if (!window.Store || !Store.demo) return;
+    if (!window.Store || !Store.demo || !window.KBF_ADMIN) return;
     const b = document.createElement('div');
     b.className = 'preview-banner';
-    b.textContent = 'Preview mode — sign-ups are saved in this browser only.';
+    b.textContent = 'Preview mode — data stays in this browser';
     document.body.prepend(b);
   });
 
