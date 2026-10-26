@@ -328,7 +328,7 @@
     for (let i = 0; i < 46; i++) {
       const p = document.createElement('img');
       p.className = 'confetti';
-      p.src = `img/deco/sparkle-${i % 6 + 1}.png`;
+      p.src = i % 2 ? `img/deco/sparkle-w${i % 3 + 1}.png` : `img/deco/sparkle-${i % 3 + 4}.png`;   // white + green show on the blue
       p.alt = '';
       p.style.width = 18 + Math.random() * 22 + 'px';
       p.style.left = 50 + (Math.random() - .5) * 30 + 'vw';

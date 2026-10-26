@@ -257,13 +257,16 @@ a.info-chip:active { transform: translateY(3px); box-shadow: none; }
 body.has-basket main { padding-bottom: 120px; }
 
 /* done screen */
-.complete { position: fixed; inset: 0; z-index: 50; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; padding: 24px 16px calc(24px + env(safe-area-inset-bottom)); background: var(--bg); text-align: center; overflow: hidden; animation: rise .25s ease; }
-.complete .hero-logo { width: min(240px, 62vw); animation: jump .7s var(--spring) both, bob 5s ease-in-out .7s infinite; }
+.complete { position: fixed; inset: 0; z-index: 50; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; padding: 24px 16px calc(24px + env(safe-area-inset-bottom)); background: var(--brand) url(../img/crayon.svg) 0 0 / 200px 200px; text-align: center; overflow: hidden; animation: rise .25s ease; }
+.complete .hero-logo { width: min(280px, 72vw); margin-bottom: 8px; animation: jump .7s var(--spring) both, bob 5s ease-in-out .7s infinite; }
+.complete .hero-logo > img:first-child { filter: drop-shadow(0 7px 0 var(--brand-dark)); }
+.complete .hero-logo .rays { top: -9%; left: 55%; }
 .complete h2 { margin: 0; font-size: clamp(1.8rem, 7vw, 2.4rem); animation: pop .5s var(--spring) .2s both; }
 .stats { display: flex; gap: 12px; animation: rise .5s var(--spring) .35s both; }
-.stat { display: flex; flex-direction: column; min-width: 120px; border: 2px solid var(--c); border-radius: 16px; overflow: hidden; }
-.stat-label { padding: 4px 10px; background: var(--c); color: #fff; font-size: .85rem; font-weight: 800; }
-.stat-val { padding: 10px; color: var(--c); font-size: 1.6rem; font-weight: 800; }
+.stat { display: flex; flex-direction: column; min-width: 120px; padding: 10px 14px 8px; background: #fff; border-radius: 26px 10px 22px 12px / 10px 24px 12px 22px; box-shadow: 0 5px 0 var(--brand-dark); }
+.stat:nth-child(2) { rotate: 2deg; } .stat:first-child { rotate: -2deg; }
+.stat-label { color: var(--ink-soft); font-size: .9rem; font-weight: 700; }
+.stat-val { color: var(--c); font-size: 2rem; font-weight: 800; line-height: 1.2; }
 .complete .btn { margin-top: 10px; animation: rise .5s var(--spring) .5s both; }
 .confetti { position: absolute; top: 60%; height: auto; pointer-events: none; }
 
