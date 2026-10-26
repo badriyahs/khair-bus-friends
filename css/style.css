@@ -345,14 +345,14 @@ body.brand-bg { background: var(--brand) url(../img/crayon.svg) 0 0 / 200px 200p
 .brand-bg .bubble { border-color: #fff; }
 .brand-bg .bubble::before { border-color: #fff; }
 
-/* hand-drawn feel: slightly uneven corners, and a little squiggle under titles */
-.ev-card { border-radius: 26px 18px 24px 20px / 20px 26px 18px 24px; }
-.choice { border-radius: 22px 16px 24px 18px / 18px 24px 16px 22px; }
-.choice:nth-child(even) { border-radius: 16px 24px 18px 22px / 24px 18px 22px 16px; }
-.card, .rows { border-radius: 24px 18px 22px 20px / 20px 24px 18px 22px; }
-.bubble { border-radius: 20px 14px 22px 16px / 16px 20px 14px 22px; }
-.ev-title::after, .choice-name::after { content: ""; display: block; width: 46px; height: 11px; margin-top: 4px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='12' viewBox='0 0 48 12'%3E%3Cpath d='M3 7Q8 1 13 6T23 6T33 6T45 5' fill='none' stroke='%237fd858' stroke-width='3.2' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat center / contain; }
-.choice-name::after { margin-inline: auto; }
+/* hand-drawn feel: clearly uneven corners and a slight tilt, like cut-out paper */
+.ev-card { border-radius: 44px 16px 38px 14px / 16px 40px 14px 36px; rotate: -.6deg; }
+.choice { border-radius: 36px 12px 30px 14px / 12px 32px 14px 28px; rotate: -.7deg; }
+.choice:nth-child(even) { border-radius: 12px 34px 14px 30px / 32px 12px 28px 14px; rotate: .6deg; }
+.choice:nth-child(3n) { rotate: .9deg; }
+.card, .rows { border-radius: 40px 14px 34px 16px / 14px 36px 16px 32px; }
+.bubble { border-radius: 26px 10px 24px 12px / 10px 24px 12px 22px; rotate: -1.5deg; }
+.choice-hit { border-radius: 32px 12px 0 0 / 12px 30px 0 0; }
 
 /* ---------- smaller screens ---------- */
 
