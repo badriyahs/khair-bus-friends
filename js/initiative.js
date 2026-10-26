@@ -317,14 +317,15 @@
     setTimeout(() => row.classList.remove('flash'), 1800);
   });
 
-  // a quick burst of colour behind the done screen
+  // a burst of their hand-drawn sparkles behind the done screen
   function confetti() {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !Element.prototype.animate) return;
-    const colors = ['#1cb0f6', '#58c322', '#ffc800', '#ff9600', '#ce82ff'];
-    for (let i = 0; i < 70; i++) {
-      const p = document.createElement('i');
+    for (let i = 0; i < 46; i++) {
+      const p = document.createElement('img');
       p.className = 'confetti';
-      p.style.background = colors[i % colors.length];
+      p.src = `img/deco/sparkle-${i % 6 + 1}.png`;
+      p.alt = '';
+      p.style.width = 18 + Math.random() * 22 + 'px';
       p.style.left = 50 + (Math.random() - .5) * 30 + 'vw';
       done.appendChild(p);
       const dx = (Math.random() - .5) * 90, rise = 30 + Math.random() * 40, spin = (Math.random() - .5) * 1080;
