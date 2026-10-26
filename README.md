@@ -31,5 +31,5 @@ The Firebase web config isn't a secret. It's meant to be in the page, and `fires
 
 ## Swapping in the real logo and photos
 
-- Replace `img/logo.svg` with the real logo. Keep the name, or update the `<img src>` in each page.
-- The colours are at the top of `css/style.css` (`--green`, `--blue`).
+- The logo (`img/logo.png`, `img/logo-96.png`) is cut from their profile picture. Swap in a higher-quality file with the same names if they have one.
+- Colours, font and the crayon texture are at the top of `css/style.css`.
