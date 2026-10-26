@@ -1,6 +1,6 @@
 /* Team dashboard: create initiatives, edit item lists, see who's bringing what. */
 (function () {
-  const { $, $$, esc, tally, when, byDate, icon, toast } = UI;
+  const { $, $$, esc, tally, when, byDate, icon, toast, safeUrl } = UI;
   const panel = $('#panel');
   let list = null;          // every initiative
   let sel = null;           // selected initiative id (null while a new one is unsaved)
@@ -122,7 +122,7 @@
     if (dirty && !confirm('الخروج بدون حفظ؟')) return;
     stopWatching();
     sel = null; current = null; pledges = []; people = []; tab = 'details';
-    draft = { title: '', date: '', time: '', place: '', phone: '', photo: '', status: 'open', items: [blankItem(), blankItem(), blankItem()] };
+    draft = { title: '', date: '', time: '', place: '', map: '', phone: '', photo: '', status: 'open', items: [blankItem(), blankItem(), blankItem()] };
     dirty = true;
     renderList();
     renderPanel();
@@ -133,7 +133,7 @@
 
   function toDraft(d) {
     return {
-      title: d.title || '', date: d.date || '', time: d.time || '', place: d.place || '', phone: d.phone || '', photo: d.photo || '',
+      title: d.title || '', date: d.date || '', time: d.time || '', place: d.place || '', map: d.map || '', phone: d.phone || '', photo: d.photo || '',
       status: d.status === 'closed' ? 'closed' : 'open',
       items: (d.items || []).map(it => ({ id: it.id, name: it.name || '', unit: it.unit || '', needed: String(it.needed || ''), img: it.img || '' }))
     };
@@ -183,6 +183,8 @@
           <input class="input" id="fTime" data-f="time" value="${esc(d.time)}" maxlength="40" placeholder="مثلاً: 6 - 8 مساءً"></div>
         <div class="field"><label for="fPlace">المكان</label>
           <input class="input" id="fPlace" data-f="place" value="${esc(d.place)}" maxlength="120"></div>
+        <div class="field"><label for="fMap">رابط الخريطة</label>
+          <input class="input" id="fMap" data-f="map" value="${esc(d.map)}" maxlength="500" type="url" inputmode="url" dir="ltr" placeholder="https://maps.app.goo.gl/…"></div>
         <div class="field"><label for="fPhone">رقم التواصل</label>
           <input class="input" id="fPhone" data-f="phone" value="${esc(d.phone)}" maxlength="30" inputmode="tel" dir="ltr"></div>
         <div class="field"><span class="label">الصورة</span>
@@ -392,7 +394,7 @@
       return;
     }
     const data = {
-      title, date: draft.date, time: draft.time.trim(), place: draft.place.trim(), phone: draft.phone.trim(), photo: draft.photo || '', status: draft.status,
+      title, date: draft.date, time: draft.time.trim(), place: draft.place.trim(), map: safeUrl(draft.map), phone: draft.phone.trim(), photo: draft.photo || '', status: draft.status,
       items: rows.map(it => ({ id: it.id, name: it.name.trim(), unit: String(it.unit).trim(), needed: parseInt(it.needed, 10), img: it.img || '' }))
     };
     const btn = $('#saveBtn');

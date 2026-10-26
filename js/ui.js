@@ -56,6 +56,7 @@ window.UI = (function () {
 
   const ICONS = {
     check: '<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+    chat: '<path d="M20.5 11.5a8.5 8.5 0 0 1-12.4 7.6L3.5 20.5l1.4-4.4a8.5 8.5 0 1 1 15.6-4.6z"/>',
     chev: '<path d="M15 5l-7 7 7 7"/>',
     cal: '<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 3v4M16 3v4M4 10h16"/>',
     clock: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
@@ -67,6 +68,19 @@ window.UI = (function () {
     open: '<path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',
     download: '<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>'
   };
+  // only plain web links (e.g. a Google Maps link), nothing else
+  function safeUrl(u) {
+    u = String(u || '').trim();
+    return /^https?:\/\/\S+$/i.test(u) ? u : '';
+  }
+
+  // a WhatsApp chat link; 8-digit numbers are Kuwaiti, so add 965
+  function whatsapp(phone, text) {
+    let n = String(phone || '').replace(/\D/g, '').replace(/^00/, '');
+    if (n.length === 8) n = '965' + n;
+    return n ? `https://wa.me/${n}${text ? '?text=' + encodeURIComponent(text) : ''}` : '';
+  }
+
   function icon(name, size = 18) {
     return `<svg class="ic" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name]}</svg>`;
   }
@@ -94,5 +108,5 @@ window.UI = (function () {
     document.body.prepend(b);
   });
 
-  return { $, $$, esc, arDate, when, itemsLeft, twoTone, byDate, tally, icon, toast };
+  return { $, $$, esc, arDate, when, itemsLeft, twoTone, byDate, tally, icon, toast, safeUrl, whatsapp };
 })();

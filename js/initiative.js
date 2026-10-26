@@ -1,6 +1,6 @@
 /* One initiative, like a lesson: tap the foods you'll bring, add your name, confirm. */
 (function () {
-  const { $, $$, esc, tally, arDate, twoTone, icon, toast } = UI;
+  const { $, $$, esc, tally, arDate, twoTone, icon, toast, safeUrl, whatsapp } = UI;
   const iid = new URLSearchParams(location.search).get('id');
   const done = $('#thanks');
   const cards = new Map();
@@ -61,8 +61,13 @@
     const info = [];
     if (ini.date) info.push(`<span class="info-chip">${icon('cal', 18)}${esc(arDate(ini.date))}</span>`);
     if (ini.time) info.push(`<span class="info-chip">${icon('clock', 18)}${esc(ini.time)}</span>`);
-    if (ini.place) info.push(`<span class="info-chip">${icon('pin', 18)}${esc(ini.place)}</span>`);
-    if (ini.phone) info.push(`<a class="info-chip" href="tel:${esc(String(ini.phone).replace(/[^\d+]/g, ''))}">${icon('phone', 18)}<span dir="ltr">${esc(ini.phone)}</span></a>`);
+    // place opens the map link if there is one; the number opens a WhatsApp chat
+    const map = safeUrl(ini.map);
+    if (ini.place || map) info.push(map
+      ? `<a class="info-chip" href="${esc(map)}" target="_blank" rel="noopener">${icon('pin', 18)}${esc(ini.place || 'الموقع')}</a>`
+      : `<span class="info-chip">${icon('pin', 18)}${esc(ini.place)}</span>`);
+    const wa = whatsapp(ini.phone, `السلام عليكم، بخصوص ${ini.title}`);
+    if (wa) info.push(`<a class="info-chip" href="${esc(wa)}" target="_blank" rel="noopener">${icon('chat', 18)}<span dir="ltr">${esc(ini.phone)}</span></a>`);
     setHTML($('#iniInfo'), info.join(''));
     const photo = $('#iniPhoto'), src = ini.photo || 'img/logo.png';
     if (photo.getAttribute('src') !== src) photo.src = src;
