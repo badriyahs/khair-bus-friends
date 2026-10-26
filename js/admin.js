@@ -17,11 +17,9 @@
   Store.onAuth(a => {
     $('#boot').hidden = true;
     $('#loginView').hidden = a.state !== 'out';
-    $('#notAdminView').hidden = a.state !== 'notAdmin';
     $('#dashView').hidden = a.state !== 'in';
     $('#signOut').hidden = Store.demo || a.state === 'out';
     $('#who').textContent = a.state === 'out' ? '' : (a.email || '');
-    if (a.state === 'notAdmin') $('#uid').textContent = a.uid;
     if (a.error) loginError('تعذّر الاتصال، حدّث الصفحة');
     if (a.state === 'in') start();
   });
@@ -35,28 +33,17 @@
     e.preventDefault();
     const btn = $('#loginBtn');
     btn.disabled = true;
-    btn.textContent = 'جارٍ الدخول…';
     $('#loginErr').hidden = true;
     try {
-      await Store.signIn($('#email').value.trim(), $('#password').value);
+      await Store.signIn($('#username').value, $('#password').value);
     } catch (err) {
-      loginError('البريد أو كلمة المرور غير صحيحة');
+      loginError('اسم المستخدم أو كلمة المرور غير صحيحة');
     } finally {
       btn.disabled = false;
-      btn.textContent = 'دخول';
     }
   });
 
-  $('#forgot').addEventListener('click', async () => {
-    const email = $('#email').value.trim();
-    if (!email) { $('#email').focus(); return; }
-    try { await Store.resetPassword(email); toast(`أرسلنا رابط تغيير كلمة المرور إلى ${email}`); }
-    catch (err) { toast('تعذّر الإرسال، تأكد من البريد'); }
-  });
-
-  for (const id of ['#signOut', '#signOut2']) {
-    $(id).addEventListener('click', async () => { await Store.signOut(); location.reload(); });
-  }
+  $('#signOut').addEventListener('click', async () => { await Store.signOut(); location.reload(); });
 
   $('#resetPreview').addEventListener('click', async () => {
     if (!confirm('إرجاع البيانات التجريبية؟')) return;

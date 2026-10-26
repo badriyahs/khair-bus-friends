@@ -29,20 +29,12 @@
 
     <section class="login" id="loginView" hidden>
       <h2>دخول الفريق</h2>
-      <form id="loginForm">
-        <div class="field"><label for="email">البريد الإلكتروني</label><input class="input" id="email" type="email" dir="ltr" autocomplete="username" required></div>
+      <form class="login-actions" id="loginForm">
+        <div class="field"><label for="username">اسم المستخدم</label><input class="input" id="username" dir="ltr" autocomplete="username" autocapitalize="none" spellcheck="false" required></div>
         <div class="field"><label for="password">كلمة المرور</label><input class="input" id="password" type="password" dir="ltr" autocomplete="current-password" required></div>
         <p class="form-error" id="loginErr" role="alert" hidden></p>
         <button class="btn btn-primary" type="submit" id="loginBtn">دخول</button>
-        <button class="btn-link" type="button" id="forgot">نسيت كلمة المرور؟</button>
       </form>
-    </section>
-
-    <section class="login" id="notAdminView" hidden>
-      <h2>الحساب غير مضاف للفريق</h2>
-      <p class="muted">أضف هذا المعرّف إلى <b dir="ltr">admins</b> في Firebase:</p>
-      <code id="uid" dir="ltr"></code>
-      <button class="btn btn-ghost" type="button" id="signOut2">خروج</button>
     </section>
 
     <div class="admin-shell" id="dashView" hidden>

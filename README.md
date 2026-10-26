@@ -12,23 +12,20 @@ Plain HTML, CSS and JavaScript, with no build step. Hosted on GitHub Pages, and 
 
 Until a Firebase config is added to `js/config.js`, the site runs in **preview mode**. Everything works with sample data, but sign-ups are saved only in the browser you're using, and the dashboard has no login. A yellow bar at the top says when you're in preview mode.
 
-## Going live (about 15 minutes)
+## Going live
 
-1. Go to [console.firebase.google.com](https://console.firebase.google.com), create a project (e.g. `khair-bus-friends`). Analytics can be off.
-2. **Build → Firestore Database → Create database** (production mode, a nearby region).
-3. **Firestore → Rules**: paste in everything from `firestore.rules`, then **Publish**.
-4. **Build → Authentication → Get started → Email/Password → Enable.**
-   Then **Users → Add user** for each team member (email + password).
-5. Copy each team member's **User UID** from the Users list. In **Firestore → Data**, create a collection called `admins`, and add one document per team member, with the **document ID = their UID** (add any field, e.g. `name: "Salma"`).
-6. **Project settings → General → Your apps → Web (</>)**: register an app and copy the `firebaseConfig` values into `js/config.js` (replace `firebase: null`).
-7. **Authentication → Settings → Authorized domains**: add the site's domain (e.g. `badriyahs.github.io`).
+1. Create a Firebase project (Analytics off) at [console.firebase.google.com](https://console.firebase.google.com).
+2. **Firestore Database → Create database** (production mode), then **Rules**: paste `firestore.rules` and **Publish**.
+3. **Authentication → Sign-in method → Email/Password → Enable.** Then **Settings → User actions**: untick **Enable create (sign-up)**, so nobody can make their own account.
+4. **Team logins** are a username + password. In **Authentication → Users → Add user**, put the username followed by `@<project-id>.firebaseapp.com` as the email (e.g. `khairbus@khair-bus-friends.firebaseapp.com`) and choose a password. On `admin.html` they type just the username (`khairbus`) and the password. To change a password, use the user's ⋮ menu in the same list.
+5. **Project settings → Your apps → Web**: register an app and paste its `firebaseConfig` into `js/config.js`.
 
 The Firebase web config isn't a secret. It's meant to be in the page, and `firestore.rules` is what protects the data:
 
 - anyone can read initiatives and the item counts
 - anyone can sign up for an open initiative
 - anyone with the link sees the names in the list at the end of each event page
-- only the team can edit lists or remove sign-ups
+- only team logins can edit lists or remove sign-ups
 
 ## Swapping in the real logo and photos
 

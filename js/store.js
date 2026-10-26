@@ -113,8 +113,7 @@ window.Store = (function () {
 
     onAuth(cb) { Promise.resolve().then(() => cb({ state: 'in', email: 'Preview mode' })); return () => {}; },
     async signIn() {},
-    async signOut() {},
-    async resetPassword() {}
+    async signOut() {}
   };
 
   /* ---------- live mode (Firebase) ---------- */
@@ -136,6 +135,15 @@ window.Store = (function () {
       window.KBF_ADMIN ? loadScript(FB + 'firebase-auth-compat.js') : null
     ]))
     .then(() => { firebase.initializeApp(cfg); fs = firebase.firestore(); });
+
+  /* Team logins are a username + password. Firebase accounts need an email,
+     so a username like "khairbus" is stored as khairbus@<project>.firebaseapp.com. */
+  const TEAM_DOMAIN = cfg ? '@' + cfg.authDomain : '';
+  const teamEmail = name => {
+    const n = String(name || '').trim().toLowerCase();
+    return n.includes('@') ? n : n + TEAM_DOMAIN;
+  };
+  const username = email => String(email || '').replace(TEAM_DOMAIN, '');
 
   const inis = () => fs.collection('initiatives');
   const stamp = () => firebase.firestore.FieldValue.serverTimestamp();
@@ -195,18 +203,18 @@ window.Store = (function () {
       let off = null, stopped = false;
       ready.then(() => {
         if (stopped) return;
-        off = firebase.auth().onAuthStateChanged(async user => {
-          if (!user) return cb({ state: 'out' });
-          let ok = false;
-          try { ok = (await fs.collection('admins').doc(user.uid).get()).exists; } catch (e) {}
-          cb({ state: ok ? 'in' : 'notAdmin', email: user.email, uid: user.uid });
+        // only the team has accounts (made in the Firebase console), so signed in = team
+        off = firebase.auth().onAuthStateChanged(user => {
+          cb(user ? { state: 'in', email: username(user.email) } : { state: 'out' });
         });
       }).catch(() => cb({ state: 'out', error: true }));
       return () => { stopped = true; if (off) off(); };
     },
-    async signIn(email, pw) { await ready; await firebase.auth().signInWithEmailAndPassword(email, pw); },
-    async signOut() { await ready; await firebase.auth().signOut(); },
-    async resetPassword(email) { await ready; await firebase.auth().sendPasswordResetEmail(email); }
+    async signIn(name, password) {
+      await ready;
+      await firebase.auth().signInWithEmailAndPassword(teamEmail(name), password);
+    },
+    async signOut() { await ready; await firebase.auth().signOut(); }
   };
 
   return { demo, ready, ...(demo ? previewApi : liveApi) };
