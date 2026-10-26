@@ -18,7 +18,7 @@
   --muted: #afafaf;
   --line: #e5e5e5;
   --tint: #f7f7f7;
-  --bg: #fff;
+  --bg: linear-gradient(180deg, #dff3ff 0%, #eef9ff 45%, #effae4 100%);
   --danger: #ff4b4b;
   --radius: 16px;
   --spring: cubic-bezier(.3, 1.6, .6, 1);
@@ -27,7 +27,8 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
-body { margin: 0; font-family: var(--font); font-size: 17px; font-weight: 500; line-height: 1.5; color: var(--ink); background: var(--bg); -webkit-tap-highlight-color: transparent; }
+html { background: #dff3ff; }
+body { margin: 0; min-height: 100vh; font-family: var(--font); font-size: 17px; font-weight: 500; line-height: 1.5; color: var(--ink); background: var(--bg); -webkit-tap-highlight-color: transparent; }
 body.no-scroll { overflow: hidden; }
 img, svg { display: block; max-width: 100%; }
 a { color: var(--blue); }
@@ -48,7 +49,7 @@ button, input, textarea, select { font: inherit; color: inherit; }
 /* ---------- header ---------- */
 
 .preview-banner { padding: 6px 16px; background: #fff4cc; color: #7a5c00; font-size: .85rem; font-weight: 700; text-align: center; }
-.site-head { position: sticky; top: 0; z-index: 20; background: rgba(255, 255, 255, .96); border-bottom: 2px solid var(--line); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.site-head { position: sticky; top: 0; z-index: 20; background: rgba(255, 255, 255, .88); border-bottom: 2px solid var(--line); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
 .head-in { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 64px; }
 .brand { display: flex; align-items: center; gap: 10px; color: var(--ink); font-weight: 800; font-size: 1.1rem; text-decoration: none; }
 .brand img { width: 44px; height: 44px; }
@@ -73,7 +74,7 @@ button, input, textarea, select { font: inherit; color: inherit; }
 
 .field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 .field label, .label { font-weight: 700; font-size: .95rem; }
-.input { width: 100%; min-height: 50px; padding: 10px 14px; border: 2px solid var(--line); border-radius: 14px; background: var(--tint); transition: border-color .15s, background .15s; }
+.input { width: 100%; min-height: 50px; padding: 10px 14px; border: 2px solid var(--line); border-radius: 14px; background: #fff; transition: border-color .15s, background .15s; }
 .input:focus { outline: none; border-color: var(--blue-line); background: #fff; }
 textarea.input { resize: vertical; }
 input[type="number"] { -moz-appearance: textfield; }
@@ -86,8 +87,8 @@ input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-o
 .pill { padding: 3px 10px; border-radius: 999px; background: var(--green-soft); color: var(--green-dark); font-size: .8rem; font-weight: 800; white-space: nowrap; }
 .pill.closed { background: var(--tint); color: var(--muted); }
 .pill.extra { background: var(--blue-soft); color: var(--blue-dark); }
-.empty { padding: 28px; border: 2px dashed var(--line); border-radius: 20px; color: var(--ink-soft); text-align: center; list-style: none; }
-.notice { margin: 0 0 16px; padding: 14px 18px; border-radius: 16px; background: var(--tint); color: var(--ink-soft); font-weight: 700; }
+.empty { padding: 28px; border: 2px dashed var(--blue-line); border-radius: 20px; background: rgba(255, 255, 255, .7); color: var(--ink-soft); text-align: center; list-style: none; }
+.notice { margin: 0 0 16px; padding: 14px 18px; border-radius: 16px; background: #fff; color: var(--ink-soft); font-weight: 700; }
 
 /* ---------- progress bar with a shine ---------- */
 
@@ -146,7 +147,7 @@ input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-o
 
 /* ---------- event page: like a lesson ---------- */
 
-.lesson-bar { position: sticky; top: 0; z-index: 20; background: rgba(255, 255, 255, .96); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.lesson-bar { position: sticky; top: 0; z-index: 20; background: rgba(255, 255, 255, .88); border-bottom: 2px solid rgba(255, 255, 255, .9); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
 .lesson-in { display: flex; align-items: center; gap: 12px; min-height: 64px; }
 .close-btn { flex: none; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 12px; color: var(--muted); }
 .close-btn:hover { background: var(--tint); color: var(--ink-soft); }
@@ -205,7 +206,7 @@ input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-o
 
 /* who's bringing what — like a leaderboard */
 .board { margin-top: 8px; }
-.rows { margin: 0; padding: 0; border: 2px solid var(--line); border-radius: 18px; list-style: none; overflow: hidden; }
+.rows { margin: 0; padding: 0; border: 2px solid var(--line); border-radius: 18px; background: #fff; list-style: none; overflow: hidden; }
 .row { display: flex; align-items: center; gap: 12px; padding: 12px 14px; transition: background .3s; }
 .who-list .row { align-items: flex-start; }
 .row + .row { border-top: 2px solid var(--line); }
@@ -233,7 +234,7 @@ input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-o
 body.has-basket main { padding-bottom: 120px; }
 
 /* done screen */
-.complete { position: fixed; inset: 0; z-index: 50; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; padding: 24px 16px calc(24px + env(safe-area-inset-bottom)); background: #fff; text-align: center; overflow: hidden; animation: rise .25s ease; }
+.complete { position: fixed; inset: 0; z-index: 50; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; padding: 24px 16px calc(24px + env(safe-area-inset-bottom)); background: var(--bg); text-align: center; overflow: hidden; animation: rise .25s ease; }
 .complete .hero-logo { width: min(240px, 62vw); animation: jump .7s var(--spring) both, bob 5s ease-in-out .7s infinite; }
 .complete h2 { margin: 0; font-size: clamp(1.8rem, 7vw, 2.4rem); animation: pop .5s var(--spring) .2s both; }
 .stats { display: flex; gap: 12px; animation: rise .5s var(--spring) .35s both; }
@@ -250,7 +251,7 @@ body.has-basket main { padding-bottom: 120px; }
 
 .team-pill { padding: 2px 10px; border-radius: 999px; background: var(--blue-soft); color: var(--blue-dark); font-size: .8rem; font-weight: 800; }
 .who { color: var(--muted); font-size: .9rem; font-weight: 700; }
-.login { max-width: 420px; margin: 56px auto; padding: 26px; border: 2px solid var(--line); border-radius: 22px; box-shadow: 0 4px 0 var(--line); }
+.login { max-width: 420px; margin: 56px auto; padding: 26px; background: #fff; border: 2px solid var(--line); border-radius: 22px; box-shadow: 0 4px 0 var(--line); }
 .login-actions { display: flex; flex-direction: column; gap: 12px; margin-top: 18px; }
 
 .admin-shell { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 20px; max-width: 1200px; margin: 0 auto; padding: 24px 16px; }
@@ -260,11 +261,11 @@ body.has-basket main { padding-bottom: 120px; }
 .ini-list button:active { transform: translateY(3px); box-shadow: none; }
 .ini-list button[aria-current="true"] { border-color: var(--blue-line); background: var(--blue-soft); box-shadow: 0 3px 0 var(--blue-line); }
 
-.panel { min-width: 0; padding: 22px; border: 2px solid var(--line); border-radius: 22px; }
+.panel { min-width: 0; padding: 22px; background: #fff; border: 2px solid var(--line); border-radius: 22px; }
 .panel-head { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
 .panel-head h2 { margin: 0; overflow-wrap: anywhere; }
 .head-actions { display: flex; flex-wrap: wrap; gap: 8px; }
-.tabs { display: flex; gap: 4px; width: max-content; max-width: 100%; margin: 12px 0 22px; padding: 4px; border: 2px solid var(--line); border-radius: 16px; overflow-x: auto; scrollbar-width: none; }
+.tabs { display: flex; gap: 4px; width: max-content; max-width: 100%; margin: 12px 0 22px; padding: 4px; background: #fff; border: 2px solid var(--line); border-radius: 16px; overflow-x: auto; scrollbar-width: none; }
 .tab { display: inline-flex; flex: none; align-items: center; gap: 6px; padding: 8px 16px; border: 0; border-radius: 12px; background: transparent; color: var(--ink-soft); font-weight: 700; white-space: nowrap; cursor: pointer; }
 .tab[aria-selected="true"] { background: var(--blue-soft); color: var(--blue-dark); }
 .count-pill { min-width: 22px; padding: 0 7px; border-radius: 999px; background: var(--blue); color: #fff; font-size: .78rem; line-height: 22px; text-align: center; }
