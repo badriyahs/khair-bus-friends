@@ -3,7 +3,7 @@
    with sample data, so the site can be tried straight away.
    Live mode (Firebase config in js/config.js): Firestore, updating live for everyone.
 
-   initiatives/{id}                 title, date, photo (small JPEG data URL), status, items[{id,name,unit,needed,img}]
+   initiatives/{id}                 title, date, time, place, phone, photo (small image data URL), status, items[{id,name,unit,needed,img}]
    initiatives/{id}/pledges/{pid}   items[{id,qty}], extras[{name,qty}]   (public, no names)
    initiatives/{id}/people/{pid}    name                                  (team only) */
 window.Store = (function () {
@@ -23,7 +23,7 @@ window.Store = (function () {
 
   /* ---------- preview mode ---------- */
 
-  const KEY = 'kbf-preview-v6';
+  const KEY = 'kbf-preview-v7';
   const listeners = new Set();
   let mem = null;
 
@@ -57,7 +57,8 @@ window.Store = (function () {
     return {
       initiatives: {
         'sandwiches-oct': {
-          id: 'sandwiches-oct', title: 'مبادرة تجهيز السندويشات', date: '2026-10-29', status: 'open', createdAt: Date.now(),
+          id: 'sandwiches-oct', title: 'مبادرة تجهيز السندويشات', date: '2026-10-29', time: '6 - 8 مساءً', place: '', phone: '94725505',
+          status: 'open', createdAt: Date.now(),
           photo: 'img/events/sandwich-chef.png',
           items: [
             item('toast', 'خبز توست', 'أكياس', 25),

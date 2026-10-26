@@ -1,6 +1,6 @@
 /* One initiative, like a lesson: tap the foods you'll bring, add your name, confirm. */
 (function () {
-  const { $, $$, esc, tally, enDate, twoTone, icon, toast } = UI;
+  const { $, $$, esc, tally, arDate, twoTone, icon, toast } = UI;
   const iid = new URLSearchParams(location.search).get('id');
   const done = $('#thanks');
   const cards = new Map();
@@ -53,8 +53,13 @@
   function renderHead(t) {
     document.title = `${ini.title} · أصدقاء باص الخير`;
     $('#iniTitle').innerHTML = twoTone(ini.title);
-    $('#iniDate').textContent = enDate(ini.date);
-    $('#iniDate').hidden = !ini.date;
+    // date, time, place, phone — whichever the team filled in
+    const info = [];
+    if (ini.date) info.push(`<span class="info-chip">${icon('cal', 18)}${esc(arDate(ini.date))}</span>`);
+    if (ini.time) info.push(`<span class="info-chip">${icon('clock', 18)}${esc(ini.time)}</span>`);
+    if (ini.place) info.push(`<span class="info-chip">${icon('pin', 18)}${esc(ini.place)}</span>`);
+    if (ini.phone) info.push(`<a class="info-chip" href="tel:${esc(String(ini.phone).replace(/[^\d+]/g, ''))}">${icon('phone', 18)}<span dir="ltr">${esc(ini.phone)}</span></a>`);
+    $('#iniInfo').innerHTML = info.join('');
     const photo = $('#iniPhoto'), src = ini.photo || 'img/logo.png';
     if (photo.getAttribute('src') !== src) photo.src = src;
     $('#prompt').hidden = !isOpen();

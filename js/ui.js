@@ -14,6 +14,11 @@ window.UI = (function () {
     const d = parseDate(iso);
     return d ? d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' }) : '';
   }
+  // Arabic day and date with the 0-9 digits their posters use: "الخميس، 29 أكتوبر"
+  function arDate(iso) {
+    const d = parseDate(iso);
+    return d ? d.toLocaleDateString('ar-KW-u-nu-latn', { weekday: 'long', day: 'numeric', month: 'long' }) : '';
+  }
   function when(ms) {
     return new Date(ms).toLocaleString('en-GB', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' });
   }
@@ -57,6 +62,10 @@ window.UI = (function () {
   const ICONS = {
     check: '<path d="M5 12.5l4.5 4.5L19 7.5"/>',
     chev: '<path d="M15 5l-7 7 7 7"/>',
+    cal: '<rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 3v4M16 3v4M4 10h16"/>',
+    clock: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
+    pin: '<path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/>',
+    phone: '<path d="M6.5 3.5h3l1.5 4-2 1.5a11 11 0 0 0 6 6l1.5-2 4 1.5v3a2 2 0 0 1-2 2A16 16 0 0 1 4.5 5.5a2 2 0 0 1 2-2z"/>',
     trash: '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
     plus: '<path d="M12 5v14M5 12h14"/>',
     link: '<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
@@ -90,5 +99,5 @@ window.UI = (function () {
     document.body.prepend(b);
   });
 
-  return { $, $$, esc, enDate, when, itemsLeft, twoTone, byDate, tally, icon, toast };
+  return { $, $$, esc, enDate, arDate, when, itemsLeft, twoTone, byDate, tally, icon, toast };
 })();
