@@ -23,7 +23,7 @@ window.Store = (function () {
 
   /* ---------- preview mode ---------- */
 
-  const KEY = 'kbf-preview-v4';
+  const KEY = 'kbf-preview-v6';
   const listeners = new Set();
   let mem = null;
 
@@ -51,13 +51,14 @@ window.Store = (function () {
     });
   }
 
-  // Preview data: this Thursday's checklist (from the team), no sign-ups yet
+  // Preview data: Thursday's sandwich initiative (their poster + checklist), no sign-ups yet
   function seed() {
     const item = (id, name, unit, needed) => ({ id, name, unit, needed, img: `img/items/${id}.jpg` });
     return {
       initiatives: {
-        'meals-oct': {
-          id: 'meals-oct', title: 'تجهيز وجبات', date: '2026-10-29', status: 'open', createdAt: Date.now(),
+        'sandwiches-oct': {
+          id: 'sandwiches-oct', title: 'مبادرة تجهيز السندويشات', date: '2026-10-29', status: 'open', createdAt: Date.now(),
+          photo: 'img/events/sandwich-chef.png',
           items: [
             item('toast', 'خبز توست', 'أكياس', 25),
             item('hotdog', 'خبز هوت دوغ', 'أكياس (6 حبات)', 9),

@@ -275,19 +275,32 @@
 
   /* ---------- photo ---------- */
 
-  // Shrunk on this device to a small JPEG, so it fits inside the initiative's record
-  function shrink(file, max = 480) {
+  /* Shrunk on this device so it fits inside the initiative's record.
+     Photos become JPEG; PNG cutouts (like the chef) keep their see-through background. */
+  function shrink(file, max = 480, cap = 250000) {
+    const clear = /png|webp|gif/.test(file.type);
     return new Promise((resolve, reject) => {
       const img = new Image();
       img.onload = () => {
-        const k = Math.min(1, max / Math.max(img.width, img.height));
+        let k = Math.min(1, max / Math.max(img.width, img.height)), q = .82, url;
         const c = document.createElement('canvas');
-        c.width = Math.round(img.width * k);
-        c.height = Math.round(img.height * k);
-        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+        const draw = () => {
+          c.width = Math.round(img.width * k);
+          c.height = Math.round(img.height * k);
+          c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+        };
+        const encode = () => {
+          if (!clear) return c.toDataURL('image/jpeg', q);
+          const webp = c.toDataURL('image/webp', q);
+          return webp.startsWith('data:image/webp') ? webp : c.toDataURL('image/png');
+        };
+        draw();
+        url = encode();
+        while (url.length > cap && k > .2) {
+          if (q > .5) q -= .12; else { k *= .8; draw(); }
+          url = encode();
+        }
         URL.revokeObjectURL(img.src);
-        let q = .82, url = c.toDataURL('image/jpeg', q);
-        while (url.length > 250000 && q > .4) { q -= .12; url = c.toDataURL('image/jpeg', q); }
         resolve(url);
       };
       img.onerror = reject;
@@ -297,7 +310,7 @@
 
   async function setPhoto(file) {
     try {
-      draft.photo = await shrink(file);
+      draft.photo = await shrink(file, 900, 340000);
     } catch (err) {
       toast('تعذّر قراءة الصورة، جرّب صورة أخرى');
       return;

@@ -140,33 +140,45 @@ input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-o
 
 /* ---------- initiative page ---------- */
 
-.ini-head { display: flex; align-items: center; gap: 22px; }
-.ini-photo { flex: none; width: 128px; height: 128px; object-fit: cover; border-radius: 22px; border: 3px solid #fff; box-shadow: 0 0 0 3px var(--blue); }
+.ini-head { display: flex; align-items: center; gap: 18px; }
+.ini-photo { flex: none; width: 130px; height: auto; max-height: 170px; object-fit: contain; border-radius: 14px; }
 .ini-text { flex: 1; min-width: 0; }
 .ini-text h1 { margin: 0 0 4px; font-size: clamp(1.9rem, 5.5vw, 2.8rem); color: var(--blue-dark); }
 .ini-text .post-date { text-align: right; }
 .ini-text .bar { max-width: 380px; margin: 10px 0 6px; }
 
+/* event name stays on top while scrolling the menu */
+.ini-sticky { background: var(--crayon) var(--sky); box-shadow: 0 4px 10px rgba(14, 106, 158, .2); }
+.sticky-in { display: flex; align-items: center; gap: 14px; min-height: 48px; }
+.sticky-in b { flex: none; max-width: 60%; overflow: hidden; color: #fff; font-size: 1.15rem; text-overflow: ellipsis; white-space: nowrap; text-shadow: 0 1px 2px rgba(14, 106, 158, .5); }
+.sticky-in .bar { flex: 1; background: rgba(255, 255, 255, .55); }
+
 .notice { margin-bottom: 20px; padding: 14px 18px; border-radius: 16px; background: var(--blue-soft); color: var(--blue-dark); font-weight: 700; }
 
-.items { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; margin: 0; padding: 0; list-style: none; }
-.item { display: flex; flex-direction: column; gap: 14px; padding: 18px; background: #fff; border: 2.5px solid var(--blue); border-radius: var(--radius); box-shadow: var(--shadow); transition: border-color .15s, background .15s; }
-.item.is-picked { border-color: var(--green); background: #f5fcf8; box-shadow: 0 4px 0 rgba(58, 168, 109, .22); }
-.item.is-full { background: var(--green-soft); box-shadow: none; border-color: #bfe5cf; }
-.item-top { display: flex; align-items: center; gap: 12px; }
-.item-img { flex: none; width: 76px; height: 76px; object-fit: contain; border-radius: 14px; background: #fff; }
-.item-title { flex: 1; min-width: 0; }
-.item-name { margin: 0; font-size: 1.3rem; }
-.item-unit { margin: 0; color: var(--muted); font-size: .92rem; }
-.badge { flex: none; align-self: flex-start; padding: 3px 12px; border-radius: 999px; background: var(--blue-soft); color: var(--blue-dark); font-weight: 700; font-size: .9rem; white-space: nowrap; }
-.badge.done { display: inline-flex; align-items: center; gap: 4px; background: #fff; color: var(--green-dark); }
-.stepper { display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
-.step-btn { display: grid; place-items: center; width: 46px; height: 46px; border: 2px solid var(--line); border-radius: 50%; background: #fff; color: var(--ink); font-size: 1.5rem; font-weight: 700; line-height: 1; cursor: pointer; transition: background .15s, transform .1s; }
+/* the menu: one card per food */
+.items { display: grid; grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); gap: 14px; margin: 0; padding: 0; list-style: none; }
+.item { display: flex; flex-direction: column; overflow: hidden; background: #fff; border: 2.5px solid var(--blue); border-radius: var(--radius); box-shadow: var(--shadow); text-align: center; transition: border-color .15s, background .15s, transform .15s; }
+.item.is-picked { border-color: var(--green); box-shadow: 0 4px 0 rgba(58, 168, 109, .3); transform: translateY(-2px); }
+.item.is-full { border-color: #bfe5cf; box-shadow: none; }
+.item-photo { position: relative; aspect-ratio: 1; padding: 10px; background: #fff; border-bottom: 2px dashed var(--line); }
+.item-img { width: 100%; height: 100%; object-fit: contain; }
+.item-img.placeholder { padding: 18%; opacity: .5; }
+.item.is-full .item-img { opacity: .45; filter: grayscale(.4); }
+.mine-badge { position: absolute; top: 8px; left: 8px; min-width: 36px; padding: 2px 9px; border-radius: 999px; background: var(--green); color: #fff; font-weight: 700; box-shadow: 0 2px 0 var(--green-dark); }
+.item-body { display: flex; flex: 1; flex-direction: column; gap: 4px; padding: 10px 12px 4px; }
+.item-name { margin: 0; font-size: 1.2rem; line-height: 1.2; }
+.item-unit { margin: 0; color: var(--muted); font-size: .88rem; }
+.item-body .bar { height: 8px; margin: 6px 0 2px; }
+.item-left { margin: 0; color: var(--blue-dark); font-size: .95rem; }
+.item-left b { font-size: 1.15rem; }
+.item-left.done { display: inline-flex; align-items: center; justify-content: center; gap: 4px; color: var(--green-dark); font-weight: 700; }
+.stepper { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 10px 12px; }
+.step-btn { display: grid; place-items: center; width: 40px; height: 40px; border: 2px solid var(--line); border-radius: 50%; background: #fff; color: var(--ink); font-size: 1.4rem; font-weight: 700; line-height: 1; cursor: pointer; transition: background .15s, transform .1s; }
 .step-btn:active { transform: scale(.94); }
 .step-btn.plus { background: var(--green); border-color: var(--green); color: #fff; box-shadow: 0 3px 0 var(--green-dark); }
 .step-btn.plus:hover { background: var(--green-dark); }
 .step-btn:disabled { opacity: .3; cursor: not-allowed; transform: none; }
-.qty { width: 58px; height: 46px; border: 2px solid var(--line); border-radius: 14px; text-align: center; font-weight: 700; font-size: 1.2rem; }
+.qty { width: 50px; height: 40px; border: 2px solid var(--line); border-radius: 12px; text-align: center; font-weight: 700; font-size: 1.15rem; }
 .qty:focus { outline: none; border-color: var(--blue); }
 
 .panel-card { padding: 22px; background: #fff; border: 2.5px dashed #9fd2ee; border-radius: var(--radius); }
@@ -289,7 +301,7 @@ dialog.sheet::backdrop { background: rgba(22, 50, 74, .45); }
 @media (max-width: 820px) {
   .blob { padding: 26px 26px; }
   .ini-head { gap: 14px; }
-  .ini-photo { width: 92px; height: 92px; border-radius: 18px; }
+  .ini-photo { width: 92px; max-height: 128px; }
   .hero .blob { min-height: 200px; gap: 8px; }
   .admin-shell { grid-template-columns: minmax(0, 1fr); }
   .ini-list { flex-direction: row; overflow-x: auto; padding-bottom: 4px; }

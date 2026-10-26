@@ -59,6 +59,8 @@
     const photo = $('#iniPhoto');
     if (ini.photo && photo.getAttribute('src') !== ini.photo) photo.src = ini.photo;
     photo.hidden = !ini.photo;
+    $('#stickyTitle').textContent = ini.title;
+    $('#stickyBar').style.width = t.pct + '%';
     const any = (ini.items || []).length > 0;
     $('#ovBarWrap').hidden = !any;
     $('#ovBar').style.width = t.pct + '%';
@@ -93,12 +95,16 @@
     li.className = 'item';
     li.dataset.id = id;
     li.innerHTML = `
-      <div class="item-top">
-        <img class="item-img" alt="" hidden>
-        <div class="item-title"><h3 class="item-name"></h3><p class="item-unit"></p></div>
-        <span class="badge"></span>
+      <div class="item-photo">
+        <img class="item-img" alt="">
+        <span class="mine-badge" hidden></span>
       </div>
-      <div class="bar"><span class="bar-fill"></span><span class="bar-mine"></span></div>
+      <div class="item-body">
+        <h3 class="item-name"></h3>
+        <p class="item-unit"></p>
+        <div class="bar"><span class="bar-fill"></span><span class="bar-mine"></span></div>
+        <p class="item-left"></p>
+      </div>
       <div class="stepper">
         <button type="button" class="step-btn minus">−</button>
         <input class="qty" type="number" inputmode="numeric" min="0" value="0">
@@ -115,12 +121,15 @@
     li.classList.toggle('is-picked', mine > 0);
     li.querySelector('.item-name').textContent = it.name;
     li.querySelector('.item-unit').textContent = it.unit || '';
-    const img = li.querySelector('.item-img');
-    if (it.img && img.getAttribute('src') !== it.img) img.src = it.img;
-    img.hidden = !it.img;
-    const badge = li.querySelector('.badge');
-    badge.classList.toggle('done', full);
-    badge.innerHTML = full ? `${icon('check', 14)} اكتمل` : `باقي ${left}`;
+    const img = li.querySelector('.item-img'), src = it.img || 'img/logo-180.png';
+    if (img.getAttribute('src') !== src) img.src = src;
+    img.classList.toggle('placeholder', !it.img);
+    const leftEl = li.querySelector('.item-left');
+    leftEl.classList.toggle('done', full);
+    leftEl.innerHTML = full ? `${icon('check', 16)} اكتمل` : `باقي <b>${left}</b>`;
+    const mineBadge = li.querySelector('.mine-badge');
+    mineBadge.hidden = !mine;
+    mineBadge.textContent = `+${mine}`;
     li.querySelector('.bar-fill').style.width = pct(Math.min(g, need), need);
     li.querySelector('.bar-mine').style.width = pct(mine, need);
     li.querySelector('.stepper').hidden = !isOpen() || full;
@@ -263,6 +272,12 @@
   });
 
   // Done: show where you are in the list
+  // once the big title scrolls away, keep the event name stuck on top
+  if (window.IntersectionObserver) {
+    new IntersectionObserver(([e]) => { $('#sticky').hidden = e.isIntersecting || !ini; })
+      .observe($('.ini-hero'));
+  }
+
   $('#doneBtn').addEventListener('click', () => {
     thanks.close();
     const rows = document.querySelectorAll('#whoList li.mine');
