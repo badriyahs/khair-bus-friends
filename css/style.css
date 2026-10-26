@@ -26,6 +26,9 @@ body { margin: 0; font-family: var(--font); font-size: 17px; font-weight: 500; l
 img, svg { display: block; max-width: 100%; }
 a { color: var(--blue); }
 h1, h2, h3 { font-weight: 700; line-height: 1.15; margin: 0 0 .35em; }
+/* big titles: the logo's blue + green, with a white outline */
+.fun-title { font-weight: 800; line-height: 1.35; color: var(--green); -webkit-text-stroke: 7px #fff; paint-order: stroke fill; filter: drop-shadow(0 3px 0 rgba(14, 106, 158, .35)); }
+.fun-title .w1 { color: var(--blue); }
 h2 { font-size: 1.6rem; }
 h3 { font-size: 1.2rem; }
 p { margin: 0 0 .8em; }
@@ -99,7 +102,7 @@ input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-o
 .blob-bg { position: absolute; inset: 0; z-index: -1; width: 100%; height: 100%; max-width: none; overflow: visible; }
 .blob-bg path { fill: #fff; stroke: var(--lime); stroke-width: 7; stroke-linejoin: round; }
 .hero .blob { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 16px; min-height: 250px; }
-.hero h1 { margin: 0; font-size: clamp(2.1rem, 6.5vw, 3.8rem); color: var(--blue-dark); text-wrap: balance; }
+.hero h1 { margin: 0; font-size: clamp(2.1rem, 6.5vw, 3.8rem); text-wrap: balance; }
 .hero-logo { position: relative; width: clamp(140px, 30vw, 240px); animation: bob 5s ease-in-out infinite; }
 .hero-logo img { width: 100%; height: auto; }
 .deco { position: absolute; pointer-events: none; }
@@ -126,7 +129,7 @@ input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-o
 .frame-stars { background-image: url(../img/frame-stars.webp); }
 .post-in { position: absolute; inset: 17% 13% 16% 18%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; }
 .post-stars { position: absolute; top: 15%; left: 17%; width: 17%; transform: rotate(-12deg); }
-.post h3 { margin: 0; font-size: clamp(1.6rem, 6vw, 2.1rem); color: var(--blue-dark); text-wrap: balance; }
+.post h3 { margin: 0; font-size: clamp(1.6rem, 6vw, 2.1rem); text-wrap: balance; }
 .post-date { margin: 0; color: var(--ink-soft); font-weight: 600; }
 .post .bar { width: 100%; margin-top: 6px; }
 .post-left { margin: 0; color: var(--green-dark); font-weight: 700; }
@@ -143,7 +146,7 @@ input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-o
 .ini-head { display: flex; align-items: center; gap: 18px; }
 .ini-photo { flex: none; width: 130px; height: auto; max-height: 170px; object-fit: contain; border-radius: 14px; }
 .ini-text { flex: 1; min-width: 0; }
-.ini-text h1 { margin: 0 0 4px; font-size: clamp(1.9rem, 5.5vw, 2.8rem); color: var(--blue-dark); }
+.ini-text h1 { margin: 0 0 4px; font-size: clamp(1.9rem, 5.5vw, 2.8rem); }
 .ini-text .post-date { text-align: right; }
 .ini-text .bar { max-width: 380px; margin: 10px 0 6px; }
 
@@ -156,7 +159,7 @@ input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-o
 .notice { margin-bottom: 20px; padding: 14px 18px; border-radius: 16px; background: var(--blue-soft); color: var(--blue-dark); font-weight: 700; }
 
 /* the menu: one card per food */
-.items { display: grid; grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); gap: 14px; margin: 0; padding: 0; list-style: none; }
+.items { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(150px, 45%), 1fr)); gap: 12px; margin: 0; padding: 0; list-style: none; }
 .item { display: flex; flex-direction: column; overflow: hidden; background: #fff; border: 2.5px solid var(--blue); border-radius: var(--radius); box-shadow: var(--shadow); text-align: center; transition: border-color .15s, background .15s, transform .15s; }
 .item.is-picked { border-color: var(--green); box-shadow: 0 4px 0 rgba(58, 168, 109, .3); transform: translateY(-2px); }
 .item.is-full { border-color: #bfe5cf; box-shadow: none; }
@@ -329,6 +332,14 @@ dialog.sheet::backdrop { background: rgba(22, 50, 74, .45); }
   .head-nav a { padding: 8px 10px; }
   .brand span { font-size: 1.05rem; white-space: nowrap; }
   .who { display: none; }
+}
+@media (max-width: 480px) {
+  /* event top on phones: chef above, everything centred like a poster */
+  .ini-head { flex-direction: column; gap: 4px; text-align: center; }
+  .ini-photo { width: 100px; max-height: 124px; }
+  .ini-text { width: 100%; }
+  .ini-text .post-date { text-align: center; }
+  .ini-text .bar { margin-inline: auto; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }

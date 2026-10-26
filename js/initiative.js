@@ -1,6 +1,6 @@
 /* One initiative: tap + on what you'll bring, add your name, confirm. */
 (function () {
-  const { $, esc, tally, enDate, itemsLeft, icon, toast } = UI;
+  const { $, esc, tally, enDate, itemsLeft, twoTone, icon, toast } = UI;
   const iid = new URLSearchParams(location.search).get('id');
   const thanks = $('#thanks');
   const cards = new Map();
@@ -53,7 +53,7 @@
   // Top: small photo, name, English date, overall progress
   function renderHead(t) {
     document.title = `${ini.title} · أصدقاء باص الخير`;
-    $('#iniTitle').textContent = ini.title;
+    $('#iniTitle').innerHTML = twoTone(ini.title);
     $('#iniDate').textContent = enDate(ini.date);
     $('#iniDate').hidden = !ini.date;
     const photo = $('#iniPhoto');

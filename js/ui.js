@@ -24,6 +24,11 @@ window.UI = (function () {
     if (n <= 10) return `باقي ${n} أصناف`;
     return `باقي ${n} صنفاً`;
   }
+  // Titles in the logo's two colours: first word blue, the rest green
+  function twoTone(text) {
+    const [first, ...rest] = String(text || '').trim().split(/\s+/);
+    return `<span class="w1">${esc(first)}</span>${rest.length ? ' ' + esc(rest.join(' ')) : ''}`;
+  }
   const byDate = (a, b) => (a.date || '9999').localeCompare(b.date || '9999');
 
   /* How much of each item is promised. `got` counts everything promised;
@@ -135,5 +140,5 @@ window.UI = (function () {
     document.body.prepend(b);
   });
 
-  return { $, $$, esc, enDate, when, itemsLeft, byDate, tally, icon, toast };
+  return { $, $$, esc, enDate, when, itemsLeft, twoTone, byDate, tally, icon, toast };
 })();
