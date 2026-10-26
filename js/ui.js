@@ -106,7 +106,7 @@ window.UI = (function () {
     return d + 'Z';
   }
 
-  // For boxes whose size changes (page headers): redraw to fit
+  // Redrawn to fit the box whenever it changes size
   function wavy(el) {
     const NS = 'http://www.w3.org/2000/svg';
     const svg = document.createElementNS(NS, 'svg');
@@ -125,9 +125,6 @@ window.UI = (function () {
     draw();
   }
 
-  // For square posts: one shape that scales evenly
-  const SQUARE = `<svg class="blob-bg" viewBox="0 0 1000 1000" aria-hidden="true"><path d="${wavyPath(1000, 1000, 16)}"/></svg>`;
-
   document.addEventListener('DOMContentLoaded', () => {
     $$('.blob').forEach(wavy);
     // Preview-mode notice on the team page
@@ -138,5 +135,5 @@ window.UI = (function () {
     document.body.prepend(b);
   });
 
-  return { $, $$, esc, enDate, when, itemsLeft, byDate, tally, icon, toast, SQUARE };
+  return { $, $$, esc, enDate, when, itemsLeft, byDate, tally, icon, toast };
 })();

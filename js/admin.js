@@ -142,13 +142,13 @@
     $('#fTitle').focus();
   }
 
-  const blankItem = () => ({ id: 'i' + Math.random().toString(36).slice(2, 9), name: '', unit: '', needed: '' });
+  const blankItem = () => ({ id: 'i' + Math.random().toString(36).slice(2, 9), name: '', unit: '', needed: '', img: '' });
 
   function toDraft(d) {
     return {
       title: d.title || '', date: d.date || '', photo: d.photo || '',
       status: d.status === 'closed' ? 'closed' : 'open',
-      items: (d.items || []).map(it => ({ id: it.id, name: it.name || '', unit: it.unit || '', needed: String(it.needed || '') }))
+      items: (d.items || []).map(it => ({ id: it.id, name: it.name || '', unit: it.unit || '', needed: String(it.needed || ''), img: it.img || '' }))
     };
   }
 
@@ -207,7 +207,7 @@
         </div>
       </div>
       <div class="edit-items" id="editItems">
-        <div class="edit-head"><span>الصنف</span><span>الوحدة</span><span>المطلوب</span><span>مسجّل</span><span>الباقي</span><span></span></div>
+        <div class="edit-head"><span></span><span>الصنف</span><span>الوحدة</span><span>المطلوب</span><span>مسجّل</span><span>الباقي</span><span></span></div>
         ${d.items.map(rowHTML).join('')}
       </div>
       <button class="btn btn-ghost btn-sm" type="button" data-act="add">${icon('plus', 16)} إضافة صنف</button>
@@ -216,6 +216,7 @@
 
   function rowHTML(it) {
     return `<div class="edit-row" data-id="${esc(it.id)}">
+      <label class="row-img c-img" title="صورة الصنف">${rowImg(it)}<input class="file-input row-file" type="file" accept="image/*" aria-label="صورة ${esc(it.name || 'الصنف')}"></label>
       <input class="input c-name" data-k="name" value="${esc(it.name)}" maxlength="80" placeholder="مثلاً: خبز" aria-label="الصنف">
       <input class="input c-unit" data-k="unit" value="${esc(it.unit)}" maxlength="40" placeholder="مثلاً: أكياس" aria-label="الوحدة">
       <input class="input c-need" data-k="needed" value="${esc(it.needed)}" type="number" min="1" inputmode="numeric" placeholder="0" aria-label="العدد المطلوب">
@@ -224,6 +225,8 @@
       <button class="icon-btn c-del" type="button" data-act="del-item" aria-label="حذف الصنف">${icon('trash')}</button>
     </div>`;
   }
+
+  const rowImg = it => it.img ? `<img src="${esc(it.img)}" alt="">` : icon('plus', 18);
 
   function markDirty() {
     dirty = true;
@@ -253,6 +256,12 @@
   });
 
   panel.addEventListener('change', e => {
+    if (e.target.classList.contains('row-file')) {
+      const file = e.target.files[0], row = e.target.closest('.edit-row');
+      e.target.value = '';
+      if (file) setItemImg(row, file);
+      return;
+    }
     if (e.target.id === 'photoInput') {
       const file = e.target.files[0];
       e.target.value = '';
@@ -294,6 +303,20 @@
       return;
     }
     showPhoto();
+    markDirty();
+  }
+
+  async function setItemImg(row, file) {
+    const it = draft.items.find(x => x.id === row.dataset.id);
+    if (!it) return;
+    try {
+      it.img = await shrink(file, 240);
+    } catch (err) {
+      toast('تعذّر قراءة الصورة، جرّب صورة أخرى');
+      return;
+    }
+    const label = row.querySelector('.row-img');
+    label.replaceChild(document.createRange().createContextualFragment(rowImg(it)), label.firstChild);
     markDirty();
   }
 
@@ -364,7 +387,7 @@
     }
     const data = {
       title, date: draft.date, photo: draft.photo || '', status: draft.status,
-      items: rows.map(it => ({ id: it.id, name: it.name.trim(), unit: String(it.unit).trim(), needed: parseInt(it.needed, 10) }))
+      items: rows.map(it => ({ id: it.id, name: it.name.trim(), unit: String(it.unit).trim(), needed: parseInt(it.needed, 10), img: it.img || '' }))
     };
     const btn = $('#saveBtn');
     btn.disabled = true;

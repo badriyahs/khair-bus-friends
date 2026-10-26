@@ -94,7 +94,8 @@
     li.dataset.id = id;
     li.innerHTML = `
       <div class="item-top">
-        <div><h3 class="item-name"></h3><p class="item-unit"></p></div>
+        <img class="item-img" alt="" hidden>
+        <div class="item-title"><h3 class="item-name"></h3><p class="item-unit"></p></div>
         <span class="badge"></span>
       </div>
       <div class="bar"><span class="bar-fill"></span><span class="bar-mine"></span></div>
@@ -114,6 +115,9 @@
     li.classList.toggle('is-picked', mine > 0);
     li.querySelector('.item-name').textContent = it.name;
     li.querySelector('.item-unit').textContent = it.unit || '';
+    const img = li.querySelector('.item-img');
+    if (it.img && img.getAttribute('src') !== it.img) img.src = it.img;
+    img.hidden = !it.img;
     const badge = li.querySelector('.badge');
     badge.classList.toggle('done', full);
     badge.innerHTML = full ? `${icon('check', 14)} اكتمل` : `باقي ${left}`;

@@ -3,7 +3,7 @@
    with sample data, so the site can be tried straight away.
    Live mode (Firebase config in js/config.js): Firestore, updating live for everyone.
 
-   initiatives/{id}                 title, date, photo (small JPEG data URL), status, items[{id,name,unit,needed}]
+   initiatives/{id}                 title, date, photo (small JPEG data URL), status, items[{id,name,unit,needed,img}]
    initiatives/{id}/pledges/{pid}   items[{id,qty}], extras[{name,qty}]   (public, no names)
    initiatives/{id}/people/{pid}    name                                  (team only) */
 window.Store = (function () {
@@ -23,7 +23,7 @@ window.Store = (function () {
 
   /* ---------- preview mode ---------- */
 
-  const KEY = 'kbf-preview-v3';
+  const KEY = 'kbf-preview-v4';
   const listeners = new Set();
   let mem = null;
 
@@ -51,48 +51,27 @@ window.Store = (function () {
     });
   }
 
-  function iso(d) {
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-  }
+  // Preview data: this Thursday's checklist (from the team), no sign-ups yet
   function seed() {
-    const inDays = n => { const d = new Date(); d.setDate(d.getDate() + n); return iso(d); };
-    const t = Date.now(), h = 3600e3;
+    const item = (id, name, unit, needed) => ({ id, name, unit, needed, img: `img/items/${id}.jpg` });
     return {
       initiatives: {
-        'meals': {
-          id: 'meals', title: 'تجهيز وجبات', date: inDays((4 - new Date().getDay() + 7) % 7 || 7),
-          status: 'open', createdAt: t,
+        'meals-oct': {
+          id: 'meals-oct', title: 'تجهيز وجبات', date: '2026-10-29', status: 'open', createdAt: Date.now(),
           items: [
-            { id: 'bread', name: 'خبز', unit: 'أكياس', needed: 20 },
-            { id: 'water', name: 'ماء', unit: 'كراتين', needed: 12 },
-            { id: 'rice', name: 'رز', unit: 'أكياس 5 كغ', needed: 8 },
-            { id: 'dates', name: 'تمر', unit: 'علب', needed: 10 },
-            { id: 'laban', name: 'لبن أو عصير', unit: 'علب (6 حبات)', needed: 15 },
-            { id: 'plates', name: 'صحون ومناديل', unit: 'أطقم', needed: 6 }
+            item('toast', 'خبز توست', 'أكياس', 25),
+            item('hotdog', 'خبز هوت دوغ', 'أكياس (6 حبات)', 9),
+            item('turkey', 'ديك رومي', 'علب', 34),
+            item('cheese', 'جبن', 'علب', 15),
+            item('cupcakes', 'كب كيك', 'حبات', 300),
+            item('crackers', 'بسكويت', 'أكياس', 300),
+            item('fruit', 'تفاح أو برتقال', 'حبات', 300),
+            item('juice', 'عصير', 'علب', 300)
           ]
-        },
-        'school-bags': {
-          id: 'school-bags', title: 'حقيبة لي وحقيبة لصديقي', date: inDays(-24),
-          status: 'closed', createdAt: t - 1,
-          items: [{ id: 'bags', name: 'حقائب مدرسية', unit: 'حقيبة', needed: 40 }]
         }
       },
-      pledges: {
-        'meals': {
-          p1: { id: 'p1', items: [{ id: 'bread', qty: 5 }, { id: 'water', qty: 4 }], extras: [], createdAt: t - 5 * h },
-          p2: { id: 'p2', items: [{ id: 'rice', qty: 3 }, { id: 'plates', qty: 6 }], extras: [{ name: 'أكياس برتقال', qty: 2 }], createdAt: t - 2 * h }
-        },
-        'school-bags': {
-          p3: { id: 'p3', items: [{ id: 'bags', qty: 40 }], extras: [], createdAt: t - 30 * 24 * h }
-        }
-      },
-      people: {
-        'meals': {
-          p1: { id: 'p1', name: 'نورة', createdAt: t - 5 * h },
-          p2: { id: 'p2', name: 'أحمد', createdAt: t - 2 * h }
-        },
-        'school-bags': { p3: { id: 'p3', name: 'فاطمة', createdAt: t - 30 * 24 * h } }
-      }
+      pledges: {},
+      people: {}
     };
   }
 

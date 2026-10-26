@@ -6,7 +6,7 @@
   <title>أصدقاء باص الخير</title>
   <meta name="theme-color" content="#1db3f7">
   <link rel="icon" href="img/logo-96.png" type="image/png">
-  <link rel="apple-touch-icon" href="img/logo.png">
+  <link rel="apple-touch-icon" href="img/logo-touch.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@500;600;700&display=swap" rel="stylesheet">
@@ -50,8 +50,9 @@
       </div>
 
       <div class="list-card" id="listCard" hidden>
+        <img class="list-friend" src="img/deco/friend.png" alt="">
         <div id="whoWrap">
-          <h3>مين بيجيب شنو؟</h3>
+          <h3><img class="h-icon" src="img/deco/heart-hands.png" alt="">مين بيجيب شنو؟</h3>
           <ol class="who-list" id="whoList"></ol>
         </div>
         <div>
@@ -71,8 +72,10 @@
 
   <dialog class="sheet" id="thanks" aria-labelledby="thanksTitle">
     <div class="sheet-body thanks">
+      <img class="deco thanks-stars" src="img/deco/stars-blue.png" alt="">
       <div class="hero-logo thanks-bus">
         <img src="img/logo.png" alt="">
+        <img class="rays" src="img/deco/rays.png" alt="">
         <svg class="hand" viewBox="0 0 640 640" aria-hidden="true">
           <defs>
             <filter id="crayon"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="3"/></filter>
