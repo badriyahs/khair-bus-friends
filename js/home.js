@@ -15,7 +15,7 @@
     for (const [id, off] of subs) if (!open.has(id)) { off(); subs.delete(id); }
     render();
   }, () => {
-    $('#openList').innerHTML = '<li class="empty">Couldn\'t load. Please refresh.</li>';
+    $('#openList').innerHTML = '<li class="empty">تعذّر التحميل، حدّث الصفحة</li>';
   });
 
   function render() {
@@ -24,7 +24,7 @@
     const past = initiatives.filter(i => i.status !== 'open').sort((a, b) => byDate(b, a));
     $('#openList').innerHTML = open.length
       ? open.map(openCard).join('')
-      : '<li class="empty">Nothing open right now.</li>';
+      : '<li class="empty">لا توجد مبادرات حالياً</li>';
     $('#pastWrap').hidden = !past.length;
     $('#pastList').innerHTML = past.map(pastCard).join('');
   }
@@ -40,7 +40,7 @@
 
   function openCard(ini) {
     const t = tally(ini, pledgesFor[ini.id] || []);
-    const left = t.open ? `${t.open} ${t.open === 1 ? 'item' : 'items'} needed` : 'All covered';
+    const left = t.open ? UI.itemsLeft(t.open) : 'اكتملت كل الأصناف';
     return `<li><a class="ini-card" href="initiative.html?id=${encodeURIComponent(ini.id)}">
       ${top(ini)}
       <div>

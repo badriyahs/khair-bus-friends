@@ -9,16 +9,25 @@ window.UI = (function () {
     const [y, m, d] = iso.split('-').map(Number);
     return y && m && d ? new Date(y, m - 1, d) : null;
   }
+  // Arabic month and day names, with the same 0-9 digits as their posters
+  const LOCALE = 'ar-KW-u-nu-latn';
   function longDate(iso) {
     const d = parseDate(iso);
-    return d ? d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' }) : '';
+    return d ? d.toLocaleDateString(LOCALE, { weekday: 'long', day: 'numeric', month: 'long' }) : '';
   }
   function shortDate(iso) {
     const d = parseDate(iso);
-    return d ? { day: d.getDate(), mon: d.toLocaleDateString('en-GB', { month: 'short' }) } : { day: '–', mon: 'Soon' };
+    return d ? { day: d.getDate(), mon: d.toLocaleDateString(LOCALE, { month: 'long' }) } : { day: '–', mon: 'قريباً' };
   }
   function when(ms) {
-    return new Date(ms).toLocaleString('en-GB', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' });
+    return new Date(ms).toLocaleString(LOCALE, { day: 'numeric', month: 'long', hour: 'numeric', minute: '2-digit' });
+  }
+  // "باقي 3 أصناف" with the right Arabic plural
+  function itemsLeft(n) {
+    if (n === 1) return 'باقي صنف واحد';
+    if (n === 2) return 'باقي صنفان';
+    if (n <= 10) return `باقي ${n} أصناف`;
+    return `باقي ${n} صنفاً`;
   }
   const byDate = (a, b) => (a.date || '9999').localeCompare(b.date || '9999');
 
@@ -128,9 +137,9 @@ window.UI = (function () {
     if (!window.Store || !Store.demo || !window.KBF_ADMIN) return;
     const b = document.createElement('div');
     b.className = 'preview-banner';
-    b.textContent = 'Preview mode — data stays in this browser';
+    b.textContent = 'وضع المعاينة — البيانات محفوظة في هذا المتصفح فقط';
     document.body.prepend(b);
   });
 
-  return { $, $$, esc, longDate, shortDate, when, byDate, tally, icon, toast };
+  return { $, $$, esc, LOCALE, longDate, shortDate, when, itemsLeft, byDate, tally, icon, toast };
 })();

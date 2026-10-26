@@ -42,11 +42,11 @@
       }
     }
     if (!isOpen()) extras = [];
-    if (changed.length) toast(`Updated — someone just signed up for ${changed.join(', ')}`);
+    if (changed.length) toast(`تم التحديث، أحد سجّل للتو: ${changed.join('، ')}`);
   }
 
   function renderHead() {
-    document.title = `${ini.title} · Khair Bus Friends`;
+    document.title = `${ini.title} · أصدقاء باص الخير`;
     $('#iniTitle').textContent = ini.title;
     const chips = [];
     if (ini.date) chips.push(`<span class="chip">${icon('cal', 16)}${esc(longDate(ini.date))}</span>`);
@@ -61,7 +61,7 @@
     const list = $('#items');
     const items = ini.items || [];
     if (!items.length) {
-      list.innerHTML = '<li class="empty">Coming soon</li>';
+      list.innerHTML = '<li class="empty">القائمة قيد التجهيز</li>';
       cards.clear();
       return;
     }
@@ -106,16 +106,16 @@
     li.querySelector('.item-unit').textContent = it.unit || '';
     const badge = li.querySelector('.badge');
     badge.classList.toggle('done', full);
-    badge.innerHTML = full ? `${icon('check', 14)} Covered` : `${left} needed`;
+    badge.innerHTML = full ? `${icon('check', 14)} اكتمل` : `باقي ${left}`;
     li.querySelector('.bar-fill').style.width = pct(Math.min(g, need), need);
     li.querySelector('.bar-mine').style.width = pct(mine, need);
     li.querySelector('.stepper').hidden = !isOpen() || full;
     const q = li.querySelector('.qty'), minus = li.querySelector('.minus'), plus = li.querySelector('.plus');
     if (document.activeElement !== q) q.value = mine;
     q.max = left;
-    q.setAttribute('aria-label', `How many ${it.name}`);
-    minus.setAttribute('aria-label', `One less ${it.name}`);
-    plus.setAttribute('aria-label', `One more ${it.name}`);
+    q.setAttribute('aria-label', `عدد ${it.name}`);
+    minus.setAttribute('aria-label', `إنقاص ${it.name}`);
+    plus.setAttribute('aria-label', `زيادة ${it.name}`);
     minus.disabled = mine <= 0;
     plus.disabled = mine >= left;
   }
@@ -124,7 +124,7 @@
     const it = (ini.items || []).find(x => x.id === id);
     if (!it || !isOpen()) return;
     const max = remaining(it);
-    if (typed && n > max) toast(`Only ${max} needed`);
+    if (typed && n > max) toast(`المطلوب ${max} فقط`);
     n = Math.max(0, Math.min(n, max));
     if (n) pick[id] = n; else delete pick[id];
     renderItems();
@@ -152,7 +152,7 @@
     const qty = Math.max(1, parseInt($('#exQty').value, 10) || 1);
     if (!name) return $('#exName').focus();
     const listed = (ini.items || []).find(it => it.name.trim().toLowerCase() === name.toLowerCase());
-    if (listed) { toast(`${listed.name} is already on the list`); return; }
+    if (listed) { toast(`${listed.name} موجود في القائمة`); return; }
     const same = extras.find(x => x.name.toLowerCase() === name.toLowerCase());
     if (same) same.qty += qty; else extras.push({ name, qty });
     $('#exName').value = '';
@@ -173,7 +173,7 @@
   function renderExtras(list) {
     if (list) others = list;
     $('#myExtras').innerHTML = extras.map((x, i) =>
-      `<li class="tag mine">${esc(x.name)} × ${x.qty}<button type="button" data-i="${i}" aria-label="Remove ${esc(x.name)}">×</button></li>`).join('');
+      `<li class="tag mine">${esc(x.name)} × ${x.qty}<button type="button" data-i="${i}" aria-label="إزالة ${esc(x.name)}">×</button></li>`).join('');
     $('#others').innerHTML = others.map(x => `<li class="tag">${esc(x.name)} × ${x.qty}</li>`).join('');
     $('#extraForm').hidden = !isOpen();
     $('#extraCard').hidden = !isOpen() && !others.length;
@@ -207,10 +207,10 @@
       try { localStorage.setItem('kbf-name', name); } catch (_) {}
       for (const id of Object.keys(pick)) delete pick[id];
       extras = [];
-      $('#thanksTitle').textContent = `Thank you, ${name}!`;
+      $('#thanksTitle').textContent = `شكراً يا ${name}!`;
       thanks.showModal();
     } catch (err) {
-      toast(isOpen() ? "Didn't save — please try again" : 'This one just closed');
+      toast(isOpen() ? 'لم يتم الحفظ، حاول مرة أخرى' : 'أُغلقت هذه المبادرة');
     } finally {
       submitting = false;
       send.disabled = false;
@@ -222,13 +222,13 @@
   thanks.addEventListener('click', e => { if (e.target === thanks) thanks.close(); });
 
   function notFound() {
-    document.title = 'Not found · Khair Bus Friends';
-    $('#iniTitle').textContent = 'Not found';
-    $('#iniChips').innerHTML = '<a class="btn btn-primary" href="index.html">Back</a>';
+    document.title = 'غير موجودة · أصدقاء باص الخير';
+    $('#iniTitle').textContent = 'المبادرة غير موجودة';
+    $('#iniChips').innerHTML = '<a class="btn btn-primary" href="index.html">رجوع</a>';
     $('#content').hidden = true;
   }
 
   function loadFailed() {
-    $('#iniTitle').textContent = "Couldn't load. Please refresh.";
+    $('#iniTitle').textContent = 'تعذّر التحميل، حدّث الصفحة';
   }
 })();

@@ -23,7 +23,7 @@ window.Store = (function () {
 
   /* ---------- preview mode ---------- */
 
-  const KEY = 'kbf-preview-v1';
+  const KEY = 'kbf-preview-v2';
   const listeners = new Set();
   let mem = null;
 
@@ -59,39 +59,39 @@ window.Store = (function () {
     const t = Date.now(), h = 3600e3;
     return {
       initiatives: {
-        'friday-meal-bus': {
-          id: 'friday-meal-bus', title: 'Friday Meal Bus', date: inDays((5 - new Date().getDay() + 7) % 7 || 7),
-          time: '4:00 PM', place: 'Meeting point to be confirmed', status: 'open', createdAt: t,
+        'meals': {
+          id: 'meals', title: 'تجهيز وجبات', date: inDays((4 - new Date().getDay() + 7) % 7 || 7),
+          time: '4 مساءً', place: 'يُحدد لاحقاً', status: 'open', createdAt: t,
           items: [
-            { id: 'bread', name: 'Bread', unit: 'packs', needed: 20 },
-            { id: 'water', name: 'Bottled water', unit: 'cartons', needed: 12 },
-            { id: 'rice', name: 'Rice', unit: '5 kg bags', needed: 8 },
-            { id: 'dates', name: 'Dates', unit: 'boxes', needed: 10 },
-            { id: 'laban', name: 'Laban or juice', unit: 'packs of 6', needed: 15 },
-            { id: 'plates', name: 'Plates & napkins', unit: 'sets', needed: 6 }
+            { id: 'bread', name: 'خبز', unit: 'أكياس', needed: 20 },
+            { id: 'water', name: 'ماء', unit: 'كراتين', needed: 12 },
+            { id: 'rice', name: 'رز', unit: 'أكياس 5 كغ', needed: 8 },
+            { id: 'dates', name: 'تمر', unit: 'علب', needed: 10 },
+            { id: 'laban', name: 'لبن أو عصير', unit: 'علب (6 حبات)', needed: 15 },
+            { id: 'plates', name: 'صحون ومناديل', unit: 'أطقم', needed: 6 }
           ]
         },
-        'winter-blankets': {
-          id: 'winter-blankets', title: 'Winter Blanket Drive', date: inDays(-24), time: '', place: '',
+        'school-bags': {
+          id: 'school-bags', title: 'حقيبة لي وحقيبة لصديقي', date: inDays(-24), time: '', place: '',
           status: 'closed', createdAt: t - 1,
-          items: [{ id: 'blankets', name: 'Blankets', unit: 'pieces', needed: 40 }]
+          items: [{ id: 'bags', name: 'حقائب مدرسية', unit: 'حقيبة', needed: 40 }]
         }
       },
       pledges: {
-        'friday-meal-bus': {
+        'meals': {
           p1: { id: 'p1', items: [{ id: 'bread', qty: 5 }, { id: 'water', qty: 4 }], extras: [], createdAt: t - 5 * h },
-          p2: { id: 'p2', items: [{ id: 'rice', qty: 3 }, { id: 'plates', qty: 6 }], extras: [{ name: 'Bags of oranges', qty: 2 }], createdAt: t - 2 * h }
+          p2: { id: 'p2', items: [{ id: 'rice', qty: 3 }, { id: 'plates', qty: 6 }], extras: [{ name: 'أكياس برتقال', qty: 2 }], createdAt: t - 2 * h }
         },
-        'winter-blankets': {
-          p3: { id: 'p3', items: [{ id: 'blankets', qty: 40 }], extras: [], createdAt: t - 30 * 24 * h }
+        'school-bags': {
+          p3: { id: 'p3', items: [{ id: 'bags', qty: 40 }], extras: [], createdAt: t - 30 * 24 * h }
         }
       },
       people: {
-        'friday-meal-bus': {
-          p1: { id: 'p1', name: 'Noura', createdAt: t - 5 * h },
-          p2: { id: 'p2', name: 'Ahmad', createdAt: t - 2 * h }
+        'meals': {
+          p1: { id: 'p1', name: 'نورة', createdAt: t - 5 * h },
+          p2: { id: 'p2', name: 'أحمد', createdAt: t - 2 * h }
         },
-        'winter-blankets': { p3: { id: 'p3', name: 'Fatma', createdAt: t - 30 * 24 * h } }
+        'school-bags': { p3: { id: 'p3', name: 'فاطمة', createdAt: t - 30 * 24 * h } }
       }
     };
   }

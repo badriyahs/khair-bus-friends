@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Team dashboard · Khair Bus Friends</title>
+  <title>لوحة الفريق · أصدقاء باص الخير</title>
   <meta name="robots" content="noindex">
   <meta name="theme-color" content="#eff4fc">
   <link rel="icon" href="img/logo-96.png" type="image/png">
@@ -16,42 +16,42 @@
 <body>
   <header class="site-head">
     <div class="wrap head-in" style="max-width:1200px">
-      <a class="brand" href="index.html"><img src="img/logo-96.png" alt=""><span>Khair Bus Friends</span><span class="team-pill">Team</span></a>
+      <a class="brand" href="index.html"><img src="img/logo-96.png" alt=""><span>أصدقاء باص الخير</span><span class="team-pill">الفريق</span></a>
       <div class="head-nav">
         <span class="who" id="who"></span>
-        <button class="btn btn-ghost btn-sm" id="signOut" type="button" hidden>Sign out</button>
+        <button class="btn btn-ghost btn-sm" id="signOut" type="button" hidden>خروج</button>
       </div>
     </div>
   </header>
 
   <main>
-    <p class="muted" id="boot" style="text-align:center;margin-top:64px">Loading…</p>
+    <p class="muted" id="boot" style="text-align:center;margin-top:64px">جارٍ التحميل…</p>
 
     <section class="login" id="loginView" hidden>
-      <h2>Team login</h2>
+      <h2>دخول الفريق</h2>
       <form id="loginForm">
-        <div class="field"><label for="email">Email</label><input class="input" id="email" type="email" autocomplete="username" required></div>
-        <div class="field"><label for="password">Password</label><input class="input" id="password" type="password" autocomplete="current-password" required></div>
+        <div class="field"><label for="email">البريد الإلكتروني</label><input class="input" id="email" type="email" dir="ltr" autocomplete="username" required></div>
+        <div class="field"><label for="password">كلمة المرور</label><input class="input" id="password" type="password" dir="ltr" autocomplete="current-password" required></div>
         <p class="form-error" id="loginErr" role="alert" hidden></p>
-        <button class="btn btn-primary" type="submit" id="loginBtn">Sign in</button>
-        <button class="btn-link" type="button" id="forgot">Forgot password?</button>
+        <button class="btn btn-primary" type="submit" id="loginBtn">دخول</button>
+        <button class="btn-link" type="button" id="forgot">نسيت كلمة المرور؟</button>
       </form>
     </section>
 
     <section class="login" id="notAdminView" hidden>
-      <h2>Not on the team list yet</h2>
-      <p class="muted">Add this ID to <b>admins</b> in Firebase:</p>
-      <code id="uid"></code>
-      <button class="btn btn-ghost" type="button" id="signOut2">Sign out</button>
+      <h2>الحساب غير مضاف للفريق</h2>
+      <p class="muted">أضف هذا المعرّف إلى <b dir="ltr">admins</b> في Firebase:</p>
+      <code id="uid" dir="ltr"></code>
+      <button class="btn btn-ghost" type="button" id="signOut2">خروج</button>
     </section>
 
     <div class="admin-shell" id="dashView" hidden>
       <aside class="side">
-        <button class="btn btn-primary" id="newBtn" type="button">+ New initiative</button>
+        <button class="btn btn-primary" id="newBtn" type="button">+ مبادرة جديدة</button>
         <ul class="ini-list" id="iniList"></ul>
-        <button class="btn-link small" id="resetPreview" type="button" hidden>Reset sample data</button>
+        <button class="btn-link small" id="resetPreview" type="button" hidden>إرجاع البيانات التجريبية</button>
       </aside>
-      <section class="panel" id="panel"><p class="muted">Loading…</p></section>
+      <section class="panel" id="panel"><p class="muted">جارٍ التحميل…</p></section>
     </div>
   </main>
 

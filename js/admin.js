@@ -22,7 +22,7 @@
     $('#signOut').hidden = Store.demo || a.state === 'out';
     $('#who').textContent = a.state === 'out' ? '' : (a.email || '');
     if (a.state === 'notAdmin') $('#uid').textContent = a.uid;
-    if (a.error) loginError("Couldn't connect. Please refresh.");
+    if (a.error) loginError('تعذّر الاتصال، حدّث الصفحة');
     if (a.state === 'in') start();
   });
 
@@ -35,23 +35,23 @@
     e.preventDefault();
     const btn = $('#loginBtn');
     btn.disabled = true;
-    btn.textContent = 'Signing in…';
+    btn.textContent = 'جارٍ الدخول…';
     $('#loginErr').hidden = true;
     try {
       await Store.signIn($('#email').value.trim(), $('#password').value);
     } catch (err) {
-      loginError('Wrong email or password');
+      loginError('البريد أو كلمة المرور غير صحيحة');
     } finally {
       btn.disabled = false;
-      btn.textContent = 'Sign in';
+      btn.textContent = 'دخول';
     }
   });
 
   $('#forgot').addEventListener('click', async () => {
     const email = $('#email').value.trim();
     if (!email) { $('#email').focus(); return; }
-    try { await Store.resetPassword(email); toast(`Reset link sent to ${email}`); }
-    catch (err) { toast("Couldn't send — check the email"); }
+    try { await Store.resetPassword(email); toast(`أرسلنا رابط تغيير كلمة المرور إلى ${email}`); }
+    catch (err) { toast('تعذّر الإرسال، تأكد من البريد'); }
   });
 
   for (const id of ['#signOut', '#signOut2']) {
@@ -59,7 +59,7 @@
   }
 
   $('#resetPreview').addEventListener('click', async () => {
-    if (!confirm('Reset to the sample data?')) return;
+    if (!confirm('إرجاع البيانات التجريبية؟')) return;
     dirty = false;
     await Store.resetPreview();
     location.reload();
@@ -89,12 +89,12 @@
   function renderList() {
     if (!list) return;
     $('#iniList').innerHTML = list.length ? list.map(i => {
-      const d = i.date ? new Date(i.date + 'T00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+      const d = i.date ? new Date(i.date + 'T00:00').toLocaleDateString(UI.LOCALE, { day: 'numeric', month: 'long', year: 'numeric' }) : '';
       const open = i.status === 'open';
       return `<li><button type="button" data-id="${esc(i.id)}" aria-current="${i.id === sel}">
-        <b>${esc(i.title || 'Untitled')}</b>
+        <b>${esc(i.title || 'بدون اسم')}</b>
         ${d ? `<span class="muted small">${esc(d)}</span>` : ''}
-        <span class="pill ${open ? '' : 'closed'}">${open ? 'Open' : 'Closed'}</span>
+        <span class="pill ${open ? '' : 'closed'}">${open ? 'مفتوحة' : 'مغلقة'}</span>
       </button></li>`;
     }).join('') : '';
   }
@@ -112,11 +112,11 @@
   }
 
   function select(id) {
-    if (dirty && !confirm('Leave without saving?')) return;
+    if (dirty && !confirm('الخروج بدون حفظ؟')) return;
     stopWatching();
     sel = id; current = null; draft = null; dirty = false; pledges = []; people = []; tab = 'details';
     renderList();
-    panel.innerHTML = '<p class="muted">Loading…</p>';
+    panel.innerHTML = '<p class="muted">جارٍ التحميل…</p>';
     offSel.push(Store.watchInitiative(id, d => {
       if (!d) {   // deleted, maybe from another device
         stopWatching();
@@ -132,7 +132,7 @@
   }
 
   function newInitiative() {
-    if (dirty && !confirm('Leave without saving?')) return;
+    if (dirty && !confirm('الخروج بدون حفظ؟')) return;
     stopWatching();
     sel = null; current = null; pledges = []; people = []; tab = 'details';
     draft = { title: '', date: '', time: '', place: '', status: 'open', items: [blankItem(), blankItem(), blankItem()] };
@@ -156,29 +156,29 @@
 
   function renderPanel() {
     if (!draft) {
-      panel.innerHTML = '<div class="empty"><button class="btn btn-primary" type="button" data-act="new">+ New initiative</button></div>';
+      panel.innerHTML = '<div class="empty"><button class="btn btn-primary" type="button" data-act="new">+ مبادرة جديدة</button></div>';
       return;
     }
     const link = sel ? `initiative.html?id=${encodeURIComponent(sel)}` : '';
     panel.innerHTML = `
       <div class="panel-head">
-        <h2 id="pTitle">${esc(draft.title || 'New initiative')}</h2>
+        <h2 id="pTitle">${esc(draft.title || 'مبادرة جديدة')}</h2>
         ${sel ? `<div class="head-actions">
-          <a class="btn btn-ghost btn-sm" href="${link}" target="_blank" rel="noopener">${icon('open', 16)} View</a>
-          <button class="btn btn-ghost btn-sm" type="button" data-act="copy">${icon('link', 16)} Copy link</button>
+          <a class="btn btn-ghost btn-sm" href="${link}" target="_blank" rel="noopener">${icon('open', 16)} عرض</a>
+          <button class="btn btn-ghost btn-sm" type="button" data-act="copy">${icon('link', 16)} نسخ الرابط</button>
         </div>` : ''}
       </div>
       ${sel ? `<div class="tabs" role="tablist">
-        <button class="tab" type="button" role="tab" data-tab="details" aria-selected="${tab === 'details'}">Items</button>
-        <button class="tab" type="button" role="tab" data-tab="people" aria-selected="${tab === 'people'}">Names <span class="count-pill" id="peopleCount">0</span></button>
+        <button class="tab" type="button" role="tab" data-tab="details" aria-selected="${tab === 'details'}">الأصناف</button>
+        <button class="tab" type="button" role="tab" data-tab="people" aria-selected="${tab === 'people'}">الأسماء <span class="count-pill" id="peopleCount">0</span></button>
       </div>` : ''}
       <div id="tabDetails" ${tab === 'details' ? '' : 'hidden'}>${formHTML()}</div>
       <div id="tabPeople" ${tab === 'people' ? '' : 'hidden'}></div>
       <div class="savebar" id="savebar" ${dirty ? '' : 'hidden'}>
-        <span>${sel ? 'Unsaved changes' : 'Not saved yet'}</span>
+        <span>${sel ? 'تغييرات غير محفوظة' : 'لم تُحفظ بعد'}</span>
         <div>
-          <button class="btn btn-on-dark btn-sm" type="button" data-act="discard">Discard</button>
-          <button class="btn btn-primary btn-sm" type="button" data-act="save" id="saveBtn">Save</button>
+          <button class="btn btn-on-dark btn-sm" type="button" data-act="discard">تراجع</button>
+          <button class="btn btn-primary btn-sm" type="button" data-act="save" id="saveBtn">حفظ</button>
         </div>
       </div>`;
     renderStats();
@@ -188,37 +188,37 @@
     const d = draft;
     return `
       <div class="form-grid">
-        <div class="field full"><label for="fTitle">Name</label>
+        <div class="field full"><label for="fTitle">اسم المبادرة</label>
           <input class="input" id="fTitle" data-f="title" value="${esc(d.title)}" maxlength="100"></div>
-        <div class="field"><label for="fDate">Date</label>
+        <div class="field"><label for="fDate">التاريخ</label>
           <input class="input" id="fDate" data-f="date" type="date" value="${esc(d.date)}"></div>
-        <div class="field"><label for="fTime">Time</label>
+        <div class="field"><label for="fTime">الوقت</label>
           <input class="input" id="fTime" data-f="time" value="${esc(d.time)}" maxlength="40"></div>
-        <div class="field full"><label for="fPlace">Place</label>
+        <div class="field full"><label for="fPlace">المكان</label>
           <input class="input" id="fPlace" data-f="place" value="${esc(d.place)}" maxlength="120"></div>
         <div class="field full">
-          <div class="seg" role="radiogroup" aria-label="Status">
-            <label><input type="radio" name="status" value="open" ${d.status === 'open' ? 'checked' : ''}>Open</label>
-            <label><input type="radio" name="status" value="closed" ${d.status === 'closed' ? 'checked' : ''}>Closed</label>
+          <div class="seg" role="radiogroup" aria-label="الحالة">
+            <label><input type="radio" name="status" value="open" ${d.status === 'open' ? 'checked' : ''}>مفتوحة</label>
+            <label><input type="radio" name="status" value="closed" ${d.status === 'closed' ? 'checked' : ''}>مغلقة</label>
           </div>
         </div>
       </div>
       <div class="edit-items" id="editItems">
-        <div class="edit-head"><span>Item</span><span>Unit</span><span>Needed</span><span>Coming</span><span>Left</span><span></span></div>
+        <div class="edit-head"><span>الصنف</span><span>الوحدة</span><span>المطلوب</span><span>مسجّل</span><span>الباقي</span><span></span></div>
         ${d.items.map(rowHTML).join('')}
       </div>
-      <button class="btn btn-ghost btn-sm" type="button" data-act="add">${icon('plus', 16)} Add item</button>
-      ${sel ? `<div class="danger-zone"><button class="btn btn-danger btn-sm" type="button" data-act="delete">${icon('trash', 16)} Delete</button></div>` : ''}`;
+      <button class="btn btn-ghost btn-sm" type="button" data-act="add">${icon('plus', 16)} إضافة صنف</button>
+      ${sel ? `<div class="danger-zone"><button class="btn btn-danger btn-sm" type="button" data-act="delete">${icon('trash', 16)} حذف المبادرة</button></div>` : ''}`;
   }
 
   function rowHTML(it) {
     return `<div class="edit-row" data-id="${esc(it.id)}">
-      <input class="input c-name" data-k="name" value="${esc(it.name)}" maxlength="80" placeholder="e.g. Bread" aria-label="Item">
-      <input class="input c-unit" data-k="unit" value="${esc(it.unit)}" maxlength="40" placeholder="e.g. packs" aria-label="Unit">
-      <input class="input c-need" data-k="needed" value="${esc(it.needed)}" type="number" min="1" inputmode="numeric" placeholder="0" aria-label="How many needed">
-      <span class="num c-coming" data-label="Coming"></span>
-      <span class="num c-left" data-label="Left"></span>
-      <button class="icon-btn c-del" type="button" data-act="del-item" aria-label="Remove item">${icon('trash')}</button>
+      <input class="input c-name" data-k="name" value="${esc(it.name)}" maxlength="80" placeholder="مثلاً: خبز" aria-label="الصنف">
+      <input class="input c-unit" data-k="unit" value="${esc(it.unit)}" maxlength="40" placeholder="مثلاً: أكياس" aria-label="الوحدة">
+      <input class="input c-need" data-k="needed" value="${esc(it.needed)}" type="number" min="1" inputmode="numeric" placeholder="0" aria-label="العدد المطلوب">
+      <span class="num c-coming" data-label="مسجّل"></span>
+      <span class="num c-left" data-label="الباقي"></span>
+      <button class="icon-btn c-del" type="button" data-act="del-item" aria-label="حذف الصنف">${icon('trash')}</button>
     </div>`;
   }
 
@@ -239,7 +239,7 @@
     const t = e.target;
     if (t.dataset.f) {
       draft[t.dataset.f] = t.value;
-      if (t.dataset.f === 'title') $('#pTitle').textContent = t.value || 'New initiative';
+      if (t.dataset.f === 'title') $('#pTitle').textContent = t.value || 'مبادرة جديدة';
     } else if (t.dataset.k) {
       const it = draft.items.find(x => x.id === t.closest('.edit-row').dataset.id);
       if (!it) return;
@@ -293,7 +293,7 @@
     const it = draft.items.find(x => x.id === row.dataset.id);
     if (!it) return;
     const promised = tally(null, pledges).got[it.id] || 0;
-    if (promised && !confirm(`${promised} ${it.name} already promised. Remove anyway?`)) return;
+    if (promised && !confirm(`مسجّل ${promised} من «${it.name}». حذفه؟`)) return;
     draft.items = draft.items.filter(x => x !== it);
     row.remove();
     markDirty();
@@ -301,12 +301,12 @@
 
   async function save() {
     const title = draft.title.trim();
-    if (!title) { showTab('details'); toast('Add a name first'); $('#fTitle').focus(); return; }
+    if (!title) { showTab('details'); toast('أضف اسم المبادرة'); $('#fTitle').focus(); return; }
     const rows = draft.items.filter(it => String(it.name).trim());
     const bad = rows.find(it => !(parseInt(it.needed, 10) > 0));
     if (bad) {
       showTab('details');
-      toast(`How many ${bad.name.trim()}?`);
+      toast(`كم المطلوب من ${bad.name.trim()}؟`);
       $(`.edit-row[data-id="${bad.id}"] .c-need`).focus();
       return;
     }
@@ -316,16 +316,16 @@
     };
     const btn = $('#saveBtn');
     btn.disabled = true;
-    btn.textContent = 'Saving…';
+    btn.textContent = 'جارٍ الحفظ…';
     try {
       const id = await Store.saveInitiative(sel, data);
       dirty = false;
-      if (!sel) { toast('Created'); select(id); }
-      else { toast('Saved'); current = { ...current, ...data }; draft = toDraft(current); renderPanel(); }
+      if (!sel) { toast('تم الإنشاء'); select(id); }
+      else { toast('تم الحفظ'); current = { ...current, ...data }; draft = toDraft(current); renderPanel(); }
     } catch (err) {
       btn.disabled = false;
-      btn.textContent = 'Save';
-      toast("Couldn't save — please try again");
+      btn.textContent = 'حفظ';
+      toast('تعذّر الحفظ، حاول مرة أخرى');
     }
   }
 
@@ -339,21 +339,21 @@
   function copyLink() {
     const url = new URL(`initiative.html?id=${encodeURIComponent(sel)}`, location.href).href;
     (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject())
-      .then(() => toast('Link copied'))
-      .catch(() => window.prompt('Copy this link:', url));
+      .then(() => toast('تم نسخ الرابط'))
+      .catch(() => window.prompt('انسخ الرابط:', url));
   }
 
   async function deleteInitiative() {
-    const name = (current && current.title) || 'this initiative';
-    if (!confirm(`Delete “${name}” and all its names? This can't be undone.`)) return;
+    const name = (current && current.title) || 'هذه المبادرة';
+    if (!confirm(`حذف «${name}» وكل الأسماء؟ لا يمكن التراجع.`)) return;
     const id = sel;
     stopWatching();
     sel = null; current = null; draft = null; dirty = false;
     try {
       await Store.deleteInitiative(id);
-      toast('Deleted');
+      toast('تم الحذف');
     } catch (err) {
-      toast("Couldn't delete — please try again");
+      toast('تعذّر الحذف، حاول مرة أخرى');
       select(id);
       return;
     }
@@ -362,10 +362,10 @@
   }
 
   async function removePledge(pid) {
-    const who = (people.find(p => p.id === pid) || {}).name || 'this person';
-    if (!confirm(`Remove ${who}? Their items go back on the list.`)) return;
-    try { await Store.deletePledge(sel, pid); toast('Removed'); }
-    catch (err) { toast("Couldn't remove — please try again"); }
+    const who = (people.find(p => p.id === pid) || {}).name || 'هذا الاسم';
+    if (!confirm(`إزالة ${who}؟ ترجع أصنافه للقائمة.`)) return;
+    try { await Store.deletePledge(sel, pid); toast('تمت الإزالة'); }
+    catch (err) { toast('تعذّرت الإزالة، حاول مرة أخرى'); }
   }
 
   /* ---------- live numbers & who's bringing what ---------- */
@@ -379,7 +379,7 @@
       const g = got[it.id] || 0, need = parseInt(it.needed, 10) || 0, left = Math.max(0, need - g);
       row.querySelector('.c-coming').textContent = g;
       const cell = row.querySelector('.c-left');
-      cell.textContent = need ? (left || 'Covered') : '–';
+      cell.textContent = need ? (left || 'اكتمل') : '–';
       cell.classList.toggle('ok', need > 0 && !left);
     });
     const count = $('#peopleCount');
@@ -397,13 +397,13 @@
     const byId = Object.fromEntries(items.map(it => [it.id, it]));
     const rows = pledges.slice().sort((a, b) => b.createdAt - a.createdAt);
     if (!rows.length) {
-      box.innerHTML = '<div class="empty">No names yet</div>';
+      box.innerHTML = '<div class="empty">لا توجد أسماء بعد</div>';
       return;
     }
 
     const what = p => [
-      ...(p.items || []).map(x => `${esc(byId[x.id] ? byId[x.id].name : 'Removed item')} × ${x.qty}`),
-      ...(p.extras || []).map(x => `${esc(x.name)} × ${x.qty} <span class="pill extra">extra</span>`)
+      ...(p.items || []).map(x => `${esc(byId[x.id] ? byId[x.id].name : 'صنف محذوف')} × ${x.qty}`),
+      ...(p.extras || []).map(x => `${esc(x.name)} × ${x.qty} <span class="pill extra">إضافي</span>`)
     ].join('<br>');
 
     const perItem = items.map(it => {
@@ -418,16 +418,16 @@
 
     box.innerHTML = `
       <div class="people-head">
-        <button class="btn btn-ghost btn-sm" type="button" data-act="csv">${icon('download', 16)} Download</button>
+        <button class="btn btn-ghost btn-sm" type="button" data-act="csv">${icon('download', 16)} تحميل</button>
       </div>
       <table class="people">
         <tbody>${rows.map(p => `<tr>
           <td><b>${esc(nameOf(p))}</b><div class="muted small">${esc(when(p.createdAt))}</div></td>
           <td>${what(p)}</td>
-          <td><button class="icon-btn" type="button" data-act="unpledge" data-pid="${esc(p.id)}" aria-label="Remove ${esc(nameOf(p))}">${icon('trash')}</button></td>
+          <td><button class="icon-btn" type="button" data-act="unpledge" data-pid="${esc(p.id)}" aria-label="إزالة ${esc(nameOf(p))}">${icon('trash')}</button></td>
         </tr>`).join('')}</tbody>
       </table>
-      <h3 class="mt">By item</h3>
+      <h3 class="mt">حسب الصنف</h3>
       <div class="by-item">${perItem}</div>`;
   }
 
@@ -440,20 +440,20 @@
       if (/^[=+\-@\t\r]/.test(s)) s = "'" + s;
       return `"${s.replace(/"/g, '""')}"`;
     };
-    const lines = [['Name', 'Item', 'Unit', 'Quantity', 'Signed up']];
+    const lines = [['الاسم', 'الصنف', 'الوحدة', 'العدد', 'وقت التسجيل']];
     for (const p of pledges.slice().sort((a, b) => a.createdAt - b.createdAt)) {
       const name = names[p.id] || '', at = when(p.createdAt);
       for (const x of p.items || []) {
         const it = byId[x.id];
-        lines.push([name, it ? it.name : 'Removed item', it ? it.unit : '', x.qty, at]);
+        lines.push([name, it ? it.name : 'صنف محذوف', it ? it.unit : '', x.qty, at]);
       }
-      for (const x of p.extras || []) lines.push([name, `${x.name} (extra)`, '', x.qty, at]);
+      for (const x of p.extras || []) lines.push([name, `${x.name} (إضافي)`, '', x.qty, at]);
     }
     const csv = '﻿' + lines.map(r => r.map(cell).join(',')).join('\r\n');
-    const slug = ((current && current.title) || 'initiative').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'initiative';
+    const slug = ((current && current.title) || '').replace(/[^\p{L}\p{N}]+/gu, '-').replace(/^-|-$/g, '') || 'initiative';
     const a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
-    a.download = `${slug}-sign-ups.csv`;
+    a.download = `${slug}-names.csv`;
     document.body.appendChild(a);
     a.click();
     a.remove();
@@ -461,6 +461,6 @@
   }
 
   function loadErr() {
-    toast("Couldn't load — please refresh");
+    toast('تعذّر التحميل، حدّث الصفحة');
   }
 })();
