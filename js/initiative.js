@@ -398,6 +398,11 @@
     $('#iniTitle').textContent = 'المبادرة غير موجودة';
     $('#content').hidden = true;
     $('#basket').hidden = true;
+    // the little friend shrugs, with a way back home
+    $('#iniPhoto').src = 'img/deco/friend.png';
+    $('#bubble').textContent = 'ما لقيناها!';
+    $('#prompt').hidden = false;
+    if (!$('.lost-home')) $('#prompt').insertAdjacentHTML('afterend', '<a class="btn btn-primary btn-wide lost-home" href="index.html">الرئيسية</a>');
   }
 
   function loadFailed() {

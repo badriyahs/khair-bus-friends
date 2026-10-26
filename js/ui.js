@@ -9,11 +9,6 @@ window.UI = (function () {
     const [y, m, d] = iso.split('-').map(Number);
     return y && m && d ? new Date(y, m - 1, d) : null;
   }
-  // Event dates are shown in English ("Thursday 29 October"); the rest of the page is Arabic
-  function enDate(iso) {
-    const d = parseDate(iso);
-    return d ? d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' }) : '';
-  }
   // Arabic day and date with the 0-9 digits their posters use: "الخميس، 29 أكتوبر"
   function arDate(iso) {
     const d = parseDate(iso);
@@ -99,5 +94,5 @@ window.UI = (function () {
     document.body.prepend(b);
   });
 
-  return { $, $$, esc, enDate, arDate, when, itemsLeft, twoTone, byDate, tally, icon, toast };
+  return { $, $$, esc, arDate, when, itemsLeft, twoTone, byDate, tally, icon, toast };
 })();
