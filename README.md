@@ -27,7 +27,8 @@ The Firebase web config isn't a secret. It's meant to be in the page, and `fires
 
 - anyone can read initiatives and the item counts
 - anyone can sign up for an open initiative
-- only the team can see names, edit lists, or remove sign-ups
+- anyone with the link sees the names in the list at the end of each event page
+- only the team can edit lists or remove sign-ups
 
 ## Swapping in the real logo and photos
 

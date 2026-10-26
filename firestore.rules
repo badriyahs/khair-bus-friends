@@ -35,9 +35,9 @@ service cloud.firestore {
         allow update, delete: if isTeam();
       }
 
-      // Who signed up — team only
+      // Who signed up — shown in the list on the event page
       match /people/{pid} {
-        allow read: if isTeam();
+        allow read: if true;
         allow create: if isOpen()
           && request.resource.data.keys().hasOnly(['name', 'createdAt'])
           && request.resource.data.name is string

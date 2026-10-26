@@ -6,11 +6,15 @@
   const cards = new Map();
   const pick = {};          // item id -> how many I'll bring
   let extras = [];          // my own extra items [{name, qty}]
-  let ini = null, iniLoaded = false, pledges = [], got = {}, submitting = false;
+  let ini = null, iniLoaded = false, pledges = [], people = [], got = {}, submitting = false;
+  // sign-ups made on this phone, so the list can mark them "أنت"
+  let mine = new Set();
+  try { mine = new Set(JSON.parse(localStorage.getItem('kbf-mine') || '[]')); } catch (e) {}
 
   if (!iid) return notFound();
   Store.watchInitiative(iid, d => { ini = d; iniLoaded = true; render(); }, loadFailed);
   Store.watchPledges(iid, p => { pledges = p; render(); }, loadFailed);
+  Store.watchPeople(iid, p => { people = p; render(); });
   try { $('#name').value = localStorage.getItem('kbf-name') || ''; } catch (e) {}
 
   const isOpen = () => !!ini && ini.status === 'open';
@@ -27,6 +31,7 @@
     renderItems();
     renderExtras(t.extras);
     renderBasket();
+    renderList();
   }
 
   // If others sign up while you're choosing, never offer more than is still needed.
@@ -184,6 +189,32 @@
     $('#extraCard').hidden = !isOpen() && !others.length;
   }
 
+  /* ---------- the list at the end: who's bringing what, and what's still needed ---------- */
+
+  function renderList() {
+    const items = ini.items || [];
+    const names = Object.fromEntries(people.map(p => [p.id, p.name]));
+    const byId = Object.fromEntries(items.map(it => [it.id, it]));
+    const rows = pledges.filter(p => names[p.id]).sort((a, b) => a.createdAt - b.createdAt);
+    $('#whoWrap').hidden = !rows.length;
+    $('#whoList').innerHTML = rows.map(p => {
+      const what = [
+        ...(p.items || []).filter(x => byId[x.id]).map(x => `${esc(byId[x.id].name)} × ${x.qty}`),
+        ...(p.extras || []).map(x => `${esc(x.name)} × ${x.qty}`)
+      ].join('، ');
+      const me = mine.has(p.id);
+      return `<li class="${me ? 'mine' : ''}" data-pid="${esc(p.id)}">
+        <b>${esc(names[p.id])}</b>${me ? ' <span class="pill">أنت</span>' : ''}
+        <span class="who-what">${what}</span>
+      </li>`;
+    }).join('');
+    const left = items.filter(it => remaining(it) > 0);
+    $('#leftList').innerHTML = left.length
+      ? left.map(it => `<li><span>${esc(it.name)}${it.unit ? ` <span class="muted small">${esc(it.unit)}</span>` : ''}</span><b>${remaining(it)}</b></li>`).join('')
+      : '<li class="all-done">اكتملت كل الأصناف</li>';
+    $('#listCard').hidden = !items.length && !rows.length;
+  }
+
   /* ---------- name & confirm ---------- */
 
   function chosen() {
@@ -208,8 +239,12 @@
     submitting = true;
     send.disabled = true;
     try {
-      await Store.pledge(iid, { name, items, extras });
-      try { localStorage.setItem('kbf-name', name); } catch (_) {}
+      const pid = await Store.pledge(iid, { name, items, extras });
+      mine.add(pid);
+      try {
+        localStorage.setItem('kbf-name', name);
+        localStorage.setItem('kbf-mine', JSON.stringify([...mine].slice(-200)));
+      } catch (_) {}
       for (const id of Object.keys(pick)) delete pick[id];
       extras = [];
       $('#thanksTitle').textContent = `شكراً يا ${name}!`;
@@ -223,7 +258,16 @@
     }
   });
 
-  $('#doneBtn').addEventListener('click', () => thanks.close());
+  // Done: show where you are in the list
+  $('#doneBtn').addEventListener('click', () => {
+    thanks.close();
+    const rows = document.querySelectorAll('#whoList li.mine');
+    const row = rows[rows.length - 1];
+    if (!row) return;
+    row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    row.classList.add('flash');
+    setTimeout(() => row.classList.remove('flash'), 1800);
+  });
   thanks.addEventListener('click', e => { if (e.target === thanks) thanks.close(); });
 
   function notFound() {

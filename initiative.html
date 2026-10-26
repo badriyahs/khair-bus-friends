@@ -48,6 +48,17 @@
         <ul class="tag-list" id="myExtras"></ul>
         <ul class="tag-list" id="others" aria-label="سيحضرها آخرون"></ul>
       </div>
+
+      <div class="list-card" id="listCard" hidden>
+        <div id="whoWrap">
+          <h3>مين بيجيب شنو؟</h3>
+          <ol class="who-list" id="whoList"></ol>
+        </div>
+        <div>
+          <h3>شنو باقي؟</h3>
+          <ul class="left-list" id="leftList"></ul>
+        </div>
+      </div>
     </section>
   </main>
 
@@ -60,7 +71,19 @@
 
   <dialog class="sheet" id="thanks" aria-labelledby="thanksTitle">
     <div class="sheet-body thanks">
-      <img class="thanks-bus" src="img/logo.png" alt="">
+      <div class="hero-logo thanks-bus">
+        <img src="img/logo.png" alt="">
+        <svg class="hand" viewBox="0 0 640 640" aria-hidden="true">
+          <defs>
+            <filter id="crayon"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="3"/></filter>
+          </defs>
+          <g class="wave-hand" filter="url(#crayon)" fill="none" stroke="#4fa775" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M302 184C318 168 328 150 330 128"/>
+            <circle cx="334" cy="112" r="13"/>
+            <path d="M324 101l-5-12M334 98V85M344 101l6-11M347 117l10-6"/>
+          </g>
+        </svg>
+      </div>
       <h2 id="thanksTitle">شكراً!</h2>
       <button class="btn btn-primary" type="button" id="doneBtn">تم</button>
     </div>
