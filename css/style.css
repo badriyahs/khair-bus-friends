@@ -356,6 +356,28 @@ body.brand-bg { background: var(--brand) url(../img/crayon.svg) 0 0 / 200px 200p
 .brand-bg .bubble { border-color: #fff; }
 .brand-bg .bubble::before { border-color: #fff; }
 
+/* the bus rides the progress bar */
+.bar-ride { position: relative; --p: 0; }
+.ride-bus { position: absolute; top: 50%; inset-inline-start: clamp(0px, calc(var(--p) * 1% - 22px), calc(100% - 44px)); width: 44px; height: auto; translate: 0 -62%; filter: drop-shadow(0 2px 0 rgba(0, 0, 0, .12)); transition: inset-inline-start .7s var(--spring); animation: bob 1.4s ease-in-out infinite; pointer-events: none; }
+
+/* the chef cheers when you pick something */
+@keyframes hop { 40% { transform: translateY(-16px) rotate(-5deg); } 70% { transform: translateY(0) rotate(2deg); } }
+.prompt-char.cheer { animation: hop .55s var(--spring); }
+.bubble.cheer { animation: pop .4s var(--spring); }
+.spark-pop { position: fixed; z-index: 40; height: auto; pointer-events: none; }
+
+/* the friend peeks over the names list */
+.peek-wrap { position: relative; margin-top: 52px; }
+.peek-wrap .rows { position: relative; z-index: 1; }
+.peek { position: absolute; top: -66px; left: 22px; z-index: 0; width: 74px; height: auto; animation: peek 4s ease-in-out infinite; }
+@keyframes peek { 0%, 100% { transform: translateY(6px) rotate(-3deg); } 50% { transform: translateY(0) rotate(3deg); } }
+.hero-logo .complete-friend { position: absolute; left: -12%; bottom: -16%; width: 34%; height: auto; animation: pop .55s var(--spring) .55s both; }
+
+/* countdown sticker on the event card */
+.ev-card { position: relative; }
+.sticker { position: absolute; top: -14px; inset-inline-end: 18px; z-index: 2; padding: 3px 14px; border: 3px solid #fff; border-radius: 14px 8px 16px 10px / 10px 14px 8px 16px; background: var(--lime); color: #1f5c12; font-size: .95rem; font-weight: 800; rotate: -7deg; box-shadow: 0 3px 0 var(--brand-dark); animation: pop .5s var(--spring) .35s both; }
+.ev-list { padding-top: 10px; }
+
 /* hand-drawn feel: clearly uneven corners and a slight tilt, like cut-out paper */
 .ev-card { border-radius: 44px 16px 38px 14px / 16px 40px 14px 36px; rotate: -.6deg; }
 .choice { border-radius: 36px 12px 30px 14px / 12px 32px 14px 28px; rotate: -.7deg; }

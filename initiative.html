@@ -20,7 +20,10 @@
       <a class="close-btn" href="index.html" aria-label="رجوع"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
       <div class="lesson-mid">
         <b class="sticky-title" id="stickyTitle" hidden></b>
-        <div class="bar big"><span class="bar-fill" id="ovBar"></span></div>
+        <div class="bar-ride" id="ride">
+          <div class="bar big"><span class="bar-fill" id="ovBar"></span></div>
+          <img class="ride-bus" src="img/logo-sticker.png" alt="">
+        </div>
       </div>
     </div>
     </div>
@@ -33,7 +36,7 @@
       <div class="info-chips" id="iniInfo"></div>
       <div class="prompt" id="prompt" hidden>
         <img class="prompt-char" id="iniPhoto" alt="">
-        <div class="bubble">شنو بتييب؟</div>
+        <div class="bubble" id="bubble">شنو بتييب؟</div>
       </div>
     </section>
 
@@ -61,7 +64,10 @@
       <section class="board" id="listCard" hidden>
         <div id="whoWrap">
           <h2 class="section-title">اللي مسجل:</h2>
-          <ol class="rows who-list" id="whoList"></ol>
+          <div class="peek-wrap">
+            <img class="peek" src="img/deco/friend.png" alt="">
+            <ol class="rows who-list" id="whoList"></ol>
+          </div>
         </div>
         <div>
           <h2 class="section-title">شنو باقي؟</h2>
@@ -83,6 +89,7 @@
   <section class="complete" id="thanks" hidden aria-live="polite">
     <div class="hero-logo">
       <img src="img/logo-sticker.png" alt="">
+      <img class="complete-friend" src="img/deco/friend.png" alt="">
       <img class="rays" src="img/deco/rays-white.png" alt="">
       <svg class="hand" viewBox="0 0 640 472" aria-hidden="true">
         <defs>

@@ -65,6 +65,7 @@
     $('#prompt').hidden = !isOpen();
     $('#stickyTitle').textContent = ini.title;
     $('#ovBar').style.width = t.pct + '%';
+    $('#ride').style.setProperty('--p', t.pct);
     $('#content').hidden = false;
     $('#closedNote').hidden = isOpen();
   }
@@ -169,10 +170,60 @@
     if (typed && n > max) toast(`المطلوب ${max} فقط`);
     n = Math.max(0, Math.min(n, max));
     if (n === (pick[id] || 0)) return;
+    const more = n > (pick[id] || 0);
     if (n) pick[id] = n; else delete pick[id];
     renderItems();
     renderBasket();
     bump(id);
+    if (more) { cheer(); sparkle(cards.get(id)); }
+  }
+
+  /* ---------- the chef cheers you on ---------- */
+
+  const CHEERS = ['كفو!', 'تسلم!', 'يمّي!', 'عساك عالقوة!', 'يا حلوك!'];
+  let cheerTimer, lastCheer = -1;
+  const motionOK = () => !window.matchMedia('(prefers-reduced-motion: reduce)').matches && !!Element.prototype.animate;
+
+  function replay(el, cls) {
+    el.classList.remove(cls);
+    void el.offsetWidth;   // restart the animation
+    el.classList.add(cls);
+    el.addEventListener('animationend', () => el.classList.remove(cls), { once: true });
+  }
+
+  function cheer() {
+    const bubble = $('#bubble');
+    let i;
+    do { i = Math.floor(Math.random() * CHEERS.length); } while (i === lastCheer && CHEERS.length > 1);
+    lastCheer = i;
+    bubble.textContent = CHEERS[i];
+    replay(bubble, 'cheer');
+    replay($('#iniPhoto'), 'cheer');
+    clearTimeout(cheerTimer);
+    cheerTimer = setTimeout(() => { bubble.textContent = 'شنو بتييب؟'; }, 2200);
+  }
+
+  // a little pop of their sparkles out of the food you tapped
+  function sparkle(card) {
+    if (!card || !motionOK()) return;
+    const r = card.querySelector('.choice-img').getBoundingClientRect();
+    const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+    for (let i = 0; i < 7; i++) {
+      const s = document.createElement('img');
+      const size = 16 + Math.random() * 14;
+      s.className = 'spark-pop';
+      s.src = `img/deco/sparkle-${i % 6 + 1}.png`;
+      s.alt = '';
+      s.style.width = size + 'px';
+      s.style.left = cx - size / 2 + 'px';
+      s.style.top = cy - size / 2 + 'px';
+      document.body.appendChild(s);
+      const ang = i / 7 * Math.PI * 2 + Math.random() * .6, dist = 55 + Math.random() * 40;
+      s.animate([
+        { transform: 'translate(0, 0) scale(.3) rotate(0deg)', opacity: 1 },
+        { transform: `translate(${Math.cos(ang) * dist}px, ${Math.sin(ang) * dist}px) scale(1) rotate(${(Math.random() - .5) * 200}deg)`, opacity: 0 }
+      ], { duration: 650 + Math.random() * 250, easing: 'cubic-bezier(.2, .8, .3, 1)' }).onfinish = () => s.remove();
+    }
   }
 
   $('#items').addEventListener('click', e => {
@@ -324,7 +375,7 @@
 
   // a burst of their hand-drawn sparkles behind the done screen
   function confetti() {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !Element.prototype.animate) return;
+    if (!motionOK()) return;
     for (let i = 0; i < 46; i++) {
       const p = document.createElement('img');
       p.className = 'confetti';

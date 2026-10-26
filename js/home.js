@@ -29,12 +29,27 @@
     $('#pastList').innerHTML = past.map((ini, i) => card(ini, i, true)).join('');
   }
 
+  // "اليوم!", "باجر!", "باقي يومين"… for the sticker on each open event
+  function countdown(iso) {
+    if (!iso) return '';
+    const [y, m, d] = iso.split('-').map(Number);
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const days = Math.round((new Date(y, m - 1, d) - today) / 864e5);
+    if (days < 0) return '';
+    if (days === 0) return 'اليوم!';
+    if (days === 1) return 'باجر!';
+    if (days === 2) return 'باقي يومين';
+    return days <= 10 ? `باقي ${days} أيام` : `باقي ${days} يوم`;
+  }
+
   function card(ini, i, past) {
     const t = tally(ini, pledgesFor[ini.id] || []);
     const progress = past ? '' : `
         <span class="bar"><span class="bar-fill" style="width:${t.pct}%"></span></span>
         <span class="ev-left">${t.open ? itemsLeft(t.open) : 'اكتملت كل الأصناف'}</span>`;
+    const soon = past ? '' : countdown(ini.date);
     return `<li style="--i:${i}"><a class="ev-card" href="initiative.html?id=${encodeURIComponent(ini.id)}">
+      ${soon ? `<span class="sticker">${soon}</span>` : ''}
       <span class="ev-icon"><img src="${esc(ini.photo || 'img/logo-180.png')}" alt=""></span>
       <span class="ev-main">
         <b class="ev-title">${esc(ini.title)}</b>
