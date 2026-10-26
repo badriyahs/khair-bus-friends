@@ -7,6 +7,8 @@
   --green-dark: #268753;
   --green-soft: #e0f3e8;
   --lime: #7fd858;
+  --title-blue: #0ea2f2;
+  --title-green: #34c759;
   --ink: #1b2a38;
   --ink-soft: #445869;
   --muted: #6c7f8d;
@@ -27,8 +29,8 @@ img, svg { display: block; max-width: 100%; }
 a { color: var(--blue); }
 h1, h2, h3 { font-weight: 700; line-height: 1.15; margin: 0 0 .35em; }
 /* big titles: the logo's blue + green, with a white outline */
-.fun-title { font-weight: 800; line-height: 1.35; color: var(--green); -webkit-text-stroke: 7px #fff; paint-order: stroke fill; filter: drop-shadow(0 3px 0 rgba(14, 106, 158, .35)); }
-.fun-title .w1 { color: var(--blue); }
+.fun-title { font-weight: 800; line-height: 1.35; color: var(--title-green); -webkit-text-stroke: 7px #fff; paint-order: stroke fill; filter: drop-shadow(0 3px 0 rgba(10, 80, 130, .45)); }
+.fun-title .w1 { color: var(--title-blue); }
 h2 { font-size: 1.6rem; }
 h3 { font-size: 1.2rem; }
 p { margin: 0 0 .8em; }
