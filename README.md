@@ -31,5 +31,6 @@ The Firebase web config isn't a secret. It's meant to be in the page, and `fires
 
 ## Swapping in the real logo and photos
 
-- The logo (`img/logo.png`, `img/logo-96.png`) is cut from their profile picture. Swap in a higher-quality file with the same names if they have one.
+- Logos: `img/logo.png` + `img/logo-96.png` (hand-drawn bus, cut from their profile picture) and `img/logo-official.png`. Swap in higher-quality files with the same names if they have them.
+- The waving hand on the home page is drawn over `img/logo.png`; if that logo is replaced, its position in `index.html` needs adjusting.
 - Colours, font and the crayon texture are at the top of `css/style.css`.

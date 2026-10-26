@@ -3,7 +3,7 @@
    with sample data, so the site can be tried straight away.
    Live mode (Firebase config in js/config.js): Firestore, updating live for everyone.
 
-   initiatives/{id}                 title, date, time, place, status, items[{id,name,unit,needed}]
+   initiatives/{id}                 title, date, photo (small JPEG data URL), status, items[{id,name,unit,needed}]
    initiatives/{id}/pledges/{pid}   items[{id,qty}], extras[{name,qty}]   (public, no names)
    initiatives/{id}/people/{pid}    name                                  (team only) */
 window.Store = (function () {
@@ -23,7 +23,7 @@ window.Store = (function () {
 
   /* ---------- preview mode ---------- */
 
-  const KEY = 'kbf-preview-v2';
+  const KEY = 'kbf-preview-v3';
   const listeners = new Set();
   let mem = null;
 
@@ -61,7 +61,7 @@ window.Store = (function () {
       initiatives: {
         'meals': {
           id: 'meals', title: 'تجهيز وجبات', date: inDays((4 - new Date().getDay() + 7) % 7 || 7),
-          time: '4 مساءً', place: 'يُحدد لاحقاً', status: 'open', createdAt: t,
+          status: 'open', createdAt: t,
           items: [
             { id: 'bread', name: 'خبز', unit: 'أكياس', needed: 20 },
             { id: 'water', name: 'ماء', unit: 'كراتين', needed: 12 },
@@ -72,7 +72,7 @@ window.Store = (function () {
           ]
         },
         'school-bags': {
-          id: 'school-bags', title: 'حقيبة لي وحقيبة لصديقي', date: inDays(-24), time: '', place: '',
+          id: 'school-bags', title: 'حقيبة لي وحقيبة لصديقي', date: inDays(-24),
           status: 'closed', createdAt: t - 1,
           items: [{ id: 'bags', name: 'حقائب مدرسية', unit: 'حقيبة', needed: 40 }]
         }

@@ -89,11 +89,11 @@
   function renderList() {
     if (!list) return;
     $('#iniList').innerHTML = list.length ? list.map(i => {
-      const d = i.date ? new Date(i.date + 'T00:00').toLocaleDateString(UI.LOCALE, { day: 'numeric', month: 'long', year: 'numeric' }) : '';
+      const d = i.date ? new Date(i.date + 'T00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
       const open = i.status === 'open';
       return `<li><button type="button" data-id="${esc(i.id)}" aria-current="${i.id === sel}">
         <b>${esc(i.title || 'بدون اسم')}</b>
-        ${d ? `<span class="muted small">${esc(d)}</span>` : ''}
+        ${d ? `<span class="muted small" dir="ltr">${esc(d)}</span>` : ''}
         <span class="pill ${open ? '' : 'closed'}">${open ? 'مفتوحة' : 'مغلقة'}</span>
       </button></li>`;
     }).join('') : '';
@@ -135,7 +135,7 @@
     if (dirty && !confirm('الخروج بدون حفظ؟')) return;
     stopWatching();
     sel = null; current = null; pledges = []; people = []; tab = 'details';
-    draft = { title: '', date: '', time: '', place: '', status: 'open', items: [blankItem(), blankItem(), blankItem()] };
+    draft = { title: '', date: '', photo: '', status: 'open', items: [blankItem(), blankItem(), blankItem()] };
     dirty = true;
     renderList();
     renderPanel();
@@ -146,7 +146,7 @@
 
   function toDraft(d) {
     return {
-      title: d.title || '', date: d.date || '', time: d.time || '', place: d.place || '',
+      title: d.title || '', date: d.date || '', photo: d.photo || '',
       status: d.status === 'closed' ? 'closed' : 'open',
       items: (d.items || []).map(it => ({ id: it.id, name: it.name || '', unit: it.unit || '', needed: String(it.needed || '') }))
     };
@@ -192,10 +192,13 @@
           <input class="input" id="fTitle" data-f="title" value="${esc(d.title)}" maxlength="100"></div>
         <div class="field"><label for="fDate">التاريخ</label>
           <input class="input" id="fDate" data-f="date" type="date" value="${esc(d.date)}"></div>
-        <div class="field"><label for="fTime">الوقت</label>
-          <input class="input" id="fTime" data-f="time" value="${esc(d.time)}" maxlength="40"></div>
-        <div class="field full"><label for="fPlace">المكان</label>
-          <input class="input" id="fPlace" data-f="place" value="${esc(d.place)}" maxlength="120"></div>
+        <div class="field"><span class="label">الصورة</span>
+          <div class="photo-field">
+            <img class="photo-preview" id="photoPreview" src="${esc(d.photo)}" alt="" ${d.photo ? '' : 'hidden'}>
+            <label class="btn btn-ghost btn-sm"><span id="photoBtnText">${d.photo ? 'تغيير' : 'اختر صورة'}</span><input class="file-input" type="file" accept="image/*" id="photoInput"></label>
+            <button class="btn-link" type="button" data-act="photo-remove" ${d.photo ? '' : 'hidden'}>إزالة</button>
+          </div>
+        </div>
         <div class="field full">
           <div class="seg" role="radiogroup" aria-label="الحالة">
             <label><input type="radio" name="status" value="open" ${d.status === 'open' ? 'checked' : ''}>مفتوحة</label>
@@ -250,10 +253,58 @@
   });
 
   panel.addEventListener('change', e => {
+    if (e.target.id === 'photoInput') {
+      const file = e.target.files[0];
+      e.target.value = '';
+      if (file) setPhoto(file);
+      return;
+    }
     if (e.target.name !== 'status') return;
     draft.status = e.target.value;
     markDirty();
   });
+
+  /* ---------- photo ---------- */
+
+  // Shrunk on this device to a small JPEG, so it fits inside the initiative's record
+  function shrink(file, max = 480) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        const k = Math.min(1, max / Math.max(img.width, img.height));
+        const c = document.createElement('canvas');
+        c.width = Math.round(img.width * k);
+        c.height = Math.round(img.height * k);
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+        URL.revokeObjectURL(img.src);
+        let q = .82, url = c.toDataURL('image/jpeg', q);
+        while (url.length > 250000 && q > .4) { q -= .12; url = c.toDataURL('image/jpeg', q); }
+        resolve(url);
+      };
+      img.onerror = reject;
+      img.src = URL.createObjectURL(file);
+    });
+  }
+
+  async function setPhoto(file) {
+    try {
+      draft.photo = await shrink(file);
+    } catch (err) {
+      toast('تعذّر قراءة الصورة، جرّب صورة أخرى');
+      return;
+    }
+    showPhoto();
+    markDirty();
+  }
+
+  function showPhoto() {
+    const has = !!draft.photo;
+    const img = $('#photoPreview');
+    img.hidden = !has;
+    if (has) img.src = draft.photo;
+    $('#photoBtnText').textContent = has ? 'تغيير' : 'اختر صورة';
+    $('[data-act="photo-remove"]', panel).hidden = !has;
+  }
 
   // Enter in an item row jumps to the next row (or adds one)
   panel.addEventListener('keydown', e => {
@@ -278,6 +329,7 @@
     else if (act === 'delete') deleteInitiative();
     else if (act === 'unpledge') removePledge(b.dataset.pid);
     else if (act === 'csv') downloadCSV();
+    else if (act === 'photo-remove') { draft.photo = ''; showPhoto(); markDirty(); }
   });
 
   function addItem() {
@@ -311,7 +363,7 @@
       return;
     }
     const data = {
-      title, date: draft.date, time: draft.time.trim(), place: draft.place.trim(), status: draft.status,
+      title, date: draft.date, photo: draft.photo || '', status: draft.status,
       items: rows.map(it => ({ id: it.id, name: it.name.trim(), unit: String(it.unit).trim(), needed: parseInt(it.needed, 10) }))
     };
     const btn = $('#saveBtn');
@@ -422,7 +474,7 @@
       </div>
       <table class="people">
         <tbody>${rows.map(p => `<tr>
-          <td><b>${esc(nameOf(p))}</b><div class="muted small">${esc(when(p.createdAt))}</div></td>
+          <td><b>${esc(nameOf(p))}</b><div class="muted small"><bdi dir="ltr">${esc(when(p.createdAt))}</bdi></div></td>
           <td>${what(p)}</td>
           <td><button class="icon-btn" type="button" data-act="unpledge" data-pid="${esc(p.id)}" aria-label="إزالة ${esc(nameOf(p))}">${icon('trash')}</button></td>
         </tr>`).join('')}</tbody>

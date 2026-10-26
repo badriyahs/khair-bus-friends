@@ -1,6 +1,6 @@
 /* One initiative: tap + on what you'll bring, add your name, confirm. */
 (function () {
-  const { $, esc, tally, longDate, icon, toast } = UI;
+  const { $, esc, tally, enDate, itemsLeft, icon, toast } = UI;
   const iid = new URLSearchParams(location.search).get('id');
   const thanks = $('#thanks');
   const cards = new Map();
@@ -23,7 +23,7 @@
     const t = tally(ini, pledges);
     got = t.got;
     if (!submitting) clampPicks();
-    renderHead();
+    renderHead(t);
     renderItems();
     renderExtras(t.extras);
     renderBasket();
@@ -45,14 +45,19 @@
     if (changed.length) toast(`تم التحديث، أحد سجّل للتو: ${changed.join('، ')}`);
   }
 
-  function renderHead() {
+  // Top: small photo, name, English date, overall progress
+  function renderHead(t) {
     document.title = `${ini.title} · أصدقاء باص الخير`;
     $('#iniTitle').textContent = ini.title;
-    const chips = [];
-    if (ini.date) chips.push(`<span class="chip">${icon('cal', 16)}${esc(longDate(ini.date))}</span>`);
-    if (ini.time) chips.push(`<span class="chip">${icon('clock', 16)}${esc(ini.time)}</span>`);
-    if (ini.place) chips.push(`<span class="chip">${icon('pin', 16)}${esc(ini.place)}</span>`);
-    $('#iniChips').innerHTML = chips.join('');
+    $('#iniDate').textContent = enDate(ini.date);
+    $('#iniDate').hidden = !ini.date;
+    const photo = $('#iniPhoto');
+    if (ini.photo && photo.getAttribute('src') !== ini.photo) photo.src = ini.photo;
+    photo.hidden = !ini.photo;
+    const any = (ini.items || []).length > 0;
+    $('#ovBarWrap').hidden = !any;
+    $('#ovBar').style.width = t.pct + '%';
+    $('#ovLeft').textContent = !any ? '' : t.open ? itemsLeft(t.open) : 'اكتملت كل الأصناف';
     $('#content').hidden = false;
     $('#closedNote').hidden = isOpen();
   }
@@ -224,7 +229,7 @@
   function notFound() {
     document.title = 'غير موجودة · أصدقاء باص الخير';
     $('#iniTitle').textContent = 'المبادرة غير موجودة';
-    $('#iniChips').innerHTML = '<a class="btn btn-primary" href="index.html">رجوع</a>';
+    $('#ovLeft').innerHTML = '<a class="btn btn-primary" href="index.html">رجوع</a>';
     $('#content').hidden = true;
   }
 

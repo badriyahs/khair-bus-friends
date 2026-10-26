@@ -9,18 +9,13 @@ window.UI = (function () {
     const [y, m, d] = iso.split('-').map(Number);
     return y && m && d ? new Date(y, m - 1, d) : null;
   }
-  // Arabic month and day names, with the same 0-9 digits as their posters
-  const LOCALE = 'ar-KW-u-nu-latn';
-  function longDate(iso) {
+  // Event dates are shown in English ("Thursday 29 October"); the rest of the page is Arabic
+  function enDate(iso) {
     const d = parseDate(iso);
-    return d ? d.toLocaleDateString(LOCALE, { weekday: 'long', day: 'numeric', month: 'long' }) : '';
-  }
-  function shortDate(iso) {
-    const d = parseDate(iso);
-    return d ? { day: d.getDate(), mon: d.toLocaleDateString(LOCALE, { month: 'long' }) } : { day: '–', mon: 'قريباً' };
+    return d ? d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' }) : '';
   }
   function when(ms) {
-    return new Date(ms).toLocaleString(LOCALE, { day: 'numeric', month: 'long', hour: 'numeric', minute: '2-digit' });
+    return new Date(ms).toLocaleString('en-GB', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' });
   }
   // "باقي 3 أصناف" with the right Arabic plural
   function itemsLeft(n) {
@@ -55,18 +50,12 @@ window.UI = (function () {
   }
 
   const ICONS = {
-    cal: '<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/>',
-    clock: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
-    pin: '<path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/>',
     check: '<path d="M5 12.5l4.5 4.5L19 7.5"/>',
     trash: '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
     plus: '<path d="M12 5v14M5 12h14"/>',
-    back: '<path d="M15 5l-7 7 7 7"/>',
-    arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
     link: '<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
     open: '<path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',
-    download: '<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>',
-    heart: '<path d="M12 20s-7-4.4-8.6-8.6C2.2 8.2 4.3 5 7.5 5c1.9 0 3.3 1 4.5 2.6C13.2 6 14.6 5 16.5 5c3.2 0 5.3 3.2 4.1 6.4C19 15.6 12 20 12 20z"/>'
+    download: '<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>'
   };
   function icon(name, size = 18) {
     return `<svg class="ic" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name]}</svg>`;
@@ -86,7 +75,38 @@ window.UI = (function () {
     toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
   }
 
-  /* Squiggly outline like the posters: redrawn to fit each .blob so the waves stay even at any size. */
+  /* Squiggly outline like their posters: a rounded rectangle whose edge waves in and out.
+     The wave count is fitted to the size so the squiggle stays even. */
+  function wavyPath(w, h, A) {
+    const pad = A + 5, r = Math.min(w, h) * .07 + 10;
+    const x0 = pad, y0 = pad, x1 = w - pad, y1 = h - pad;
+    const sw = x1 - x0 - 2 * r, sh = y1 - y0 - 2 * r, arc = Math.PI * r / 2;
+    const P = 2 * (sw + sh) + 4 * arc;
+    const waves = Math.max(8, Math.round(P / (A * 10)));
+    // point and outward normal at distance s along the rounded rectangle
+    const corner = (cx, cy, a) => [cx + r * Math.cos(a), cy + r * Math.sin(a), Math.cos(a), Math.sin(a)];
+    const at = s => {
+      if (s < sw) return [x0 + r + s, y0, 0, -1]; s -= sw;
+      if (s < arc) return corner(x1 - r, y0 + r, -Math.PI / 2 + s / r); s -= arc;
+      if (s < sh) return [x1, y0 + r + s, 1, 0]; s -= sh;
+      if (s < arc) return corner(x1 - r, y1 - r, s / r); s -= arc;
+      if (s < sw) return [x1 - r - s, y1, 0, 1]; s -= sw;
+      if (s < arc) return corner(x0 + r, y1 - r, Math.PI / 2 + s / r); s -= arc;
+      if (s < sh) return [x0, y1 - r - s, -1, 0]; s -= sh;
+      return corner(x0 + r, y0 + r, Math.PI + s / r);
+    };
+    const steps = Math.ceil(P / (A * .6));
+    let d = '';
+    for (let i = 0; i < steps; i++) {
+      const s = i / steps * P, [x, y, nx, ny] = at(s);
+      const f = s / P * 2 * Math.PI;
+      const o = A * (1 + .3 * Math.sin(3 * f)) * Math.sin(waves * f);
+      d += (i ? 'L' : 'M') + (x + nx * o).toFixed(1) + ' ' + (y + ny * o).toFixed(1);
+    }
+    return d + 'Z';
+  }
+
+  // For boxes whose size changes (page headers): redraw to fit
   function wavy(el) {
     const NS = 'http://www.w3.org/2000/svg';
     const svg = document.createElementNS(NS, 'svg');
@@ -99,41 +119,18 @@ window.UI = (function () {
       const w = el.clientWidth, h = el.clientHeight;
       if (!w || !h) return;
       svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
-      const A = 6, pad = A + 5, r = Math.min(40, (h - 2 * pad) / 2);
-      const x0 = pad, y0 = pad, x1 = w - pad, y1 = h - pad;
-      const sw = x1 - x0 - 2 * r, sh = y1 - y0 - 2 * r, arc = Math.PI * r / 2;
-      const P = 2 * (sw + sh) + 4 * arc;
-      const waves = Math.max(8, Math.round(P / 62));
-      // point and outward normal at distance s along the rounded rectangle
-      const corner = (cx, cy, a) => [cx + r * Math.cos(a), cy + r * Math.sin(a), Math.cos(a), Math.sin(a)];
-      const at = s => {
-        if (s < sw) return [x0 + r + s, y0, 0, -1]; s -= sw;
-        if (s < arc) return corner(x1 - r, y0 + r, -Math.PI / 2 + s / r); s -= arc;
-        if (s < sh) return [x1, y0 + r + s, 1, 0]; s -= sh;
-        if (s < arc) return corner(x1 - r, y1 - r, s / r); s -= arc;
-        if (s < sw) return [x1 - r - s, y1, 0, 1]; s -= sw;
-        if (s < arc) return corner(x0 + r, y1 - r, Math.PI / 2 + s / r); s -= arc;
-        if (s < sh) return [x0, y1 - r - s, -1, 0]; s -= sh;
-        return corner(x0 + r, y0 + r, Math.PI + s / r);
-      };
-      const steps = Math.ceil(P / 4);
-      let d = '';
-      for (let i = 0; i < steps; i++) {
-        const s = i / steps * P, [x, y, nx, ny] = at(s);
-        const f = s / P * 2 * Math.PI;
-        const o = A * (1 + .3 * Math.sin(3 * f)) * Math.sin(waves * f);
-        d += (i ? 'L' : 'M') + (x + nx * o).toFixed(1) + ' ' + (y + ny * o).toFixed(1);
-      }
-      path.setAttribute('d', d + 'Z');
+      path.setAttribute('d', wavyPath(w, h, 6));
     };
     if (window.ResizeObserver) new ResizeObserver(draw).observe(el);
     draw();
   }
 
-  document.addEventListener('DOMContentLoaded', () => $$('.blob').forEach(wavy));
+  // For square posts: one shape that scales evenly
+  const SQUARE = `<svg class="blob-bg" viewBox="0 0 1000 1000" aria-hidden="true"><path d="${wavyPath(1000, 1000, 16)}"/></svg>`;
 
-  // Preview-mode notice at the top of every page
   document.addEventListener('DOMContentLoaded', () => {
+    $$('.blob').forEach(wavy);
+    // Preview-mode notice on the team page
     if (!window.Store || !Store.demo || !window.KBF_ADMIN) return;
     const b = document.createElement('div');
     b.className = 'preview-banner';
@@ -141,5 +138,5 @@ window.UI = (function () {
     document.body.prepend(b);
   });
 
-  return { $, $$, esc, LOCALE, longDate, shortDate, when, itemsLeft, byDate, tally, icon, toast };
+  return { $, $$, esc, enDate, when, itemsLeft, byDate, tally, icon, toast, SQUARE };
 })();
