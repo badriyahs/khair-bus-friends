@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Team dashboard · Khair Bus Friends</title>
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#f5faf8">
+  <link rel="icon" href="img/logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="site-head">
+    <div class="wrap head-in" style="max-width:1200px">
+      <a class="brand" href="index.html"><img src="img/logo.svg" alt=""><span>Khair Bus Friends</span><span class="team-pill">Team</span></a>
+      <div class="head-nav">
+        <span class="who" id="who"></span>
+        <button class="btn btn-ghost btn-sm" id="signOut" type="button" hidden>Sign out</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <p class="muted" id="boot" style="text-align:center;margin-top:64px">Loading…</p>
+
+    <section class="login" id="loginView" hidden>
+      <h2>Team login</h2>
+      <p class="muted">For the Khair Bus Friends team. Participants don't need an account.</p>
+      <form id="loginForm">
+        <div class="field"><label for="email">Email</label><input class="input" id="email" type="email" autocomplete="username" required></div>
+        <div class="field"><label for="password">Password</label><input class="input" id="password" type="password" autocomplete="current-password" required></div>
+        <p class="form-error" id="loginErr" role="alert" hidden></p>
+        <button class="btn btn-primary" type="submit" id="loginBtn">Sign in</button>
+        <button class="btn-link" type="button" id="forgot">Forgot password?</button>
+      </form>
+    </section>
+
+    <section class="login" id="notAdminView" hidden>
+      <h2>Almost there</h2>
+      <p>You're signed in, but this account isn't on the team list yet. Ask whoever manages the site to add this ID:</p>
+      <code id="uid"></code>
+      <button class="btn btn-ghost" type="button" id="signOut2">Sign out</button>
+    </section>
+
+    <div class="admin-shell" id="dashView" hidden>
+      <aside class="side">
+        <button class="btn btn-primary" id="newBtn" type="button">+ New initiative</button>
+        <ul class="ini-list" id="iniList"></ul>
+        <button class="btn-link small" id="resetPreview" type="button" hidden>Reset sample data</button>
+      </aside>
+      <section class="panel" id="panel"><p class="muted">Loading…</p></section>
+    </div>
+  </main>
+
+  <script>window.KBF_ADMIN = true;</script>
+  <script src="js/config.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>
