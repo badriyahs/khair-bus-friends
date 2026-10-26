@@ -230,15 +230,17 @@
     const byId = Object.fromEntries(items.map(it => [it.id, it]));
     const rows = pledges.filter(p => names[p.id]).sort((a, b) => a.createdAt - b.createdAt);
     $('#whoWrap').hidden = !rows.length;
+    // each thing as a little chip: photo, name, how many
+    const chip = (name, qty, img) => `<span class="mini">${img ? `<img src="${esc(img)}" alt="">` : ''}<span>${esc(name)}</span><b>${qty}</b></span>`;
     $('#whoList').innerHTML = rows.map(p => {
       const what = [
-        ...(p.items || []).filter(x => byId[x.id]).map(x => `${esc(byId[x.id].name)} × ${x.qty}`),
-        ...(p.extras || []).map(x => `${esc(x.name)} × ${x.qty}`)
-      ].join('، ');
+        ...(p.items || []).filter(x => byId[x.id]).map(x => chip(byId[x.id].name, x.qty, byId[x.id].img)),
+        ...(p.extras || []).map(x => chip(x.name, x.qty))
+      ].join('');
       const me = mine.has(p.id), name = names[p.id];
       return `<li class="row${me ? ' mine' : ''}" data-pid="${esc(p.id)}">
         <span class="avatar" style="--c:${avatarColor(name)}">${esc([...name.trim()][0] || '؟')}</span>
-        <span class="row-main"><b>${esc(name)}</b><span class="row-sub">${what}</span></span>
+        <span class="row-main"><b>${esc(name)}</b><span class="minis">${what}</span></span>
         ${me ? '<span class="pill">أنت</span>' : ''}
       </li>`;
     }).join('');

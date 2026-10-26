@@ -207,6 +207,7 @@ input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-o
 .board { margin-top: 8px; }
 .rows { margin: 0; padding: 0; border: 2px solid var(--line); border-radius: 18px; list-style: none; overflow: hidden; }
 .row { display: flex; align-items: center; gap: 12px; padding: 12px 14px; transition: background .3s; }
+.who-list .row { align-items: flex-start; }
 .row + .row { border-top: 2px solid var(--line); }
 .row.mine { background: var(--green-soft); }
 .row.flash { animation: flash 1.6s; }
@@ -214,6 +215,13 @@ input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-o
 .row-main { display: flex; flex: 1; flex-direction: column; min-width: 0; }
 .row-main b { font-weight: 700; }
 .row-sub { color: var(--ink-soft); font-size: .92rem; }
+.minis { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.mini { display: inline-flex; align-items: center; gap: 6px; padding: 3px; padding-inline-end: 4px; border: 2px solid var(--line); border-radius: 12px; background: #fff; font-size: .88rem; font-weight: 700; }
+.mini:not(:has(img)) { padding-inline-start: 10px; }
+.mini img { width: 28px; height: 28px; object-fit: contain; border-radius: 8px; }
+.mini b { min-width: 26px; padding: 1px 7px; border-radius: 8px; background: var(--blue-soft); color: var(--blue-dark); font-weight: 800; text-align: center; }
+.row.mine .mini { border-color: var(--green-line); }
+.row.mine .mini b { background: var(--green-soft); color: var(--green-dark); }
 .count { flex: none; min-width: 44px; padding: 4px 10px; border-radius: 12px; background: var(--blue-soft); color: var(--blue-dark); font-weight: 800; text-align: center; }
 .row.all-done { justify-content: center; gap: 6px; color: var(--green-dark); font-weight: 700; }
 
