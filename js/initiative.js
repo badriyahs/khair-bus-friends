@@ -10,19 +10,23 @@
   // sign-ups made on this phone, so the list can mark them "أنت"
   let mine = new Set();
   try { mine = new Set(JSON.parse(localStorage.getItem('kbf-mine') || '[]')); } catch (e) {}
+  const motionOK = () => !window.matchMedia('(prefers-reduced-motion: reduce)').matches && !!Element.prototype.animate;
 
   if (!iid) return notFound();
   Store.watchInitiative(iid, d => { ini = d; iniLoaded = true; render(); }, loadFailed);
   Store.watchPledges(iid, p => { pledges = p; render(); }, loadFailed);
-  Store.watchPeople(iid, p => { people = p; render(); });
+  Store.watchPeople(iid, p => { newcomers(p); people = p; render(); });
   try { $('#name').value = localStorage.getItem('kbf-name') || ''; } catch (e) {}
 
   const isOpen = () => !!ini && ini.status === 'open';
+  // only touch the page when something changed, so chips and tags don't re-pop on every update
+  const setHTML = (el, html) => { if (el.lastHTML !== html) { el.lastHTML = html; el.innerHTML = html; } };
   const remaining = it => Math.max(0, (+it.needed || 0) - (got[it.id] || 0));
   const pct = (a, b) => (b ? Math.min(100, a / b * 100) : 0).toFixed(2) + '%';
 
   function render() {
     if (!iniLoaded) return;
+    $('#loader').hidden = true;
     if (!ini) return notFound();
     const t = tally(ini, pledges);
     got = t.got;
@@ -59,7 +63,7 @@
     if (ini.time) info.push(`<span class="info-chip">${icon('clock', 18)}${esc(ini.time)}</span>`);
     if (ini.place) info.push(`<span class="info-chip">${icon('pin', 18)}${esc(ini.place)}</span>`);
     if (ini.phone) info.push(`<a class="info-chip" href="tel:${esc(String(ini.phone).replace(/[^\d+]/g, ''))}">${icon('phone', 18)}<span dir="ltr">${esc(ini.phone)}</span></a>`);
-    $('#iniInfo').innerHTML = info.join('');
+    setHTML($('#iniInfo'), info.join(''));
     const photo = $('#iniPhoto'), src = ini.photo || 'img/logo.png';
     if (photo.getAttribute('src') !== src) photo.src = src;
     $('#prompt').hidden = !isOpen();
@@ -106,7 +110,7 @@
     li.style.setProperty('--i', i);
     li.innerHTML = `
       <button type="button" class="choice-hit">
-        <span class="choice-img"><img alt=""></span>
+        <span class="choice-img"><img alt=""><span class="full-stamp" hidden>${icon('check', 36)}</span></span>
         <span class="choice-name"></span>
         <span class="choice-unit"></span>
       </button>
@@ -127,6 +131,10 @@
     const need = +it.needed || 0, g = got[it.id] || 0, left = remaining(it);
     const mineQty = Math.min(pick[it.id] || 0, left);
     const full = left === 0;
+    // someone else just finished this item: stamp it and burst sparkles
+    if (li.dataset.full === '0' && full && !submitting && done.hidden) party(li);
+    li.dataset.full = full ? '1' : '0';
+    li.querySelector('.full-stamp').hidden = !full;
     li.classList.toggle('is-full', full);
     li.classList.toggle('is-picked', mineQty > 0);
     li.querySelector('.choice-name').textContent = it.name;
@@ -141,7 +149,13 @@
     li.querySelector('.bar-mine').style.width = mineQty ? `calc(${pct(mineQty, need)} + 10px)` : '0';
     const leftEl = li.querySelector('.choice-left');
     leftEl.classList.toggle('done', full);
-    leftEl.innerHTML = full ? `${icon('check', 16)} اكتمل` : `باقي <b>${left}</b>`;
+    if (full) leftEl.innerHTML = `${icon('check', 16)} اكتمل`;
+    else {
+      let num = leftEl.querySelector('b');
+      if (!num) { leftEl.innerHTML = 'باقي <b></b>'; num = leftEl.querySelector('b'); }
+      const was = parseInt(num.textContent, 10);
+      if (was && was !== left) countTo(num, was, left); else num.textContent = left;
+    }
     const badge = li.querySelector('.mine-badge');
     badge.hidden = !mineQty;
     badge.textContent = `+${mineQty}`;
@@ -163,6 +177,25 @@
     card.classList.add('bump');
   }
 
+  // roll a number from old to new
+  function countTo(el, from, to) {
+    if (!motionOK()) { el.textContent = to; return; }
+    cancelAnimationFrame(el.raf);
+    const t0 = performance.now(), ms = 700;
+    const step = now => {
+      const k = Math.min(1, (now - t0) / ms);
+      el.textContent = Math.round(from + (to - from) * (1 - Math.pow(1 - k, 3)));
+      if (k < 1) el.raf = requestAnimationFrame(step);
+    };
+    el.raf = requestAnimationFrame(step);
+    replay(el, 'tick');
+  }
+
+  function party(li) {
+    replay(li.querySelector('.full-stamp'), 'stamp');
+    sparkle(li, 12);
+  }
+
   function setPick(id, n, typed) {
     const it = (ini.items || []).find(x => x.id === id);
     if (!it || !isOpen()) return;
@@ -182,7 +215,6 @@
 
   const CHEERS = ['كفو!', 'تسلم!', 'يمّي!', 'عساك عالقوة!', 'يا حلوك!'];
   let cheerTimer, lastCheer = -1;
-  const motionOK = () => !window.matchMedia('(prefers-reduced-motion: reduce)').matches && !!Element.prototype.animate;
 
   function replay(el, cls) {
     el.classList.remove(cls);
@@ -204,11 +236,11 @@
   }
 
   // a little pop of their sparkles out of the food you tapped
-  function sparkle(card) {
+  function sparkle(card, n = 7) {
     if (!card || !motionOK()) return;
     const r = card.querySelector('.choice-img').getBoundingClientRect();
     const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
-    for (let i = 0; i < 7; i++) {
+    for (let i = 0; i < n; i++) {
       const s = document.createElement('img');
       const size = 16 + Math.random() * 14;
       s.className = 'spark-pop';
@@ -218,7 +250,7 @@
       s.style.left = cx - size / 2 + 'px';
       s.style.top = cy - size / 2 + 'px';
       document.body.appendChild(s);
-      const ang = i / 7 * Math.PI * 2 + Math.random() * .6, dist = 55 + Math.random() * 40;
+      const ang = i / n * Math.PI * 2 + Math.random() * .6, dist = 55 + Math.random() * (n > 7 ? 70 : 40);
       s.animate([
         { transform: 'translate(0, 0) scale(.3) rotate(0deg)', opacity: 1 },
         { transform: `translate(${Math.cos(ang) * dist}px, ${Math.sin(ang) * dist}px) scale(1) rotate(${(Math.random() - .5) * 200}deg)`, opacity: 0 }
@@ -268,9 +300,9 @@
   let others = [];
   function renderExtras(list) {
     if (list) others = list;
-    $('#myExtras').innerHTML = extras.map((x, i) =>
-      `<li class="tag mine">${esc(x.name)} × ${x.qty}<button type="button" data-i="${i}" aria-label="إزالة ${esc(x.name)}">×</button></li>`).join('');
-    $('#others').innerHTML = others.map(x => `<li class="tag">${esc(x.name)} × ${x.qty}</li>`).join('');
+    setHTML($('#myExtras'), extras.map((x, i) =>
+      `<li class="tag mine">${esc(x.name)} × ${x.qty}<button type="button" data-i="${i}" aria-label="إزالة ${esc(x.name)}">×</button></li>`).join(''));
+    setHTML($('#others'), others.map(x => `<li class="tag">${esc(x.name)} × ${x.qty}</li>`).join(''));
     $('#extraForm').hidden = !isOpen();
     $('#extraCard').hidden = !isOpen() && !others.length;
   }
@@ -288,7 +320,7 @@
     $('#whoWrap').hidden = !rows.length;
     // each thing as a little chip: photo, name, how many
     const chip = (name, qty, img) => `<span class="mini">${img ? `<img src="${esc(img)}" alt="">` : ''}<span>${esc(name)}</span><b>${qty}</b></span>`;
-    $('#whoList').innerHTML = rows.map(p => {
+    setHTML($('#whoList'), rows.map(p => {
       const what = [
         ...(p.items || []).filter(x => byId[x.id]).map(x => chip(byId[x.id].name, x.qty, byId[x.id].img)),
         ...(p.extras || []).map(x => chip(x.name, x.qty))
@@ -299,15 +331,36 @@
         <span class="row-main"><b>${esc(name)}</b><span class="minis">${what}</span></span>
         ${me ? '<span class="pill">أنت</span>' : ''}
       </li>`;
-    }).join('');
+    }).join(''));
     const left = items.filter(it => remaining(it) > 0);
-    $('#leftList').innerHTML = left.length
+    setHTML($('#leftList'), left.length
       ? left.map(it => `<li class="row">
           <span class="row-main"><b>${esc(it.name)}</b>${it.unit ? `<span class="row-sub">${esc(it.unit)}</span>` : ''}</span>
           <span class="count">${remaining(it)}</span>
         </li>`).join('')
-      : `<li class="row all-done">${icon('check', 18)} اكتملت كل الأصناف</li>`;
+      : `<li class="row all-done">${icon('check', 18)} اكتملت كل الأصناف</li>`);
     $('#listCard').hidden = !items.length && !rows.length;
+  }
+
+  /* ---------- someone else just joined ---------- */
+
+  let seenPeople = null, popTimer;
+  function newcomers(list) {
+    const fresh = seenPeople ? list.filter(p => !seenPeople.has(p.id) && !mine.has(p.id)) : [];
+    seenPeople = new Set(list.map(p => p.id));
+    if (!fresh.length || submitting) return;
+    let pop = $('#livePop');
+    if (!pop) {
+      pop = document.createElement('div');
+      pop.id = 'livePop'; pop.className = 'live-pop'; pop.setAttribute('role', 'status');
+      document.body.appendChild(pop);
+    }
+    const name = fresh[fresh.length - 1].name || '';
+    const who = fresh.length > 1 ? `${esc(name)} و${fresh.length - 1}` : esc(name);
+    pop.innerHTML = `<span class="avatar" style="--c:${avatarColor(name)}">${esc([...name.trim()][0] || '؟')}</span><span>${who} معانا!</span>`;
+    pop.classList.add('show');
+    clearTimeout(popTimer);
+    popTimer = setTimeout(() => pop.classList.remove('show'), 3200);
   }
 
   /* ---------- name & confirm ---------- */
@@ -394,6 +447,7 @@
   }
 
   function notFound() {
+    $('#loader').hidden = true;
     document.title = 'غير موجودة · أصدقاء باص الخير';
     $('#iniTitle').textContent = 'المبادرة غير موجودة';
     $('#content').hidden = true;
@@ -406,6 +460,7 @@
   }
 
   function loadFailed() {
+    $('#loader').hidden = true;
     $('#iniTitle').textContent = 'تعذّر التحميل، حدّث الصفحة';
   }
 })();

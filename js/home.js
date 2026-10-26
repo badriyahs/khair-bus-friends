@@ -22,11 +22,32 @@
     if (!initiatives) return;
     const open = initiatives.filter(i => i.status === 'open').sort(byDate);
     const past = initiatives.filter(i => i.status !== 'open').sort((a, b) => byDate(b, a));
-    $('#openList').innerHTML = open.length
-      ? open.map((ini, i) => card(ini, i, false)).join('')
-      : '<li class="empty">لا توجد مبادرات حالياً</li>';
+    paint($('#openList'), open, false, '<li class="empty">لا توجد مبادرات حالياً</li>');
     $('#pastWrap').hidden = !past.length;
-    $('#pastList').innerHTML = past.map((ini, i) => card(ini, i, true)).join('');
+    paint($('#pastList'), past, true, '');
+  }
+
+  // Same cards as before? Just move the buses along. Otherwise rebuild the list.
+  const sig = (ini, past) => JSON.stringify([ini.id, ini.title, ini.date, ini.time, ini.photo, past, countdown(ini.date)]);
+  function paint(list, arr, past, empty) {
+    const lis = [...list.children];
+    const same = arr.length && lis.length === arr.length && arr.every((ini, i) => lis[i].dataset.sig === sig(ini, past));
+    if (!same) {
+      list.innerHTML = arr.length ? arr.map((ini, i) => card(ini, i, past)).join('') : empty;
+      void list.offsetWidth;   // start the bars empty so the buses drive in
+    }
+    if (!past) arr.forEach((ini, i) => progress(list.children[i], ini));
+  }
+
+  function progress(li, ini) {
+    const t = tally(ini, pledgesFor[ini.id] || []);
+    li.querySelector('.bar-ride').style.setProperty('--p', t.pct);
+    li.querySelector('.bar-fill').style.width = t.pct + '%';
+    const left = li.querySelector('.ev-left'), text = t.open ? itemsLeft(t.open) : 'اكتملت كل الأصناف';
+    if (left.textContent !== text) {
+      if (left.textContent) { left.classList.remove('tick'); void left.offsetWidth; left.classList.add('tick'); }
+      left.textContent = text;
+    }
   }
 
   // "اليوم!", "باجر!", "باقي يومين"… for the sticker on each open event
@@ -43,7 +64,6 @@
   }
 
   function card(ini, i, past) {
-    const t = tally(ini, pledgesFor[ini.id] || []);
     const soon = past ? '' : countdown(ini.date);
     // same details as the event page: date and time chips
     const chips = [
@@ -51,15 +71,15 @@
       ini.time ? `<span class="info-chip">${icon('clock', 16)}${esc(ini.time)}</span>` : ''
     ].join('');
     const progress = past ? '' : `
-        <span class="bar-ride" style="--p:${t.pct}">
-          <span class="bar"><span class="bar-fill" style="width:${t.pct}%"></span></span>
+        <span class="bar-ride" style="--p:0">
+          <span class="bar"><span class="bar-fill" style="width:0"></span></span>
           <img class="ride-bus" src="img/logo-sticker.png" alt="">
         </span>
         <span class="ev-foot">
-          <span class="ev-left">${t.open ? itemsLeft(t.open) : 'اكتملت كل الأصناف'}</span>
+          <span class="ev-left"></span>
           <span class="btn btn-primary btn-sm ev-btn">يلا!</span>
         </span>`;
-    return `<li style="--i:${i}"><a class="ev-card" href="initiative.html?id=${encodeURIComponent(ini.id)}">
+    return `<li style="--i:${i}" data-sig="${esc(sig(ini, past))}"><a class="ev-card" href="initiative.html?id=${encodeURIComponent(ini.id)}">
       ${soon ? `<span class="sticker">${soon}</span>` : ''}
       <span class="ev-icon"><img src="${esc(ini.photo || 'img/logo-180.png')}" alt=""></span>
       <span class="ev-main">

@@ -180,6 +180,7 @@ input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-o
 .lesson-bar .bar { background: rgba(255, 255, 255, .35); }
 .lesson-bar .bar-fill { background: var(--sun); }
 .lesson-mid { display: flex; flex: 1; flex-direction: column; gap: 4px; min-width: 0; }
+.sticky-title:not([hidden]) + .bar-ride { margin-top: 12px; }
 .sticky-title { overflow: hidden; color: #fff; font-size: .95rem; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; animation: rise .25s ease both; }
 
 .lesson { padding-top: 8px; }
@@ -380,7 +381,7 @@ body.brand-bg { background: var(--brand) url(../img/crayon.svg) 0 0 / 200px 200p
 @keyframes hop { 40% { transform: translateY(-16px) rotate(-5deg); } 70% { transform: translateY(0) rotate(2deg); } }
 .prompt-char.cheer { animation: hop .55s var(--spring); }
 .bubble.cheer { animation: pop .4s var(--spring); }
-.spark-pop { position: fixed; z-index: 40; height: auto; pointer-events: none; }
+.spark-pop { position: fixed; z-index: 25; height: auto; pointer-events: none; }
 
 /* the friend peeks over the names list */
 .peek-wrap { position: relative; margin-top: 46px; }
@@ -403,6 +404,30 @@ body.brand-bg { background: var(--brand) url(../img/crayon.svg) 0 0 / 200px 200p
 .card, .rows { border-radius: 40px 14px 34px 16px / 14px 36px 16px 32px; }
 .bubble { border-radius: 26px 10px 24px 12px / 10px 24px 12px 22px; rotate: -1.5deg; }
 .choice-hit { border-radius: 32px 12px 0 0 / 12px 30px 0 0; }
+
+/* loading: the bus drives along a dashed road */
+.loader { display: grid; place-items: center; padding: 36px 0; list-style: none; animation: appear .3s .2s both; }
+.loader-road { position: relative; width: min(240px, 66vw); height: 64px; overflow: hidden; }
+.loader-road::after { content: ""; position: absolute; inset-inline: 0; bottom: 3px; border-bottom: 4px dashed rgba(255, 255, 255, .75); }
+.loader-bus { position: absolute; bottom: 7px; left: 100%; width: 76px; animation: drive 1.9s linear infinite; }
+.loader-bus img { display: block; width: 100%; height: auto; animation: bob .45s ease-in-out infinite; }
+@keyframes drive { to { left: -76px; } }
+@keyframes appear { from { opacity: 0; } }
+
+/* someone else just signed up */
+.live-pop { position: fixed; inset-inline: 0; bottom: calc(24px + env(safe-area-inset-bottom)); z-index: 45; display: flex; align-items: center; gap: 10px; width: max-content; max-width: calc(100% - 32px); margin: 0 auto; padding: 7px 18px 7px 8px; border: 3px solid #fff; border-radius: 26px 12px 24px 14px / 12px 24px 14px 26px; background: var(--sun); color: #5a3a00; font-size: 1.05rem; font-weight: 800; box-shadow: 0 4px 0 var(--sun-dark); opacity: 0; translate: 0 30px; scale: .8; transition: opacity .2s, translate .45s var(--spring), scale .45s var(--spring); pointer-events: none; }
+.live-pop.show { opacity: 1; translate: 0 0; scale: 1; }
+.live-pop .avatar { width: 36px; height: 36px; font-size: 1rem; }
+body.has-basket .live-pop { bottom: calc(96px + env(safe-area-inset-bottom)); }
+
+/* numbers tick when others sign up */
+.tick { display: inline-block; animation: pop .45s var(--spring); }
+
+/* an item reaches its full amount: a big green check stamps on */
+.choice-img { position: relative; }
+.full-stamp { position: absolute; inset: 0; display: grid; place-items: center; width: 68px; height: 68px; margin: auto; border: 4px solid #fff; border-radius: 50%; background: var(--green); color: #fff; box-shadow: 0 4px 0 var(--green-dark); rotate: -8deg; }
+.full-stamp.stamp { animation: stamp .6s var(--spring); }
+@keyframes stamp { 0% { transform: scale(2.6); opacity: 0; } 55% { transform: scale(.88); opacity: 1; } }
 
 /* ---------- smaller screens ---------- */
 
