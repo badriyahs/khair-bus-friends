@@ -227,10 +227,6 @@ a.info-chip:active { transform: translateY(3px); box-shadow: none; }
 .step-btn:disabled { opacity: .35; cursor: default; }
 .qty { width: 48px; height: 40px; border: 2px solid var(--blue-line); border-radius: 12px; background: #fff; text-align: center; font-size: 1.15rem; font-weight: 800; color: var(--blue-dark); }
 .qty:focus { outline: none; border-color: var(--blue); }
-.row-step { display: flex; flex: none; align-items: center; gap: 6px; }
-.row-step .step-btn { width: 36px; height: 36px; font-size: 1.2rem; }
-.row-mine { min-width: 22px; color: var(--blue-dark); font-size: 1.1rem; text-align: center; }
-.left-list .row.is-picked { background: var(--blue-soft); }
 
 /* something else */
 .extra-card { max-width: 560px; }
