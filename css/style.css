@@ -99,16 +99,13 @@ input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-o
 
 /* ---------- home ---------- */
 
-.hero, .ini-hero { padding: 22px 0 26px; background: var(--crayon) var(--sky); }
-.blob { position: relative; isolation: isolate; padding: 34px 44px; }
-.blob-bg { position: absolute; inset: 0; z-index: -1; width: 100%; height: 100%; max-width: none; overflow: visible; }
-.blob-bg path { fill: #fff; stroke: var(--lime); stroke-width: 7; stroke-linejoin: round; }
-.hero .blob { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 16px; min-height: 250px; }
+.hero, .ini-hero { padding: 22px 0 6px; }
+.hero-in { position: relative; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 16px; }
 .hero h1 { margin: 0; font-size: clamp(2.1rem, 6.5vw, 3.8rem); text-wrap: balance; }
 .hero-logo { position: relative; width: clamp(140px, 30vw, 240px); animation: bob 5s ease-in-out infinite; }
 .hero-logo img { width: 100%; height: auto; }
 .deco { position: absolute; pointer-events: none; }
-.deco-stars { top: -8px; right: 14px; width: 70px; transform: rotate(8deg); }
+.deco-stars { top: -14px; right: -4px; width: 58px; transform: rotate(8deg); }
 .hero-logo .rays { position: absolute; top: 2%; left: 54%; width: 16%; transform: scaleX(-1); animation: rays 2.8s ease-in-out infinite; }
 @keyframes rays { 0%, 62%, 100% { opacity: 0; } 12%, 45% { opacity: 1; } }
 .hero-logo .hand { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
@@ -124,13 +121,12 @@ input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-o
 .section { padding-top: 28px; }
 
 .posts { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 18px; margin: 0; padding: 0; list-style: none; }
-.post { position: relative; display: block; aspect-ratio: 4 / 5; border-radius: 6px; background: #fff center / 100% 100% no-repeat; color: var(--ink); text-decoration: none; text-align: center; box-shadow: 0 6px 18px rgba(14, 106, 158, .18); transition: transform .15s; }
+.post { position: relative; display: block; aspect-ratio: 1; border-radius: 6px; background: #fff center / 100% 100% no-repeat; color: var(--ink); text-decoration: none; text-align: center; box-shadow: 0 6px 18px rgba(14, 106, 158, .18); transition: transform .15s; }
 .post:hover { transform: translateY(-3px) rotate(-.6deg); }
-.frame-a { background-image: url(../img/frame-a.webp); }
-.frame-b { background-image: url(../img/frame-b.webp); }
+.frame-squiggle { background-image: url(../img/frame-squiggle.webp); }
 .frame-stars { background-image: url(../img/frame-stars.webp); }
-.post-in { position: absolute; inset: 17% 13% 16% 18%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; }
-.post-stars { position: absolute; top: 15%; left: 17%; width: 17%; transform: rotate(-12deg); }
+.post-in { position: absolute; inset: 19% 18% 19% 21%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; }
+.post-stars { position: absolute; top: 17%; left: 21%; width: 15%; transform: rotate(-12deg); }
 .post h3 { margin: 0; font-size: clamp(1.6rem, 6vw, 2.1rem); text-wrap: balance; }
 .post-date { margin: 0; color: var(--ink-soft); font-weight: 600; }
 .post .bar { width: 100%; margin-top: 6px; }
@@ -304,10 +300,8 @@ dialog.sheet::backdrop { background: rgba(22, 50, 74, .45); }
 /* ---------- smaller screens ---------- */
 
 @media (max-width: 820px) {
-  .blob { padding: 26px 26px; }
   .ini-head { gap: 14px; }
   .ini-photo { width: 92px; max-height: 128px; }
-  .hero .blob { min-height: 200px; gap: 8px; }
   .admin-shell { grid-template-columns: minmax(0, 1fr); }
   .ini-list { flex-direction: row; overflow-x: auto; padding-bottom: 4px; }
   .ini-list li { flex: none; width: 210px; }

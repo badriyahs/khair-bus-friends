@@ -1,7 +1,6 @@
-/* Home: each initiative as a post in their poster frame (name, date, progress), past ones below. */
+/* Home: each initiative as a square post in their squiggly frame (name, date, progress), past ones below. */
 (function () {
   const { $, esc, tally, enDate, itemsLeft, twoTone, byDate } = UI;
-  const FRAMES = ['frame-a', 'frame-b'];   // their two wavy poster frames; past ones get the star frame
   let initiatives = null;
   const pledgesFor = {};
   const subs = new Map();
@@ -35,7 +34,7 @@
     const progress = past ? '' : `
         <div class="bar"><span class="bar-fill" style="width:${t.pct}%"></span></div>
         <p class="post-left">${t.open ? itemsLeft(t.open) : 'اكتملت كل الأصناف'}</p>`;
-    return `<li><a class="post ${past ? 'frame-stars' : FRAMES[i % FRAMES.length]}" href="initiative.html?id=${encodeURIComponent(ini.id)}">
+    return `<li><a class="post ${past ? 'frame-stars' : 'frame-squiggle'}" href="initiative.html?id=${encodeURIComponent(ini.id)}">
       ${past ? '' : '<img class="post-stars" src="img/deco/stars-blue.png" alt="">'}
       <div class="post-in">
         <h3 class="fun-title">${twoTone(ini.title)}</h3>

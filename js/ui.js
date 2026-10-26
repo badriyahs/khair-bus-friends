@@ -80,59 +80,8 @@ window.UI = (function () {
     toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
   }
 
-  /* Squiggly outline like their posters: a rounded rectangle whose edge waves in and out.
-     The wave count is fitted to the size so the squiggle stays even. */
-  function wavyPath(w, h, A) {
-    const pad = A + 5, r = Math.min(w, h) * .07 + 10;
-    const x0 = pad, y0 = pad, x1 = w - pad, y1 = h - pad;
-    const sw = x1 - x0 - 2 * r, sh = y1 - y0 - 2 * r, arc = Math.PI * r / 2;
-    const P = 2 * (sw + sh) + 4 * arc;
-    const waves = Math.max(8, Math.round(P / (A * 10)));
-    // point and outward normal at distance s along the rounded rectangle
-    const corner = (cx, cy, a) => [cx + r * Math.cos(a), cy + r * Math.sin(a), Math.cos(a), Math.sin(a)];
-    const at = s => {
-      if (s < sw) return [x0 + r + s, y0, 0, -1]; s -= sw;
-      if (s < arc) return corner(x1 - r, y0 + r, -Math.PI / 2 + s / r); s -= arc;
-      if (s < sh) return [x1, y0 + r + s, 1, 0]; s -= sh;
-      if (s < arc) return corner(x1 - r, y1 - r, s / r); s -= arc;
-      if (s < sw) return [x1 - r - s, y1, 0, 1]; s -= sw;
-      if (s < arc) return corner(x0 + r, y1 - r, Math.PI / 2 + s / r); s -= arc;
-      if (s < sh) return [x0, y1 - r - s, -1, 0]; s -= sh;
-      return corner(x0 + r, y0 + r, Math.PI + s / r);
-    };
-    const steps = Math.ceil(P / (A * .6));
-    let d = '';
-    for (let i = 0; i < steps; i++) {
-      const s = i / steps * P, [x, y, nx, ny] = at(s);
-      const f = s / P * 2 * Math.PI;
-      const o = A * (1 + .3 * Math.sin(3 * f)) * Math.sin(waves * f);
-      d += (i ? 'L' : 'M') + (x + nx * o).toFixed(1) + ' ' + (y + ny * o).toFixed(1);
-    }
-    return d + 'Z';
-  }
-
-  // Redrawn to fit the box whenever it changes size
-  function wavy(el) {
-    const NS = 'http://www.w3.org/2000/svg';
-    const svg = document.createElementNS(NS, 'svg');
-    const path = document.createElementNS(NS, 'path');
-    svg.classList.add('blob-bg');
-    svg.setAttribute('aria-hidden', 'true');
-    svg.appendChild(path);
-    el.prepend(svg);
-    const draw = () => {
-      const w = el.clientWidth, h = el.clientHeight;
-      if (!w || !h) return;
-      svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
-      path.setAttribute('d', wavyPath(w, h, 6));
-    };
-    if (window.ResizeObserver) new ResizeObserver(draw).observe(el);
-    draw();
-  }
-
+  // Preview-mode notice on the team page
   document.addEventListener('DOMContentLoaded', () => {
-    $$('.blob').forEach(wavy);
-    // Preview-mode notice on the team page
     if (!window.Store || !Store.demo || !window.KBF_ADMIN) return;
     const b = document.createElement('div');
     b.className = 'preview-banner';
