@@ -414,11 +414,16 @@ body.brand-bg { background: var(--brand) url(../img/crayon.svg) 0 0 / 200px 200p
 
 /* loading: the bus drives along a dashed road */
 .loader { display: grid; place-items: center; padding: 36px 0; list-style: none; animation: appear .3s .2s both; }
-.loader-road { position: relative; width: min(240px, 66vw); height: 64px; overflow: hidden; }
-.loader-road::after { content: ""; position: absolute; inset-inline: 0; bottom: 3px; border-bottom: 4px dashed rgba(255, 255, 255, .75); }
-.loader-bus { position: absolute; bottom: 7px; left: 100%; width: 76px; animation: drive 1.9s linear infinite; }
-.loader-bus img { display: block; width: 100%; height: auto; animation: bob .45s ease-in-out infinite; }
-@keyframes drive { to { left: -76px; } }
+/* the bus bounces along while the road's yellow dashes slide underneath, puffs out the back */
+.loader-road { position: relative; width: min(220px, 62vw); height: 92px; }
+.loader-road::before { content: ""; position: absolute; inset-inline: 0; bottom: 0; height: 22px; border-radius: 999px 999px 999px 999px / 14px 14px 14px 14px; background: #fff; box-shadow: 0 5px 0 var(--brand-dark); }
+.loader-road::after { content: ""; position: absolute; left: 16px; right: 16px; bottom: 9px; height: 5px; border-radius: 3px; background: repeating-linear-gradient(90deg, var(--sun) 0 16px, transparent 16px 30px); animation: road .45s linear infinite; }
+@keyframes road { to { background-position: 30px 0; } }
+.loader-bus { position: absolute; z-index: 1; bottom: 18px; left: 50%; width: 92px; translate: -50% 0; }
+.loader-bus img { display: block; width: 100%; height: auto; filter: drop-shadow(0 4px 0 var(--brand-dark)); animation: bob .45s ease-in-out infinite; }
+.puff { position: absolute; z-index: 0; bottom: 26px; left: calc(50% + 34px); width: 14px; height: 14px; border-radius: 50%; background: #fff; opacity: 0; animation: puff 1s ease-out infinite; }
+.puff + .puff { animation-delay: .5s; }
+@keyframes puff { 0% { transform: translate(0, 0) scale(.4); opacity: .95; } 100% { transform: translate(38px, -16px) scale(1.5); opacity: 0; } }
 @keyframes appear { from { opacity: 0; } }
 
 /* someone else just signed up */
