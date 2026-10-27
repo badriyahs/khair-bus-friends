@@ -274,9 +274,12 @@ body.has-basket main { padding-bottom: 120px; }
 
 /* done screen */
 .complete { position: fixed; inset: 0; z-index: 50; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; padding: 24px 16px calc(24px + env(safe-area-inset-bottom)); background: var(--brand) url(../img/crayon.svg) 0 0 / 200px 200px; text-align: center; overflow: hidden; animation: rise .25s ease; }
-.complete .hero-logo { width: min(280px, 72vw); margin-bottom: 8px; animation: jump .7s var(--spring) both, bob 5s ease-in-out .7s infinite; }
-.complete .hero-logo > img:first-child { filter: drop-shadow(0 7px 0 var(--brand-dark)); }
-.complete .hero-logo .rays { top: -9%; left: 55%; }
+.thanks-friend { position: relative; width: min(180px, 46vw); transform-origin: 50% 100%; animation: jump .7s var(--spring) both, sway 3.4s ease-in-out .7s infinite; }
+.thanks-friend img { display: block; width: 100%; height: auto; }
+.thanks-friend > img:first-child { filter: drop-shadow(0 6px 0 var(--brand-dark)); }
+.thanks-friend .thanks-heart { position: absolute; left: 36.7%; top: 69.8%; width: 15.8%; animation: heartbeat 1.8s ease-in-out .8s infinite; }
+@keyframes sway { 0%, 100% { transform: rotate(-2.5deg); } 50% { transform: rotate(2.5deg); } }
+@keyframes heartbeat { 0%, 50%, 100% { transform: scale(1); } 12% { transform: scale(1.3); } 25% { transform: scale(1.05); } 37% { transform: scale(1.22); } }
 .complete h2 { margin: 0; font-size: clamp(1.8rem, 7vw, 2.4rem); animation: pop .5s var(--spring) .2s both; }
 .stats { display: flex; gap: 12px; animation: rise .5s var(--spring) .35s both; }
 .stat { display: flex; flex-direction: column; min-width: 120px; padding: 10px 14px 8px; background: #fff; border-radius: 26px 10px 22px 12px / 10px 24px 12px 22px; box-shadow: 0 5px 0 var(--brand-dark); }
@@ -389,7 +392,6 @@ body.brand-bg { background: var(--brand) url(../img/crayon.svg) 0 0 / 200px 200p
 .peek-wrap .rows { position: relative; z-index: 1; }
 .peek { position: absolute; top: -66px; left: 22px; z-index: 0; width: 74px; height: auto; animation: peek 4s ease-in-out infinite; }
 @keyframes peek { 0%, 100% { transform: translateY(6px) rotate(-3deg); } 50% { transform: translateY(0) rotate(3deg); } }
-.hero-logo .complete-friend { position: absolute; left: -12%; bottom: -16%; width: 34%; height: auto; animation: pop .55s var(--spring) .55s both; }
 
 /* countdown sticker on the event card */
 .ev-card { position: relative; }
