@@ -219,7 +219,7 @@
 
   /* ---------- the chef cheers you on ---------- */
 
-  const CHEERS = ['كفو!', 'تسلم!', 'يمي!', 'عساك عالقوة!', 'يا حلوك!'];
+  const CHEERS = ['كفو!', 'تسلم!', 'يمي!', 'يا حلوك!'];
   let cheerTimer, lastCheer = -1, bubbleText = 'شنو بتييب؟';
 
   function replay(el, cls) {
