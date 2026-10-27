@@ -414,11 +414,15 @@ body.brand-bg { background: var(--brand) url(../img/crayon.svg) 0 0 / 200px 200p
 
 /* loading: the bus drives along a dashed road */
 .loader { display: grid; place-items: center; padding: 36px 0; list-style: none; animation: appear .3s .2s both; }
-.loader-road { position: relative; width: min(240px, 66vw); height: 64px; overflow: hidden; }
-.loader-road::after { content: ""; position: absolute; inset-inline: 0; bottom: 3px; border-bottom: 4px dashed rgba(255, 255, 255, .75); }
-.loader-bus { position: absolute; bottom: 7px; left: 100%; width: 76px; animation: drive 1.9s linear infinite; }
-.loader-bus img { display: block; width: 100%; height: auto; animation: bob .45s ease-in-out infinite; }
-@keyframes drive { to { left: -76px; } }
+.scene { position: relative; width: 300px; max-width: 100%; height: 120px; overflow: hidden; }
+.scene .layer { position: absolute; left: 0; bottom: 0; width: 600px; max-width: none; height: 120px; animation: scroll linear infinite; }
+.scene .clouds { animation-duration: 9s; }
+.scene .trees { animation-duration: 3.6s; }
+.scene .ground { animation-duration: 1.5s; }
+@keyframes scroll { from { transform: translateX(-300px); } to { transform: translateX(0); } }
+.scene-bus { position: absolute; z-index: 1; bottom: 11px; left: 50%; width: 84px; margin-left: -42px; animation: cruise 3.2s ease-in-out infinite; }
+.scene-bus img { display: block; width: 100%; height: auto; animation: bob .45s ease-in-out infinite; }
+@keyframes cruise { 50% { transform: translateX(-14px); } }
 @keyframes appear { from { opacity: 0; } }
 
 /* someone else just signed up */

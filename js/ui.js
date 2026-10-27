@@ -87,6 +87,24 @@ window.UI = (function () {
     return `<svg class="ic" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name]}</svg>`;
   }
 
+  /* Loading: the bus drives along while the landscape scrolls past (clouds slowest, trees,
+     then the crayon road with grass fastest), like a game's loading screen. */
+  const tree = (x, s) => `<g transform="translate(${x} ${112 - 30 * s}) scale(${s})">
+      <path d="M0 30 V8" stroke="#b07a4a" stroke-width="5" stroke-linecap="round"/>
+      <path d="M-14 6 a10 10 0 0 1 4-16 a12 12 0 0 1 21-3 a10 10 0 0 1 6 17 a9 9 0 0 1-12 6 a10 10 0 0 1-19-4z" fill="#7fd858" stroke="#46a015" stroke-width="3" stroke-linejoin="round"/>
+    </g>`;
+  const cloud = (x, y, s) => `<path transform="translate(${x} ${y}) scale(${s})" d="M0 14 a9 9 0 0 1 8-12 a12 12 0 0 1 22 0 a8 8 0 0 1 6 12z" fill="#fff" opacity=".9"/>`;
+  const tuft = (x, c) => `<path transform="translate(${x} 96)" d="M3 14 Q4 7 2 3 M9 14 Q9 6 10 1 M15 14 Q14 8 16 4" fill="none" stroke="${c}" stroke-width="2.4" stroke-linecap="round"/>`;
+  const twice = f => f(0) + f(300);
+  const wave = 'M0 112 ' + Array.from({ length: 20 }, (_, i) => `Q ${i * 30 + 15} ${i % 2 ? 116 : 108} ${i * 30 + 30} 112`).join(' ');
+  const LOADER = `<div class="scene" role="img" aria-label="جارٍ التحميل">
+      <svg class="layer clouds" width="600" height="120" viewBox="0 0 600 120" aria-hidden="true">${twice(o => cloud(o + 30, 14, 1) + cloud(o + 190, 30, .7))}</svg>
+      <svg class="layer trees" width="600" height="120" viewBox="0 0 600 120" aria-hidden="true"><defs><filter id="sceneCrayon"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="3"/><feDisplacementMap in="SourceGraphic" scale="2.5"/></filter></defs><g filter="url(#sceneCrayon)">${twice(o => tree(o + 70, 1.35) + tree(o + 225, 1))}</g></svg>
+      <svg class="layer ground" width="600" height="120" viewBox="0 0 600 120" aria-hidden="true"><g filter="url(#sceneCrayon)"><path d="${wave}" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/>${twice(o => tuft(o + 25, '#58c322') + tuft(o + 140, '#7fd858') + tuft(o + 255, '#58c322'))}</g></svg>
+      <span class="scene-bus"><img src="img/logo-sticker.png" alt=""></span>
+    </div>`;
+  document.querySelectorAll('.loader').forEach(el => { el.innerHTML = LOADER; });
+
   let toastTimer;
   function toast(msg) {
     let el = $('#toast');
