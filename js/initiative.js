@@ -315,16 +315,14 @@
 
   /* ---------- the list at the end: who's bringing what, and what's still needed ---------- */
 
-  const AVATAR = ['#1cb0f6', '#58c322', '#ff9600', '#ce82ff', '#ff4b4b', '#2b70c9'];
   const hash = name => [...String(name)].reduce((n, c) => n + c.codePointAt(0), 0);
-  const avatarColor = name => AVATAR[hash(name) % AVATAR.length];
-  // a little smiley instead of a letter, like their character: happy closed eyes, dot eyes, or a big grin
-  const FACES = [
-    '<path d="M12 19q3.5-4.5 7 0M25 19q3.5-4.5 7 0"/><path d="M15 26q7 7 14 0"/>',
-    '<circle cx="16" cy="18" r="2.3" fill="#fff" stroke="none"/><circle cx="28" cy="18" r="2.3" fill="#fff" stroke="none"/><path d="M14 25q8 9 16 0"/>',
-    '<path d="M12 19q3.5-4.5 7 0M25 19q3.5-4.5 7 0"/><path d="M15 25h14q0 8-7 8t-7-8z" fill="#fff"/>'
-  ];
-  const face = name => `<span class="avatar" style="--c:${avatarColor(name)}"><svg viewBox="0 0 44 44" fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${FACES[hash(name) % FACES.length]}</svg></span>`;
+  // each name gets one of their little characters (the heart friend or the chef) on a soft brand colour
+  const SOFT = ['#ddf4ff', '#e4f9d4', '#fff3c4', '#ffe1ec', '#efe4ff'];
+  // down the list they take turns, so it always looks mixed; elsewhere it follows the name
+  const face = (name, i) => {
+    const h = i == null ? hash(name) : i;
+    return `<span class="avatar face" style="--c:${SOFT[h % SOFT.length]}"><img src="img/deco/face-${h % 2 ? 'chef' : 'friend'}.png" alt=""></span>`;
+  };
 
   function renderList() {
     const items = ini.items || [];
@@ -334,14 +332,14 @@
     $('#whoWrap').hidden = !rows.length;
     // each thing as a little chip: photo, name, how many
     const chip = (name, qty, img) => `<span class="mini">${img ? `<img src="${esc(img)}" alt="">` : ''}<span>${esc(name)}</span><b>${qty}</b></span>`;
-    setHTML($('#whoList'), rows.map(p => {
+    setHTML($('#whoList'), rows.map((p, i) => {
       const what = [
         ...(p.items || []).filter(x => byId[x.id]).map(x => chip(byId[x.id].name, x.qty, byId[x.id].img)),
         ...(p.extras || []).map(x => chip(x.name, x.qty))
       ].join('');
       const me = mine.has(p.id), name = names[p.id];
       return `<li class="row${me ? ' mine' : ''}" data-pid="${esc(p.id)}">
-        ${face(name)}
+        ${face(name, i)}
         <span class="row-main"><b>${esc(name)}</b><span class="minis">${what}</span></span>
         ${me ? '<span class="pill">أنت</span>' : ''}
       </li>`;

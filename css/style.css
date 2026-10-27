@@ -448,8 +448,9 @@ body.has-basket .live-pop { bottom: calc(96px + env(safe-area-inset-bottom)); }
   100% { transform: translateY(-18px) rotate(-8deg); opacity: 0; }
 }
 
-/* smiley avatars */
-.avatar svg { width: 100%; height: 100%; }
+/* their little characters as avatars */
+.avatar.face { overflow: hidden; box-shadow: inset 0 0 0 2px rgba(0, 0, 0, .05); }
+.avatar.face img { display: block; width: 100%; height: 100%; }
 
 /* hearts float up from the friend */
 .thanks-friend, .peek { cursor: pointer; -webkit-tap-highlight-color: transparent; }
