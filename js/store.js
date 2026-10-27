@@ -66,7 +66,7 @@ window.Store = (function () {
             item('turkey', 'ديك رومي', 'علب', 34),
             item('cheese', 'جبن', 'علب', 15),
             item('cupcakes', 'كب كيك', 'حبات', 300),
-            item('crackers', 'بسكويت', 'حبات', 300),
+            item('crackers', 'بسكوت', 'حبات', 300),
             item('fruit', 'تفاح أو برتقال', 'حبات', 300),
             item('juice', 'عصير', 'علب', 300)
           ]
