@@ -7,6 +7,7 @@
   const pick = {};          // item id -> how many I'll bring
   let extras = [];          // my own extra items [{name, qty}]
   let ini = null, iniLoaded = false, pledges = [], people = [], got = {}, submitting = false;
+  let editing = null;       // id of my sign-up I'm changing, if any
   // sign-ups made on this phone, so the list can mark them "أنت"
   let mine = new Set();
   try { mine = new Set(JSON.parse(localStorage.getItem('kbf-mine') || '[]')); } catch (e) {}
@@ -28,9 +29,10 @@
     if (!iniLoaded) return;
     $('#loader').hidden = true;
     if (!ini) return notFound();
-    const t = tally(ini, pledges);
+    if (editing && !pledges.some(p => p.id === editing)) stopEditing();
+    const t = tally(ini, editing ? pledges.filter(p => p.id !== editing) : pledges);
     got = t.got;
-    allDoneCheck((ini.items || []).length > 0 && t.open === 0);
+    allDoneCheck((ini.items || []).length > 0 && tally(ini, pledges).open === 0);
     if (!submitting) clampPicks();
     renderHead(t);
     renderItems();
@@ -343,7 +345,7 @@
       return `<li class="row${me ? ' mine' : ''}" data-pid="${esc(p.id)}">
         ${face(name)}
         <span class="row-main"><b>${esc(name)}</b><span class="minis">${what}</span></span>
-        ${me ? '<span class="pill">أنت</span>' : ''}
+        ${me ? (p.uid && isOpen() && !editing ? `<button type="button" class="pill edit-btn" data-edit="${esc(p.id)}">تعديل</button>` : '<span class="pill">أنت</span>') : ''}
       </li>`;
     }).join(''));
     const left = items.filter(it => remaining(it) > 0);
@@ -388,11 +390,79 @@
   function renderBasket() {
     $('#basket').hidden = !isOpen();
     document.body.classList.toggle('has-basket', isOpen());
-    $('#sendBtn').disabled = !chosen().count;
+    const count = chosen().count, send = $('#sendBtn');
+    // changing a sign-up: no name needed; empty means cancel it
+    $('#name').hidden = !!editing;
+    $('#name').required = !editing;
+    $('#editBack').hidden = !editing;
+    $('#basket').classList.toggle('editing', !!editing);
+    send.classList.toggle('btn-cancel', !!editing && !count);
+    if (!send.classList.contains('armed')) send.textContent = !editing ? 'تأكيد' : count ? 'حفظ التعديل' : 'شيل تسجيلي';
+    send.disabled = !editing && !count;
+  }
+
+  /* ---------- change or cancel my sign-up ---------- */
+
+  $('#whoList').addEventListener('click', e => {
+    const b = e.target.closest('[data-edit]');
+    if (b) startEditing(b.dataset.edit);
+  });
+
+  function startEditing(pid) {
+    const p = pledges.find(x => x.id === pid);
+    if (!p || !isOpen()) return;
+    editing = pid;
+    for (const id of Object.keys(pick)) delete pick[id];
+    (p.items || []).forEach(x => { pick[x.id] = x.qty; });
+    extras = (p.extras || []).map(x => ({ ...x }));
+    render();
+    $('#items').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function stopEditing() {
+    editing = null;
+    for (const id of Object.keys(pick)) delete pick[id];
+    extras = [];
+    const send = $('#sendBtn');
+    send.classList.remove('armed');
+  }
+
+  $('#editBack').addEventListener('click', () => { stopEditing(); render(); });
+
+  async function saveEdit() {
+    const { items, count } = chosen(), send = $('#sendBtn'), pid = editing;
+    // cancelling takes a second tap
+    if (!count && !send.classList.contains('armed')) {
+      send.classList.add('armed');
+      send.textContent = 'متأكد؟';
+      setTimeout(() => { send.classList.remove('armed'); renderBasket(); }, 3500);
+      return;
+    }
+    submitting = true;
+    send.disabled = true;
+    try {
+      if (count) {
+        await Store.updatePledge(iid, pid, { items, extras });
+        toast('تم التعديل');
+        cheer();
+      } else {
+        await Store.cancelPledge(iid, pid);
+        mine.delete(pid);
+        try { localStorage.setItem('kbf-mine', JSON.stringify([...mine])); } catch (_) {}
+        toast('انشال تسجيلك');
+      }
+      stopEditing();
+    } catch (err) {
+      toast(isOpen() ? 'ما قدرنا نعدّل، كلم الفريق' : 'أُغلقت هذه المبادرة');
+    } finally {
+      submitting = false;
+      render();
+    }
   }
 
   $('#sendForm').addEventListener('submit', async e => {
     e.preventDefault();
+    if (editing) return saveEdit();
     const name = $('#name').value.trim();
     if (!name) { $('#name').focus(); return; }
     const { items, count, pieces } = chosen();

@@ -4,7 +4,8 @@
    Live mode (Firebase config in js/config.js): Firestore, updating live for everyone.
 
    initiatives/{id}                 title, date, time, place, phone, photo (small image data URL), status, items[{id,name,unit,needed,img}]
-   initiatives/{id}/pledges/{pid}   items[{id,qty}], extras[{name,qty}]   (public, no names)
+   initiatives/{id}/pledges/{pid}   items[{id,qty}], extras[{name,qty}], uid   (public, no names; uid = the phone's
+                                    invisible sign-in, so that phone can change or cancel it later)
    initiatives/{id}/people/{pid}    name                                  (team only) */
 window.Store = (function () {
   const cfg = (window.KBF_CONFIG || {}).firebase;
@@ -87,11 +88,18 @@ window.Store = (function () {
       const d = db(), ini = d.initiatives[iid];
       if (!ini || ini.status !== 'open') throw new Error('This initiative is closed');
       const id = newId(), t = Date.now();
-      (d.pledges[iid] = d.pledges[iid] || {})[id] = { id, items: cleanItems(items), extras: cleanExtras(extras), createdAt: t };
+      (d.pledges[iid] = d.pledges[iid] || {})[id] = { id, items: cleanItems(items), extras: cleanExtras(extras), createdAt: t, uid: 'preview' };
       (d.people[iid] = d.people[iid] || {})[id] = { id, name: cleanName(name), createdAt: t };
       commit();
       return id;
     },
+    async updatePledge(iid, pid, { items, extras }) {
+      const d = db(), p = (d.pledges[iid] || {})[pid];
+      if (!p || d.initiatives[iid].status !== 'open') throw new Error('Cannot change this sign-up');
+      p.items = cleanItems(items); p.extras = cleanExtras(extras);
+      commit();
+    },
+    async cancelPledge(iid, pid) { return previewApi.deletePledge(iid, pid); },
     async saveInitiative(id, data) {
       const d = db();
       id = id || newId();
@@ -137,6 +145,23 @@ window.Store = (function () {
     ]))
     .then(() => { firebase.initializeApp(cfg); fs = firebase.firestore(); });
 
+  /* Each phone gets an invisible anonymous sign-in the first time it signs up, so it can
+     change or cancel its own sign-up later. No account, nothing for the visitor to do. */
+  let authReady = null;
+  function loadAuth() {
+    if (!authReady) authReady = ready.then(() => (firebase.auth ? null : loadScript(FB + 'firebase-auth-compat.js')));
+    return authReady;
+  }
+  async function myUid() {
+    try {
+      await loadAuth();
+      const auth = firebase.auth();
+      await new Promise(res => { const off = auth.onAuthStateChanged(() => { off(); res(); }); });
+      if (!auth.currentUser) await auth.signInAnonymously();
+      return auth.currentUser.isAnonymous ? auth.currentUser.uid : null;
+    } catch (e) { return null; }   // anonymous sign-in switched off: the sign-up still works, just can't be changed later
+  }
+
   /* Team logins are a username + password. Firebase accounts need an email,
      so a username like "khairbus" is stored as khairbus@<project>.firebaseapp.com. */
   const TEAM_DOMAIN = cfg ? '@' + cfg.authDomain : '';
@@ -168,11 +193,31 @@ window.Store = (function () {
 
     async pledge(iid, { name, items, extras }) {
       await ready;
-      const ref = inis().doc(iid), p = ref.collection('pledges').doc(), b = fs.batch();
-      b.set(p, { items: cleanItems(items), extras: cleanExtras(extras), createdAt: stamp() });
-      b.set(ref.collection('people').doc(p.id), { name: cleanName(name), createdAt: stamp() });
+      const uid = window.KBF_ADMIN ? null : await myUid();
+      const save = withUid => {
+        const ref = inis().doc(iid), p = ref.collection('pledges').doc(), b = fs.batch();
+        const body = { items: cleanItems(items), extras: cleanExtras(extras), createdAt: stamp() };
+        if (withUid) body.uid = uid;
+        b.set(p, body);
+        b.set(ref.collection('people').doc(p.id), { name: cleanName(name), createdAt: stamp() });
+        return b.commit().then(() => p.id);
+      };
+      // if the rules don't know about uid yet, still save the sign-up
+      if (uid) { try { return await save(true); } catch (e) { if (e.code !== 'permission-denied') throw e; } }
+      return save(false);
+    },
+    async updatePledge(iid, pid, { items, extras }) {
+      await ready;
+      await myUid();
+      await inis().doc(iid).collection('pledges').doc(pid).update({ items: cleanItems(items), extras: cleanExtras(extras) });
+    },
+    async cancelPledge(iid, pid) {
+      await ready;
+      await myUid();
+      const ref = inis().doc(iid), b = fs.batch();
+      b.delete(ref.collection('pledges').doc(pid));
+      b.delete(ref.collection('people').doc(pid));
       await b.commit();
-      return p.id;
     },
     async saveInitiative(id, data) {
       await ready;
@@ -206,7 +251,8 @@ window.Store = (function () {
         if (stopped) return;
         // only the team has accounts (made in the Firebase console), so signed in = team
         off = firebase.auth().onAuthStateChanged(user => {
-          cb(user ? { state: 'in', email: username(user.email) } : { state: 'out' });
+          // a phone's invisible sign-up login isn't the team
+          cb(user && !user.isAnonymous ? { state: 'in', email: username(user.email) } : { state: 'out' });
         });
       }).catch(() => cb({ state: 'out', error: true }));
       return () => { stopped = true; if (off) off(); };
