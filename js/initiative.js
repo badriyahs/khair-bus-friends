@@ -318,13 +318,16 @@
   const hash = name => [...String(name)].reduce((n, c) => n + c.codePointAt(0), 0);
   // each name gets one of their little characters: the heart friend or the chef, in different
   // scarf colours (some with rosy cheeks), on a matching soft colour. Down the list they take turns.
+  // [picture, soft background, deeper shade of the scarf for the name]
   const FACES = [
-    ['friend-blue', '#ddf4ff'], ['chef-pink', '#ffe1ec'], ['friend-green', '#e4f9d4'], ['chef-orange', '#fff3c4'],
-    ['friend-purple', '#efe4ff'], ['chef-blue', '#ddf4ff'], ['friend-pink', '#ffe1ec'], ['chef-green', '#e4f9d4'],
-    ['friend-yellow', '#fff3c4'], ['chef-purple', '#efe4ff']
+    ['friend-blue', '#ddf4ff', '#1590d0'], ['chef-pink', '#ffe1ec', '#d6336c'], ['friend-green', '#e4f9d4', '#46a015'],
+    ['chef-orange', '#fff3c4', '#e07800'], ['friend-purple', '#efe4ff', '#8e44c9'], ['chef-blue', '#ddf4ff', '#1590d0'],
+    ['friend-pink', '#ffe1ec', '#d6336c'], ['chef-green', '#e4f9d4', '#46a015'], ['friend-yellow', '#fff3c4', '#c48a00'],
+    ['chef-purple', '#efe4ff', '#8e44c9']
   ];
+  const look = (name, i) => FACES[(i == null ? hash(name) : i) % FACES.length];
   const face = (name, i) => {
-    const [img, bg] = FACES[(i == null ? hash(name) : i) % FACES.length];
+    const [img, bg] = look(name, i);
     return `<span class="avatar face" style="--c:${bg}"><img src="img/faces/${img}.png?v=2" alt=""></span>`;
   };
 
@@ -344,7 +347,7 @@
       const me = mine.has(p.id), name = names[p.id];
       return `<li class="row${me ? ' mine' : ''}" data-pid="${esc(p.id)}">
         ${face(name, i)}
-        <span class="row-main"><b>${esc(name)}</b><span class="minis">${what}</span></span>
+        <span class="row-main"><b style="color:${look(name, i)[2]}">${esc(name)}</b><span class="minis">${what}</span></span>
         ${me ? '<span class="pill">أنت</span>' : ''}
       </li>`;
     }).join(''));
