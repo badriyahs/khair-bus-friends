@@ -219,7 +219,7 @@
 
   /* ---------- the chef cheers you on ---------- */
 
-  const CHEERS = ['كفو!', 'تسلم!', 'يمّي!', 'عساك عالقوة!', 'يا حلوك!'];
+  const CHEERS = ['كفو!', 'تسلم!', 'يمي!', 'عساك عالقوة!', 'يا حلوك!'];
   let cheerTimer, lastCheer = -1, bubbleText = 'شنو بتييب؟';
 
   function replay(el, cls) {
@@ -463,10 +463,21 @@
 
   /* ---------- everything's covered: thank everyone ---------- */
 
-  let wasAllDone = null, partyWaiting = false;
+  // once everything's covered the chef takes turns thanking everyone
+  const THANKS = ['تسليم ايدكم!', 'ما قصرتوا!', 'ميزانكم!'];
+  let wasAllDone = null, partyWaiting = false, thanksI = 0, thanksTimer = null;
   function allDoneCheck(allDone) {
-    bubbleText = allDone ? 'تسلم إيدينكم!' : 'شنو بتييب؟';
+    bubbleText = allDone ? THANKS[thanksI] : 'شنو بتييب؟';
     if (!cheerTimer) $('#bubble').textContent = bubbleText;
+    if (allDone && !thanksTimer) {
+      thanksTimer = setInterval(() => {
+        thanksI = (thanksI + 1) % THANKS.length;
+        bubbleText = THANKS[thanksI];
+        if (cheerTimer) return;
+        $('#bubble').textContent = bubbleText;
+        replay($('#bubble'), 'cheer');
+      }, 3200);
+    } else if (!allDone && thanksTimer) { clearInterval(thanksTimer); thanksTimer = null; thanksI = 0; }
     if (wasAllDone === false && allDone) {
       if (submitting || !done.hidden) partyWaiting = true;
       else allDoneParty();
