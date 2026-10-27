@@ -5,7 +5,7 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     // The team signs in with a username + password. Those accounts are made only in the
-    // Firebase console (public sign-up is switched off), so any password login is the team.
+    // Firebase console (public sign-up is switched off), so any signed-in user is the team.
     function isTeam() {
       return request.auth != null && request.auth.token.firebase.sign_in_provider == 'password';
     }
@@ -17,29 +17,17 @@ service cloud.firestore {
       function isOpen() {
         return get(/databases/$(database)/documents/initiatives/$(iid)).data.status == 'open';
       }
-      function validLists(d) {
-        return d.items is list && d.items.size() <= 100 && d.extras is list && d.extras.size() <= 20;
-      }
-      // the phone that made a sign-up (its invisible anonymous login) can change or cancel it
-      function ownsPledge(pid) {
-        return request.auth != null
-          && get(/databases/$(database)/documents/initiatives/$(iid)/pledges/$(pid)).data.get('uid', '') == request.auth.uid;
-      }
 
       // What people are bringing — public, no names
       match /pledges/{pid} {
         allow read: if true;
         allow create: if isOpen()
-          && request.resource.data.keys().hasOnly(['items', 'extras', 'createdAt', 'uid'])
-          && (!('uid' in request.resource.data) || (request.auth != null && request.resource.data.uid == request.auth.uid))
-          && validLists(request.resource.data)
+          && request.resource.data.keys().hasOnly(['items', 'extras', 'createdAt'])
+          && request.resource.data.items is list && request.resource.data.items.size() <= 100
+          && request.resource.data.extras is list && request.resource.data.extras.size() <= 20
           && request.resource.data.createdAt == request.time
           && existsAfter(/databases/$(database)/documents/initiatives/$(iid)/people/$(pid));
-        allow update: if isTeam() || (isOpen() && ownsPledge(pid)
-          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['items', 'extras'])
-          && validLists(request.resource.data));
-        allow delete: if isTeam() || (isOpen() && ownsPledge(pid)
-          && !existsAfter(/databases/$(database)/documents/initiatives/$(iid)/people/$(pid)));
+        allow update, delete: if isTeam();
       }
 
       // Who signed up — shown in the list on the event page
@@ -51,9 +39,7 @@ service cloud.firestore {
           && request.resource.data.name.size() > 0 && request.resource.data.name.size() <= 80
           && request.resource.data.createdAt == request.time
           && existsAfter(/databases/$(database)/documents/initiatives/$(iid)/pledges/$(pid));
-        allow update: if isTeam();
-        allow delete: if isTeam() || (isOpen() && ownsPledge(pid)
-          && !existsAfter(/databases/$(database)/documents/initiatives/$(iid)/pledges/$(pid)));
+        allow update, delete: if isTeam();
       }
     }
   }

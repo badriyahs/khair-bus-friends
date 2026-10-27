@@ -460,14 +460,6 @@ body.has-basket .live-pop { bottom: calc(96px + env(safe-area-inset-bottom)); }
 .party-layer .confetti { top: 70%; }
 .drive-bus { position: absolute; bottom: calc(110px + env(safe-area-inset-bottom)); left: 100%; width: 130px; height: auto; filter: drop-shadow(0 5px 0 var(--brand-dark)); animation: bob .45s ease-in-out infinite; }
 
-/* change my sign-up */
-.edit-btn { border: 0; background: var(--blue-soft); color: var(--blue-dark); font: inherit; font-size: .8rem; font-weight: 800; cursor: pointer; }
-.edit-btn:active { transform: translateY(1px); }
-.lesson-foot.editing .foot-form { justify-content: space-between; }
-.lesson-foot.editing .btn { flex: 1; }
-.btn.btn-cancel { background: #fff; border-color: var(--line); box-shadow: 0 4px 0 var(--line); color: var(--danger); }
-.btn.btn-cancel.armed { background: var(--danger); border-color: var(--danger); box-shadow: 0 4px 0 #c93636; color: #fff; }
-
 /* ---------- smaller screens ---------- */
 
 @media (max-width: 820px) {
