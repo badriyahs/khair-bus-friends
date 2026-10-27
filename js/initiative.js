@@ -325,7 +325,7 @@
   ];
   const face = (name, i) => {
     const [img, bg] = FACES[(i == null ? hash(name) : i) % FACES.length];
-    return `<span class="avatar face" style="--c:${bg}"><img src="img/faces/${img}.png" alt=""></span>`;
+    return `<span class="avatar face" style="--c:${bg}"><img src="img/faces/${img}.png?v=2" alt=""></span>`;
   };
 
   function renderList() {
