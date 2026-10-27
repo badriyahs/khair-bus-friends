@@ -2,6 +2,7 @@
 (function () {
   const { $, $$, esc, tally, arDate, twoTone, icon, toast, safeUrl, whatsapp } = UI;
   const iid = new URLSearchParams(location.search).get('id');
+  $('#goal').outerHTML = UI.GOAL;
   const done = $('#thanks');
   const cards = new Map();
   const pick = {};          // item id -> how many I'll bring
@@ -74,8 +75,7 @@
     if (photo.getAttribute('src') !== src) photo.src = src;
     $('#prompt').hidden = !isOpen();
     $('#stickyTitle').textContent = ini.title;
-    $('#ovBar').style.width = t.pct + '%';
-    $('#ride').style.setProperty('--p', t.pct);
+    UI.ride($('#ride'), t.pct);
     $('#content').hidden = false;
     $('#closedNote').hidden = isOpen();
   }

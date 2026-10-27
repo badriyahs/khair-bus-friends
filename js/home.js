@@ -57,8 +57,7 @@
 
   function progress(li, ini) {
     const t = tally(ini, pledgesFor[ini.id] || []);
-    li.querySelector('.bar-ride').style.setProperty('--p', t.pct);
-    li.querySelector('.bar-fill').style.width = t.pct + '%';
+    UI.ride(li.querySelector('.bar-ride'), t.pct);
     const left = li.querySelector('.ev-left'), text = t.open ? itemsLeft(t.open) : 'اكتملت كل الأصناف';
     if (left.textContent !== text) {
       if (left.textContent) { left.classList.remove('tick'); void left.offsetWidth; left.classList.add('tick'); }
@@ -88,7 +87,7 @@
     ].join('');
     const progress = past ? '' : `
         <span class="bar-ride" style="--p:0">
-          <span class="bar"><span class="bar-fill" style="width:0"></span></span>
+          <span class="bar"><span class="bar-fill" style="width:0"></span>${UI.GOAL}</span>
           <img class="ride-bus" src="img/logo-sticker.png" alt="">
         </span>
         <span class="ev-foot">

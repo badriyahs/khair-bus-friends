@@ -105,6 +105,25 @@ window.UI = (function () {
     </div>`;
   document.querySelectorAll('.loader').forEach(el => { el.innerHTML = LOADER; });
 
+  /* Progress bars with the riding bus: a finish flag that says ما بقى شي!, and the bus hops
+     whenever the bar moves forward. */
+  const GOAL = `<span class="bar-goal">ما بقى شي!<svg class="flag" viewBox="0 0 12 14" aria-hidden="true"><path d="M2 1.5v11.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M2.8 1.6h8.2v5.6H2.8z" fill="#fff" stroke="currentColor" stroke-width="1"/><path d="M2.8 1.6h2.7v2.8H2.8zM5.5 4.4h2.8v2.8H5.5zM8.3 1.6h2.7v2.8H8.3z" fill="currentColor"/></svg></span>`;
+  function ride(el, pct) {
+    const before = el.dataset.p == null ? null : +el.dataset.p;
+    el.dataset.p = pct;
+    el.style.setProperty('--p', pct);
+    el.querySelector('.bar-fill').style.width = pct + '%';
+    const goal = el.querySelector('.bar-goal');
+    if (goal) goal.hidden = pct >= 100;
+    if (before != null && pct > before) {
+      const bus = el.querySelector('.ride-bus');
+      bus.classList.remove('hop');
+      void bus.offsetWidth;   // restart the hop
+      bus.classList.add('hop');
+      bus.addEventListener('animationend', () => bus.classList.remove('hop'), { once: true });
+    }
+  }
+
   let toastTimer;
   function toast(msg) {
     let el = $('#toast');
@@ -128,5 +147,5 @@ window.UI = (function () {
     document.body.prepend(b);
   });
 
-  return { $, $$, esc, arDate, when, itemsLeft, twoTone, byDate, tally, icon, toast, safeUrl, whatsapp };
+  return { $, $$, esc, arDate, when, itemsLeft, twoTone, byDate, tally, icon, toast, GOAL, ride, safeUrl, whatsapp };
 })();
