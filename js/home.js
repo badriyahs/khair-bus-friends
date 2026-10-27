@@ -18,6 +18,22 @@
     $('#openList').innerHTML = '<li class="empty">تعذّر التحميل، حدّث الصفحة</li>';
   });
 
+  // tap the big bus: it hops and honks
+  const bus = $('.welcome .hero-logo');
+  function honk() {
+    bus.classList.remove('hop');
+    void bus.offsetWidth;   // restart the hop
+    bus.classList.add('hop');
+    const b = document.createElement('span');
+    b.className = 'honk';
+    b.textContent = 'بيب بيب!';
+    bus.appendChild(b);
+    setTimeout(() => b.remove(), 1300);
+  }
+  bus.addEventListener('click', honk);
+  bus.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); honk(); } });
+  bus.addEventListener('animationend', e => { if (e.animationName === 'hop') bus.classList.remove('hop'); });
+
   function render() {
     if (!initiatives) return;
     const open = initiatives.filter(i => i.status === 'open').sort(byDate);

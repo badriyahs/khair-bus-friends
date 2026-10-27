@@ -30,6 +30,7 @@
     if (!ini) return notFound();
     const t = tally(ini, pledges);
     got = t.got;
+    allDoneCheck((ini.items || []).length > 0 && t.open === 0);
     if (!submitting) clampPicks();
     renderHead(t);
     renderItems();
@@ -219,7 +220,7 @@
   /* ---------- the chef cheers you on ---------- */
 
   const CHEERS = ['كفو!', 'تسلم!', 'يمّي!', 'عساك عالقوة!', 'يا حلوك!'];
-  let cheerTimer, lastCheer = -1;
+  let cheerTimer, lastCheer = -1, bubbleText = 'شنو بتييب؟';
 
   function replay(el, cls) {
     el.classList.remove(cls);
@@ -237,7 +238,7 @@
     replay(bubble, 'cheer');
     replay($('#iniPhoto'), 'cheer');
     clearTimeout(cheerTimer);
-    cheerTimer = setTimeout(() => { bubble.textContent = 'شنو بتييب؟'; }, 2200);
+    cheerTimer = setTimeout(() => { cheerTimer = null; bubble.textContent = bubbleText; }, 2200);
   }
 
   // a little pop of their sparkles out of the food you tapped
@@ -315,7 +316,15 @@
   /* ---------- the list at the end: who's bringing what, and what's still needed ---------- */
 
   const AVATAR = ['#1cb0f6', '#58c322', '#ff9600', '#ce82ff', '#ff4b4b', '#2b70c9'];
-  const avatarColor = name => AVATAR[[...String(name)].reduce((n, c) => n + c.codePointAt(0), 0) % AVATAR.length];
+  const hash = name => [...String(name)].reduce((n, c) => n + c.codePointAt(0), 0);
+  const avatarColor = name => AVATAR[hash(name) % AVATAR.length];
+  // a little smiley instead of a letter, like their character: happy closed eyes, dot eyes, or a big grin
+  const FACES = [
+    '<path d="M12 19q3.5-4.5 7 0M25 19q3.5-4.5 7 0"/><path d="M15 26q7 7 14 0"/>',
+    '<circle cx="16" cy="18" r="2.3" fill="#fff" stroke="none"/><circle cx="28" cy="18" r="2.3" fill="#fff" stroke="none"/><path d="M14 25q8 9 16 0"/>',
+    '<path d="M12 19q3.5-4.5 7 0M25 19q3.5-4.5 7 0"/><path d="M15 25h14q0 8-7 8t-7-8z" fill="#fff"/>'
+  ];
+  const face = name => `<span class="avatar" style="--c:${avatarColor(name)}"><svg viewBox="0 0 44 44" fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${FACES[hash(name) % FACES.length]}</svg></span>`;
 
   function renderList() {
     const items = ini.items || [];
@@ -332,7 +341,7 @@
       ].join('');
       const me = mine.has(p.id), name = names[p.id];
       return `<li class="row${me ? ' mine' : ''}" data-pid="${esc(p.id)}">
-        <span class="avatar" style="--c:${avatarColor(name)}">${esc([...name.trim()][0] || '؟')}</span>
+        ${face(name)}
         <span class="row-main"><b>${esc(name)}</b><span class="minis">${what}</span></span>
         ${me ? '<span class="pill">أنت</span>' : ''}
       </li>`;
@@ -362,7 +371,7 @@
     }
     const name = fresh[fresh.length - 1].name || '';
     const who = fresh.length > 1 ? `${esc(name)} و${fresh.length - 1}` : esc(name);
-    pop.innerHTML = `<span class="avatar" style="--c:${avatarColor(name)}">${esc([...name.trim()][0] || '؟')}</span><span>${who} معانا!</span>`;
+    pop.innerHTML = `${face(name)}<span>${who} معانا!</span>`;
     pop.classList.add('show');
     clearTimeout(popTimer);
     popTimer = setTimeout(() => pop.classList.remove('show'), 3200);
@@ -422,6 +431,7 @@
   // Continue: back to the page, at your row in the list
   $('#doneBtn').addEventListener('click', () => {
     done.hidden = true;
+    if (partyWaiting) { partyWaiting = false; setTimeout(allDoneParty, 700); }
     document.body.classList.remove('no-scroll');
     const rows = $$('#whoList .row.mine');
     const row = rows[rows.length - 1];
@@ -432,7 +442,7 @@
   });
 
   // a burst of their hand-drawn sparkles behind the done screen
-  function confetti() {
+  function confetti(into = done) {
     if (!motionOK()) return;
     for (let i = 0; i < 46; i++) {
       const p = document.createElement('img');
@@ -441,7 +451,7 @@
       p.alt = '';
       p.style.width = 18 + Math.random() * 22 + 'px';
       p.style.left = 50 + (Math.random() - .5) * 30 + 'vw';
-      done.appendChild(p);
+      into.appendChild(p);
       const dx = (Math.random() - .5) * 90, rise = 30 + Math.random() * 40, spin = (Math.random() - .5) * 1080;
       p.animate([
         { transform: 'translate(0, 0) rotate(0deg)', opacity: 1 },
@@ -450,6 +460,68 @@
       ], { duration: 1600 + Math.random() * 900, easing: 'cubic-bezier(.2, .7, .4, 1)' }).onfinish = () => p.remove();
     }
   }
+
+  /* ---------- everything's covered: thank everyone ---------- */
+
+  let wasAllDone = null, partyWaiting = false;
+  function allDoneCheck(allDone) {
+    bubbleText = allDone ? 'تسلم إيدينكم!' : 'شنو بتييب؟';
+    if (!cheerTimer) $('#bubble').textContent = bubbleText;
+    if (wasAllDone === false && allDone) {
+      if (submitting || !done.hidden) partyWaiting = true;
+      else allDoneParty();
+    }
+    wasAllDone = allDone;
+  }
+
+  function allDoneParty() {
+    const bubble = $('#bubble');
+    bubble.textContent = bubbleText;
+    replay(bubble, 'cheer');
+    replay($('#iniPhoto'), 'cheer');
+    if (!motionOK()) return;
+    const layer = document.createElement('div');
+    layer.className = 'party-layer';
+    document.body.appendChild(layer);
+    confetti(layer);
+    // the bus drives across the bottom of the screen
+    const bus = document.createElement('img');
+    bus.className = 'drive-bus';
+    bus.src = 'img/logo-sticker.png';
+    bus.alt = '';
+    layer.appendChild(bus);
+    bus.animate([{ left: '100%' }, { left: '-140px' }], { duration: 2600, easing: 'ease-in-out' });
+    setTimeout(() => layer.remove(), 3000);
+  }
+
+  /* ---------- tap the heart friend: little hearts float up ---------- */
+
+  function floatHearts(from) {
+    if (!motionOK()) return;
+    const r = from.getBoundingClientRect();
+    for (let i = 0; i < 6; i++) {
+      const h = document.createElement('img');
+      const size = 16 + Math.random() * 14;
+      h.className = 'float-heart';
+      h.src = 'img/deco/friend-heart.png';
+      h.alt = '';
+      h.style.width = size + 'px';
+      h.style.left = r.left + r.width / 2 - size / 2 + 'px';
+      h.style.top = r.top + r.height / 2 - size / 2 + 'px';
+      document.body.appendChild(h);
+      const dx = (Math.random() - .5) * 90, rise = 90 + Math.random() * 80;
+      h.animate([
+        { transform: 'translate(0, 0) scale(.3)', opacity: 0 },
+        { transform: `translate(${dx * .3}px, -20px) scale(1)`, opacity: 1, offset: .2 },
+        { transform: `translate(${dx}px, -${rise}px) scale(.8) rotate(${dx / 4}deg)`, opacity: 0 }
+      ], { duration: 1200 + Math.random() * 500, delay: i * 90, easing: 'ease-out', fill: 'backwards' }).onfinish = () => h.remove();
+    }
+  }
+  $('.thanks-friend').addEventListener('click', () => floatHearts($('.thanks-heart')));
+  $('.peek').addEventListener('click', e => {
+    const r = e.currentTarget.getBoundingClientRect();
+    floatHearts({ getBoundingClientRect: () => ({ left: r.left, top: r.top + r.height * .6, width: r.width, height: r.height * .3 }) });
+  });
 
   function notFound() {
     $('#loader').hidden = true;
