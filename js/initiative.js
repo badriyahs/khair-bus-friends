@@ -316,12 +316,16 @@
   /* ---------- the list at the end: who's bringing what, and what's still needed ---------- */
 
   const hash = name => [...String(name)].reduce((n, c) => n + c.codePointAt(0), 0);
-  // each name gets one of their little characters (the heart friend or the chef) on a soft brand colour
-  const SOFT = ['#ddf4ff', '#e4f9d4', '#fff3c4', '#ffe1ec', '#efe4ff'];
-  // down the list they take turns, so it always looks mixed; elsewhere it follows the name
+  // each name gets one of their little characters: the heart friend or the chef, in different
+  // scarf colours (some with rosy cheeks), on a matching soft colour. Down the list they take turns.
+  const FACES = [
+    ['friend-blue', '#ddf4ff'], ['chef-pink', '#ffe1ec'], ['friend-green', '#e4f9d4'], ['chef-orange', '#fff3c4'],
+    ['friend-purple', '#efe4ff'], ['chef-blue', '#ddf4ff'], ['friend-pink', '#ffe1ec'], ['chef-green', '#e4f9d4'],
+    ['friend-yellow', '#fff3c4'], ['chef-purple', '#efe4ff']
+  ];
   const face = (name, i) => {
-    const h = i == null ? hash(name) : i;
-    return `<span class="avatar face" style="--c:${SOFT[h % SOFT.length]}"><img src="img/deco/face-${h % 2 ? 'chef' : 'friend'}.png" alt=""></span>`;
+    const [img, bg] = FACES[(i == null ? hash(name) : i) % FACES.length];
+    return `<span class="avatar face" style="--c:${bg}"><img src="img/faces/${img}.png" alt=""></span>`;
   };
 
   function renderList() {
