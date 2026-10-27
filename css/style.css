@@ -383,7 +383,7 @@ body.brand-bg { background: var(--brand) url(../img/crayon.svg) 0 0 / 200px 200p
 
 /* the bus rides the progress bar */
 .bar-ride { position: relative; --p: 0; }
-.ride-bus { position: absolute; top: 50%; inset-inline-start: clamp(0px, calc(var(--p) * 1% - 22px), calc(100% - 44px)); width: 44px; height: auto; translate: 0 -62%; filter: drop-shadow(0 2px 0 rgba(0, 0, 0, .12)); transition: inset-inline-start .7s var(--spring); animation: bob 1.4s ease-in-out infinite; pointer-events: none; }
+.ride-bus { position: absolute; z-index: 2; top: 50%; inset-inline-start: clamp(0px, calc(var(--p) * 1% - 22px), calc(100% - 44px)); width: 44px; height: auto; translate: 0 -62%; filter: drop-shadow(0 2px 0 rgba(0, 0, 0, .12)); transition: inset-inline-start .7s var(--spring); animation: bob 1.4s ease-in-out infinite; pointer-events: none; }
 
 /* the chef cheers when you pick something */
 @keyframes hop { 40% { transform: translateY(-16px) rotate(-5deg); } 70% { transform: translateY(0) rotate(2deg); } }

@@ -44,14 +44,16 @@ window.UI = (function () {
         extras[key].qty += +x.qty || 0;
       }
     }
-    let need = 0, have = 0, open = 0;
+    // progress counts each food equally, so 300 juice boxes don't drown out 9 bags of bread
+    let need = 0, have = 0, open = 0, share = 0, kinds = 0;
     for (const it of (ini && ini.items) || []) {
       const n = +it.needed || 0;
       need += n;
       have += Math.min(got[it.id] || 0, n);
       if ((got[it.id] || 0) < n) open++;
+      if (n) { kinds++; share += Math.min(got[it.id] || 0, n) / n; }
     }
-    return { got, extras: Object.values(extras), need, have, open, pct: need ? Math.round(have / need * 100) : 0 };
+    return { got, extras: Object.values(extras), need, have, open, pct: kinds ? Math.round(share / kinds * 100) : 0 };
   }
 
   const ICONS = {
