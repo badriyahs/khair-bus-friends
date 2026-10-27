@@ -99,7 +99,7 @@
   }
 
   function select(id) {
-    if (dirty && !confirm('الخروج بدون حفظ؟')) return;
+    if (dirty) return saveFirst();
     stopWatching();
     sel = id; current = null; draft = null; dirty = false; pledges = []; people = []; tab = 'details';
     renderList();
@@ -119,7 +119,7 @@
   }
 
   function newInitiative() {
-    if (dirty && !confirm('الخروج بدون حفظ؟')) return;
+    if (dirty) return saveFirst();
     stopWatching();
     sel = null; current = null; pledges = []; people = []; tab = 'details';
     draft = { title: '', date: '', time: '', place: '', map: '', phone: '', photo: '', status: 'open', items: [blankItem(), blankItem(), blankItem()] };
@@ -127,6 +127,31 @@
     renderList();
     renderPanel();
     $('#fTitle').focus();
+  }
+
+  // Pop-up "are you sure?" boxes don't show in some in-app browsers, so:
+  // unsaved changes nudge the save bar, and deleting takes a second tap.
+  function saveFirst() {
+    toast('احفظ أو تراجع أولاً');
+    const bar = $('#savebar');
+    if (bar) { bar.classList.remove('bump'); void bar.offsetWidth; bar.classList.add('bump'); }
+  }
+
+  function armed(btn, label) {
+    if (btn.classList.contains('armed')) return true;
+    $$('.armed', panel).forEach(disarm);
+    btn.dataset.html = btn.innerHTML;
+    btn.classList.add('armed');
+    btn.innerHTML = label;
+    btn.timer = setTimeout(() => disarm(btn), 3500);
+    return false;
+  }
+
+  function disarm(btn) {
+    clearTimeout(btn.timer);
+    btn.classList.remove('armed');
+    if (btn.dataset.html != null) btn.innerHTML = btn.dataset.html;
+    delete btn.dataset.html;
   }
 
   const blankItem = () => ({ id: 'i' + Math.random().toString(36).slice(2, 9), name: '', unit: '', needed: '', img: '' });
@@ -353,12 +378,12 @@
     const act = b.dataset.act;
     if (act === 'new') newInitiative();
     else if (act === 'add') addItem();
-    else if (act === 'del-item') removeItem(b.closest('.edit-row'));
+    else if (act === 'del-item') removeItem(b.closest('.edit-row'), b);
     else if (act === 'save') save();
     else if (act === 'discard') discard();
     else if (act === 'copy') copyLink();
-    else if (act === 'delete') deleteInitiative();
-    else if (act === 'unpledge') removePledge(b.dataset.pid);
+    else if (act === 'delete') deleteInitiative(b);
+    else if (act === 'unpledge') removePledge(b.dataset.pid, b);
     else if (act === 'csv') downloadCSV();
     else if (act === 'photo-remove') { draft.photo = ''; showPhoto(); markDirty(); }
   });
@@ -372,11 +397,11 @@
     $(`.edit-row[data-id="${it.id}"] .c-name`).focus();
   }
 
-  function removeItem(row) {
+  function removeItem(row, btn) {
     const it = draft.items.find(x => x.id === row.dataset.id);
     if (!it) return;
     const promised = tally(null, pledges).got[it.id] || 0;
-    if (promised && !confirm(`مسجّل ${promised} من «${it.name}». حذفه؟`)) return;
+    if (promised && !armed(btn, `مسجّل ${promised}، حذف؟`)) return;
     draft.items = draft.items.filter(x => x !== it);
     row.remove();
     markDirty();
@@ -423,12 +448,11 @@
     const url = new URL(`initiative.html?id=${encodeURIComponent(sel)}`, location.href).href;
     (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject())
       .then(() => toast('تم نسخ الرابط'))
-      .catch(() => window.prompt('انسخ الرابط:', url));
+      .catch(() => toast(url));
   }
 
-  async function deleteInitiative() {
-    const name = (current && current.title) || 'هذه المبادرة';
-    if (!confirm(`حذف «${name}» وكل الأسماء؟ لا يمكن التراجع.`)) return;
+  async function deleteInitiative(btn) {
+    if (!armed(btn, `${icon('trash', 16)} متأكد؟ تنحذف مع كل الأسماء`)) return;
     const id = sel;
     stopWatching();
     sel = null; current = null; draft = null; dirty = false;
@@ -444,9 +468,8 @@
     if (next) select(next.id); else { renderList(); renderPanel(); }
   }
 
-  async function removePledge(pid) {
-    const who = (people.find(p => p.id === pid) || {}).name || 'هذا الاسم';
-    if (!confirm(`إزالة ${who}؟ ترجع أصنافه للقائمة.`)) return;
+  async function removePledge(pid, btn) {
+    if (!armed(btn, 'إزالة؟')) return;
     try { await Store.deletePledge(sel, pid); toast('تمت الإزالة'); }
     catch (err) { toast('تعذّرت الإزالة، حاول مرة أخرى'); }
   }

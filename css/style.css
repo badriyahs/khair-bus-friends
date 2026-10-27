@@ -342,6 +342,9 @@ body.has-basket main { padding-bottom: 120px; }
 .icon-btn { display: grid; place-items: center; width: 42px; height: 42px; border: 2px solid var(--line); border-radius: 12px; background: #fff; box-shadow: 0 3px 0 var(--line); color: var(--muted); cursor: pointer; }
 .icon-btn:hover { color: var(--danger); }
 .icon-btn:active { transform: translateY(3px); box-shadow: none; }
+/* second tap deletes: the button turns red and says so */
+.icon-btn.armed, .btn-danger.armed { width: auto; padding: 0 12px; border-color: var(--danger); background: var(--danger); box-shadow: 0 3px 0 #c93636; color: #fff; font-size: .9rem; font-weight: 800; white-space: nowrap; animation: pop .25s var(--spring); }
+.savebar.bump { animation: bump .4s var(--spring); }
 .danger-zone { margin-top: 32px; padding-top: 16px; border-top: 2px solid var(--line); }
 
 .savebar { position: sticky; bottom: 12px; z-index: 5; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-top: 22px; padding: 10px; padding-inline-start: 18px; border-radius: 18px; background: var(--ink); color: #fff; font-weight: 700; box-shadow: 0 10px 26px rgba(0, 0, 0, .2); animation: rise .25s var(--spring); }
