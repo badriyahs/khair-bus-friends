@@ -239,6 +239,24 @@
     replay($('#iniPhoto'), 'cheer');
     clearTimeout(cheerTimer);
     cheerTimer = setTimeout(() => { cheerTimer = null; bubble.textContent = bubbleText; }, 2200);
+    peekChef(CHEERS[i]);
+  }
+
+  // when the big chef has scrolled out of view, a little one peeks up from behind the bottom bar
+  let peekTimer;
+  function chefInView() {
+    const r = $('#iniPhoto').getBoundingClientRect();   // below the top bar, above the bottom bar
+    return r.height > 0 && r.bottom > 110 && r.top < innerHeight - 110;
+  }
+  function peekChef(text) {
+    if (chefInView() || !isOpen()) return;
+    const peek = $('#peekChef'), img = $('#peekChefImg');
+    if (img.getAttribute('src') !== $('#iniPhoto').getAttribute('src')) img.src = $('#iniPhoto').getAttribute('src');
+    $('#peekBubble').textContent = text;
+    replay($('#peekBubble'), 'cheer');
+    peek.classList.add('show');
+    clearTimeout(peekTimer);
+    peekTimer = setTimeout(() => peek.classList.remove('show'), 2000);
   }
 
   // a little pop of their sparkles out of the food you tapped
@@ -495,6 +513,7 @@
     bubble.textContent = bubbleText;
     replay(bubble, 'cheer');
     replay($('#iniPhoto'), 'cheer');
+    peekChef(bubbleText);
     if (!motionOK()) return;
     const layer = document.createElement('div');
     layer.className = 'party-layer';

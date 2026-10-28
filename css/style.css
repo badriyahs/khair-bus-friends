@@ -476,6 +476,13 @@ body.has-basket .live-pop { bottom: calc(96px + env(safe-area-inset-bottom)); }
 .party-layer .confetti { top: 70%; }
 .drive-bus { position: absolute; bottom: calc(110px + env(safe-area-inset-bottom)); left: 100%; width: 130px; height: auto; filter: drop-shadow(0 5px 0 var(--brand-dark)); animation: bob .45s ease-in-out infinite; }
 
+/* the little chef that peeks up from behind the bottom bar */
+.peek-chef { position: fixed; z-index: 29; bottom: calc(66px + env(safe-area-inset-bottom)); inset-inline-start: 14px; display: flex; align-items: flex-start; gap: 4px; transform: translateY(130%); transition: transform .45s var(--spring); pointer-events: none; }
+.peek-chef.show { transform: translateY(0); }
+.peek-chef img { width: 78px; height: auto; }
+.peek-chef .bubble { margin: 8px 0 0; padding: 7px 14px; font-size: 1rem; white-space: nowrap; animation: none; box-shadow: 0 3px 0 rgba(0, 0, 0, .08); }
+.peek-chef .bubble.cheer { animation: pop .4s var(--spring); }
+
 /* ---------- smaller screens ---------- */
 
 @media (max-width: 820px) {
