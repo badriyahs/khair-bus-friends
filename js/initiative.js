@@ -352,21 +352,32 @@
   function renderList() {
     const items = ini.items || [];
     const names = Object.fromEntries(people.map(p => [p.id, p.name]));
-    const byId = Object.fromEntries(items.map(it => [it.id, it]));
     const rows = pledges.filter(p => names[p.id]).sort((a, b) => a.createdAt - b.createdAt);
     $('#whoWrap').hidden = !rows.length;
+    // someone who signs up more than once shows once, with everything they're bringing added up
+    const people_ = [], byName = new Map();
+    for (const p of rows) {
+      const name = names[p.id], key = name.trim().replace(/\s+/g, ' ').toLowerCase();
+      let who = byName.get(key);
+      if (!who) { who = { name, items: {}, extras: new Map(), mine: false }; byName.set(key, who); people_.push(who); }
+      for (const x of p.items || []) who.items[x.id] = (who.items[x.id] || 0) + x.qty;
+      for (const x of p.extras || []) {
+        const k = String(x.name).trim().toLowerCase(), e = who.extras.get(k) || { name: x.name, qty: 0 };
+        e.qty += x.qty; who.extras.set(k, e);
+      }
+      if (mine.has(p.id)) who.mine = true;
+    }
     // each thing as a little chip: photo, name, how many
     const chip = (name, qty, img) => `<span class="mini">${img ? `<img src="${esc(img)}" alt="">` : ''}<span>${esc(name)}</span><b>${qty}</b></span>`;
-    setHTML($('#whoList'), rows.map((p, i) => {
+    setHTML($('#whoList'), people_.map((who, i) => {
       const what = [
-        ...(p.items || []).filter(x => byId[x.id]).map(x => chip(byId[x.id].name, x.qty, byId[x.id].img)),
-        ...(p.extras || []).map(x => chip(x.name, x.qty))
+        ...items.filter(it => who.items[it.id]).map(it => chip(it.name, who.items[it.id], it.img)),
+        ...[...who.extras.values()].map(x => chip(x.name, x.qty))
       ].join('');
-      const me = mine.has(p.id), name = names[p.id];
-      return `<li class="row${me ? ' mine' : ''}" data-pid="${esc(p.id)}">
-        ${face(name, i)}
-        <span class="row-main"><b style="color:${look(name, i)[2]}">${esc(name)}</b><span class="minis">${what}</span></span>
-        ${me ? '<span class="pill">أنت</span>' : ''}
+      return `<li class="row${who.mine ? ' mine' : ''}">
+        ${face(who.name, i)}
+        <span class="row-main"><b style="color:${look(who.name, i)[2]}">${esc(who.name)}</b><span class="minis">${what}</span></span>
+        ${who.mine ? '<span class="pill">أنت</span>' : ''}
       </li>`;
     }).join(''));
     const left = items.filter(it => remaining(it) > 0);
