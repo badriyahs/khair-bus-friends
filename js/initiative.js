@@ -411,11 +411,13 @@
   function renderBasket() {
     $('#basket').hidden = !isOpen();
     document.body.classList.toggle('has-basket', isOpen());
-    $('#sendBtn').disabled = !chosen().count;
+    // stays off while saving: the live update during saving used to switch it back on, so a quick double tap sent it twice
+    $('#sendBtn').disabled = submitting || !chosen().count;
   }
 
   $('#sendForm').addEventListener('submit', async e => {
     e.preventDefault();
+    if (submitting) return;
     const name = $('#name').value.trim();
     if (!name) { $('#name').focus(); return; }
     const { items, count, pieces } = chosen();
