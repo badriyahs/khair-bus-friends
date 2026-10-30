@@ -18,7 +18,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=10290842">
+  <link rel="stylesheet" href="css/style.css?v=10301500">
 </head>
 <body class="lesson-page brand-bg">
   <!-- like a lesson: close on one side, progress across the top, event name once you scroll -->
@@ -50,7 +50,16 @@
     </section>
 
     <div id="content" hidden>
-      <p class="notice" id="closedNote" hidden>المبادرة مغلقة</p>
+      <!-- after the event: a thank-you banner instead of sign-ups -->
+      <section class="done-banner" id="closedNote" hidden>
+        <img class="card-spark cs1" src="img/deco/sparkle-4.png" alt="">
+        <img class="card-spark cs2" src="img/deco/sparkle-2.png" alt="">
+        <img class="done-friend" src="img/deco/friend.png" alt="">
+        <div class="done-words">
+          <b class="done-title">تسليم ايدكم!</b>
+          <span class="done-text"><b id="doneFriends">0</b> <span id="doneFriendsWord">صديق</span> · <b id="donePieces">0</b> <span id="donePiecesWord">قطعة</span></span>
+        </div>
+      </section>
       <ul class="items" id="items"></ul>
 
       <section id="extraCard">
@@ -75,7 +84,7 @@
             <ol class="rows who-list" id="whoList"></ol>
           </div>
         </div>
-        <div>
+        <div id="leftWrap">
           <h2 class="section-title">شنو باقي؟</h2>
           <ul class="rows left-list" id="leftList"></ul>
         </div>
@@ -112,9 +121,9 @@
     <button class="btn btn-primary btn-wide" type="button" id="doneBtn">متابعة</button>
   </section>
 
-  <script src="js/config.js?v=10290842"></script>
-  <script src="js/store.js?v=10290842"></script>
-  <script src="js/ui.js?v=10290842"></script>
-  <script src="js/initiative.js?v=10290842"></script>
+  <script src="js/config.js?v=10301500"></script>
+  <script src="js/store.js?v=10301500"></script>
+  <script src="js/ui.js?v=10301500"></script>
+  <script src="js/initiative.js?v=10301500"></script>
 </body>
 </html>

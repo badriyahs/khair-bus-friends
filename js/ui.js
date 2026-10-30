@@ -124,6 +124,37 @@ window.UI = (function () {
     }
   }
 
+  /* Their little characters as avatars: the heart friend or the chef in different scarf colours,
+     on a matching soft colour, with a deeper shade for the name. Down a list they take turns. */
+  const hash = name => [...String(name)].reduce((n, c) => n + c.codePointAt(0), 0);
+  const FACES = [
+    ['friend-blue', '#ddf4ff', '#1590d0'], ['chef-pink', '#ffe1ec', '#d6336c'], ['friend-green', '#e4f9d4', '#46a015'],
+    ['chef-orange', '#fff3c4', '#e07800'], ['friend-purple', '#efe4ff', '#8e44c9'], ['chef-blue', '#ddf4ff', '#1590d0'],
+    ['friend-pink', '#ffe1ec', '#d6336c'], ['chef-green', '#e4f9d4', '#46a015'], ['friend-yellow', '#fff3c4', '#c48a00'],
+    ['chef-purple', '#efe4ff', '#8e44c9']
+  ];
+  const look = (name, i) => FACES[(i == null ? hash(name) : i) % FACES.length];
+  const face = (name, i) => {
+    const [img, bg] = look(name, i);
+    return `<span class="avatar face" style="--c:${bg}"><img src="img/faces/${img}.png?v=2" alt=""></span>`;
+  };
+  const sameName = n => String(n || '').trim().replace(/\s+/g, ' ').toLowerCase();
+
+  // "5 أصدقاء", "26 صديق", "3 قطع", "265 قطعة"
+  const friendsWord = n => (n === 1 ? 'صديق' : n === 2 ? 'صديقين' : n <= 10 ? 'أصدقاء' : 'صديق');
+  const piecesWord = n => (n === 1 ? 'قطعة' : n === 2 ? 'قطعتين' : n <= 10 ? 'قطع' : 'قطعة');
+
+  // after an event: how many friends joined (same name counts once) and how many pieces they brought
+  function summary(pledges, people) {
+    const names = [...new Set((people || []).map(p => sameName(p.name)).filter(Boolean))];
+    let pieces = 0;
+    for (const p of pledges || []) {
+      for (const x of p.items || []) pieces += +x.qty || 0;
+      for (const x of p.extras || []) pieces += +x.qty || 0;
+    }
+    return { friends: names.length, pieces, names: (people || []).map(p => p.name) };
+  }
+
   let toastTimer;
   function toast(msg) {
     let el = $('#toast');
@@ -147,5 +178,5 @@ window.UI = (function () {
     document.body.prepend(b);
   });
 
-  return { $, $$, esc, arDate, when, itemsLeft, twoTone, byDate, tally, icon, toast, GOAL, ride, safeUrl, whatsapp };
+  return { $, $$, esc, arDate, when, itemsLeft, twoTone, byDate, tally, icon, toast, GOAL, ride, face, look, sameName, summary, friendsWord, piecesWord, safeUrl, whatsapp };
 })();

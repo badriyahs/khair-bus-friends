@@ -78,7 +78,20 @@
     UI.ride($('#ride'), t.pct);
     $('#content').hidden = false;
     $('#closedNote').hidden = isOpen();
+    $('#leftWrap').hidden = !isOpen();
+    if (!isOpen()) {
+      // the event is over: thank everyone, no "ما بقى شي!", and a burst of confetti the first time
+      const s = UI.summary(pledges, people);
+      $('#doneFriends').textContent = s.friends;
+      $('#doneFriendsWord').textContent = UI.friendsWord(s.friends);
+      $('#donePieces').textContent = s.pieces.toLocaleString('en');
+      $('#donePiecesWord').textContent = UI.piecesWord(s.pieces);
+      const goal = $('#ride .bar-goal');
+      if (goal) goal.hidden = true;
+      if (!celebrated && motionOK()) { celebrated = true; setTimeout(allDoneParty, 500); }
+    }
   }
+  let celebrated = false;
 
   // once the big title scrolls away, keep the event name on the top bar
   if (window.IntersectionObserver) {
@@ -333,21 +346,7 @@
 
   /* ---------- the list at the end: who's bringing what, and what's still needed ---------- */
 
-  const hash = name => [...String(name)].reduce((n, c) => n + c.codePointAt(0), 0);
-  // each name gets one of their little characters: the heart friend or the chef, in different
-  // scarf colours (some with rosy cheeks), on a matching soft colour. Down the list they take turns.
-  // [picture, soft background, deeper shade of the scarf for the name]
-  const FACES = [
-    ['friend-blue', '#ddf4ff', '#1590d0'], ['chef-pink', '#ffe1ec', '#d6336c'], ['friend-green', '#e4f9d4', '#46a015'],
-    ['chef-orange', '#fff3c4', '#e07800'], ['friend-purple', '#efe4ff', '#8e44c9'], ['chef-blue', '#ddf4ff', '#1590d0'],
-    ['friend-pink', '#ffe1ec', '#d6336c'], ['chef-green', '#e4f9d4', '#46a015'], ['friend-yellow', '#fff3c4', '#c48a00'],
-    ['chef-purple', '#efe4ff', '#8e44c9']
-  ];
-  const look = (name, i) => FACES[(i == null ? hash(name) : i) % FACES.length];
-  const face = (name, i) => {
-    const [img, bg] = look(name, i);
-    return `<span class="avatar face" style="--c:${bg}"><img src="img/faces/${img}.png?v=2" alt=""></span>`;
-  };
+  const { face, look } = UI;
 
   function renderList() {
     const items = ini.items || [];

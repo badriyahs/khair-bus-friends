@@ -2,17 +2,20 @@
 (function () {
   const { $, esc, tally, arDate, itemsLeft, byDate, icon } = UI;
   let initiatives = null;
-  const pledgesFor = {};
+  const pledgesFor = {}, peopleFor = {};
   const subs = new Map();
 
   Store.watchInitiatives(list => {
     initiatives = list;
-    // keep a live pledge count for every open initiative
-    const open = new Set(list.filter(i => i.status === 'open').map(i => i.id));
-    for (const id of open) {
-      if (!subs.has(id)) subs.set(id, Store.watchPledges(id, p => { pledgesFor[id] = p; render(); }));
+    // live sign-ups for every event: progress for open ones, the thank-you totals for past ones
+    const ids = new Set(list.map(i => i.id));
+    for (const id of ids) {
+      if (!subs.has(id)) subs.set(id, [
+        Store.watchPledges(id, p => { pledgesFor[id] = p; render(); }),
+        Store.watchPeople(id, p => { peopleFor[id] = p; render(); })
+      ]);
     }
-    for (const [id, off] of subs) if (!open.has(id)) { off(); subs.delete(id); }
+    for (const [id, offs] of subs) if (!ids.has(id)) { offs.forEach(off => off()); subs.delete(id); }
     render();
   }, () => {
     $('#openList').innerHTML = '<li class="empty">تعذّر التحميل، حدّث الصفحة</li>';
@@ -38,13 +41,16 @@
     if (!initiatives) return;
     const open = initiatives.filter(i => i.status === 'open').sort(byDate);
     const past = initiatives.filter(i => i.status !== 'open').sort((a, b) => byDate(b, a));
-    paint($('#openList'), open, false, '<li class="empty">لا توجد مبادرات حالياً</li>');
+    paint($('#openList'), open, false, '<li class="empty soon"><img src="img/deco/friend.png" alt=""><b>المبادرة الجاية قريب!</b></li>');
     $('#pastWrap').hidden = !past.length;
     paint($('#pastList'), past, true, '');
   }
 
   // Same cards as before? Just move the buses along. Otherwise rebuild the list.
-  const sig = (ini, past) => JSON.stringify([ini.id, ini.title, ini.date, ini.time, ini.photo, past, countdown(ini.date)]);
+  const sig = (ini, past) => {
+    const s = past ? UI.summary(pledgesFor[ini.id], peopleFor[ini.id]) : {};
+    return JSON.stringify([ini.id, ini.title, ini.date, ini.time, ini.photo, past, countdown(ini.date), s.friends, s.pieces]);
+  };
   function paint(list, arr, past, empty) {
     const lis = [...list.children];
     const same = arr.length && lis.length === arr.length && arr.every((ini, i) => lis[i].dataset.sig === sig(ini, past));
@@ -94,15 +100,24 @@
           <span class="ev-left"></span>
           <span class="btn btn-primary btn-sm ev-btn">يلا!</span>
         </span>`;
-    return `<li style="--i:${i}" data-sig="${esc(sig(ini, past))}"><a class="ev-card" href="initiative.html?id=${encodeURIComponent(ini.id)}">
+    const done = ini => {
+      // a finished event: little faces of who came, how many friends and pieces, a few sparkles
+      const s = UI.summary(pledgesFor[ini.id], peopleFor[ini.id]);
+      const seen = new Set(), faces = [];
+      for (const n of s.names) { const k = UI.sameName(n); if (!seen.has(k) && faces.length < 4) { seen.add(k); faces.push(UI.face(n, faces.length)); } }
+      return `<img class="card-spark cs1" src="img/deco/sparkle-4.png" alt=""><img class="card-spark cs2" src="img/deco/sparkle-2.png" alt="">
+        ${s.friends ? `<span class="done-stats"><span class="faces">${faces.join('')}</span>
+          <span class="done-text"><b>${s.friends}</b> ${UI.friendsWord(s.friends)} · <b>${s.pieces.toLocaleString('en')}</b> ${UI.piecesWord(s.pieces)}</span></span>` : ''}`;
+    };
+    return `<li style="--i:${i}" data-sig="${esc(sig(ini, past))}"><a class="ev-card${past ? ' done-card' : ''}" href="initiative.html?id=${encodeURIComponent(ini.id)}">
       ${soon ? `<span class="sticker">${soon}</span>` : ''}
+      ${past ? '<span class="sticker sticker-done">تسليم ايدكم!</span>' : ''}
       <span class="ev-icon"><img src="${esc(ini.photo || 'img/logo-180.png')}" alt=""></span>
       <span class="ev-main">
         <b class="ev-title">${esc(ini.title)}</b>
         ${chips ? `<span class="ev-chips">${chips}</span>` : ''}
-        ${progress}
+        ${past ? done(ini) : progress}
       </span>
-      ${past ? `<span class="ev-go">${icon('check', 22)}</span>` : ''}
     </a></li>`;
   }
 
