@@ -183,7 +183,7 @@ input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-o
 .sticky-title:not([hidden]) + .bar-ride { margin-top: 12px; }
 .sticky-title { overflow: hidden; color: #fff; font-size: .95rem; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; animation: rise .25s ease both; }
 
-.lesson { padding-top: 8px; }
+.lesson { padding-top: 8px; padding-bottom: 48px; }
 .ini-hero h1 { margin: 6px 0 2px; font-size: clamp(1.7rem, 6vw, 2.4rem); }
 .info-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 2px; }
 .info-chips:empty { display: none; }
@@ -474,8 +474,8 @@ body.has-basket .live-pop { bottom: calc(96px + env(safe-area-inset-bottom)); }
 .drive-bus { position: absolute; bottom: calc(110px + env(safe-area-inset-bottom)); left: 100%; width: 130px; height: auto; filter: drop-shadow(0 5px 0 var(--brand-dark)); animation: bob .45s ease-in-out infinite; }
 
 /* the little chef that peeks up from behind the bottom bar */
-.peek-chef { position: fixed; z-index: 29; bottom: calc(66px + env(safe-area-inset-bottom)); inset-inline-start: 14px; display: flex; align-items: flex-start; gap: 4px; transform: translateY(130%); transition: transform .45s var(--spring); pointer-events: none; }
-.peek-chef.show { transform: translateY(0); }
+.peek-chef { position: fixed; z-index: 29; bottom: calc(66px + env(safe-area-inset-bottom)); inset-inline-start: 14px; display: flex; align-items: flex-start; gap: 4px; visibility: hidden; transform: translateY(130%); transition: transform .45s var(--spring), visibility 0s .45s; pointer-events: none; }
+.peek-chef.show { visibility: visible; transform: translateY(0); transition: transform .45s var(--spring), visibility 0s; }
 .peek-chef img { width: 78px; height: auto; filter: drop-shadow(0 4px 0 var(--brand-dark)); }
 /* yellow sticker bubble so it stands out over the white food cards */
 .peek-chef .bubble { margin: 8px 0 0; padding: 7px 14px; border: 3px solid #fff; background: var(--sun); color: #5a3a00; font-size: 1.05rem; font-weight: 800; white-space: nowrap; animation: none; box-shadow: 0 4px 0 var(--sun-dark); }

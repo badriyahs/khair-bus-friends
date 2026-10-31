@@ -341,7 +341,7 @@
       `<li class="tag mine">${esc(x.name)} × ${x.qty}<button type="button" data-i="${i}" aria-label="إزالة ${esc(x.name)}">×</button></li>`).join(''));
     setHTML($('#others'), others.map(x => `<li class="tag">${esc(x.name)} × ${x.qty}</li>`).join(''));
     $('#extraForm').hidden = !isOpen();
-    $('#extraCard').hidden = !isOpen() && !others.length;
+    $('#extraCard').hidden = !isOpen();   // once it's over, extras already show by each name
   }
 
   /* ---------- the list at the end: who's bringing what, and what's still needed ---------- */
