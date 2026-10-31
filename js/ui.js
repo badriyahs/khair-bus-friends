@@ -140,9 +140,9 @@ window.UI = (function () {
   };
   const sameName = n => String(n || '').trim().replace(/\s+/g, ' ').toLowerCase();
 
-  // "5 أصدقاء", "26 صديق", "3 قطع", "265 قطعة"
+  // "5 أصدقاء", "26 صديق", "3 تبرعات", "1,283 تبرع"
   const friendsWord = n => (n === 1 ? 'صديق' : n === 2 ? 'صديقين' : n <= 10 ? 'أصدقاء' : 'صديق');
-  const piecesWord = n => (n === 1 ? 'قطعة' : n === 2 ? 'قطعتين' : n <= 10 ? 'قطع' : 'قطعة');
+  const piecesWord = n => (n === 1 ? 'تبرع' : n === 2 ? 'تبرعين' : n <= 10 ? 'تبرعات' : 'تبرع');
 
   // after an event: how many friends joined (same name counts once) and how many pieces they brought
   function summary(pledges, people) {

@@ -232,7 +232,7 @@
 
   /* ---------- the chef cheers you on ---------- */
 
-  const CHEERS = ['كفو!', 'تسلم!', 'يمي!', 'يا حلوك!', 'بميزانكم!', 'تسليم ايدكم!', 'ما قصرتوا!'];
+  const CHEERS = ['كفو!', 'تسلم!', 'يمي!', 'يا حلوك!', 'بميزانكم!', 'تسلم ايدكم!', 'ما قصرتوا!'];
   let cheerTimer, lastCheer = -1, bubbleText = 'شنو بتييب؟';
 
   function replay(el, cls) {
@@ -499,7 +499,7 @@
   /* ---------- everything's covered: thank everyone ---------- */
 
   // once everything's covered the chef takes turns thanking everyone
-  const THANKS = ['تسليم ايدكم!', 'ما قصرتوا!', 'بميزانكم!'];
+  const THANKS = ['تسلم ايدكم!', 'ما قصرتوا!', 'بميزانكم!'];
   let wasAllDone = null, partyWaiting = false, thanksI = 0, thanksTimer = null;
   function allDoneCheck(allDone) {
     bubbleText = allDone ? THANKS[thanksI] : 'شنو بتييب؟';

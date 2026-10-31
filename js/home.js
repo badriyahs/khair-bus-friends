@@ -41,7 +41,7 @@
     if (!initiatives) return;
     const open = initiatives.filter(i => i.status === 'open').sort(byDate);
     const past = initiatives.filter(i => i.status !== 'open').sort((a, b) => byDate(b, a));
-    paint($('#openList'), open, false, '<li class="empty soon"><img src="img/deco/friend.png" alt=""><b>المبادرة الجاية قريب!</b></li>');
+    paint($('#openList'), open, false, '<li class="empty soon"><img src="img/deco/friend.png" alt=""><b>المبادرة الياية قريبة!</b></li>');
     $('#pastWrap').hidden = !past.length;
     paint($('#pastList'), past, true, '');
   }
@@ -111,7 +111,7 @@
     };
     return `<li style="--i:${i}" data-sig="${esc(sig(ini, past))}"><a class="ev-card${past ? ' done-card' : ''}" href="initiative.html?id=${encodeURIComponent(ini.id)}">
       ${soon ? `<span class="sticker">${soon}</span>` : ''}
-      ${past ? '<span class="sticker sticker-done">تسليم ايدكم!</span>' : ''}
+      ${past ? '<span class="sticker sticker-done">تسلم ايدكم!</span>' : ''}
       <span class="ev-icon"><img src="${esc(ini.photo || 'img/logo-180.png')}" alt=""></span>
       <span class="ev-main">
         <b class="ev-title">${esc(ini.title)}</b>
