@@ -105,6 +105,9 @@ window.UI = (function () {
     </div>`;
   document.querySelectorAll('.loader').forEach(el => { el.innerHTML = LOADER; });
 
+  /* The gift box for box events (hearts and stars, a lid that opens; little thumbs when he holds it) */
+  const BOX = '<svg class="kbox" viewBox="0 0 200 170" aria-hidden="true"><defs><filter id="boxCrayon"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="5"/><feDisplacementMap in="SourceGraphic" scale="2.6"/></filter></defs><g filter="url(#boxCrayon)" stroke-linejoin="round" stroke-linecap="round"><path class="kbox-inside" d="M28 64 L42 46 L158 46 L172 64 Z" fill="#cfeafb" stroke="#1590d0" stroke-width="5"/><rect x="20" y="62" width="160" height="100" rx="10" fill="#fff" stroke="#1590d0" stroke-width="5"/><path d="M62.0 100.0 C53.0 88.0 38.0 97.0 47.0 109.0 L62.0 124.0 L77.0 109.0 C86.0 97.0 71.0 88.0 62.0 100.0Z" fill="#ff8fab" stroke="#d6336c" stroke-width="3"/><polygon points="128.0,84.0 132.2,94.2 143.2,95.1 134.8,102.2 137.4,112.9 128.0,107.2 118.6,112.9 121.2,102.2 112.8,95.1 123.8,94.2" fill="#ffd43b" stroke="#e0a800" stroke-width="3"/><path d="M140.0 136.4 C134.6 129.2 125.6 134.6 131.0 141.8 L140.0 150.8 L149.0 141.8 C154.4 134.6 145.4 129.2 140.0 136.4Z" fill="#ffb3c7" stroke="#d6336c" stroke-width="2.5"/><polygon points="46.0,133.0 48.4,138.7 54.6,139.2 49.9,143.3 51.3,149.3 46.0,146.1 40.7,149.3 42.1,143.3 37.4,139.2 43.6,138.7" fill="#a5e07a" stroke="#46a015" stroke-width="2.5"/><polygon points="98.0,133.0 99.9,137.5 104.7,137.8 101.0,141.0 102.1,145.7 98.0,143.2 93.9,145.7 95.0,141.0 91.3,137.8 96.1,137.5" fill="#ffd43b" stroke="#e0a800" stroke-width="2"/><g class="kbox-lid"><rect x="12" y="44" width="176" height="26" rx="8" fill="#fff" stroke="#1590d0" stroke-width="5"/><path d="M100.0 54.2 C95.8 48.6 88.8 52.8 93.0 58.4 L100.0 65.4 L107.0 58.4 C111.2 52.8 104.2 48.6 100.0 54.2Z" fill="#ff8fab" stroke="#d6336c" stroke-width="2.5"/></g><g class="kbox-thumbs" fill="#fff" stroke="#222" stroke-width="3.5"><ellipse cx="22" cy="92" rx="9" ry="13"/><ellipse cx="178" cy="92" rx="9" ry="13"/></g></g></svg>';
+
   /* Progress bars with the riding bus: a finish flag that says ما بقى شي!, and the bus hops
      whenever the bar moves forward. */
   const GOAL = `<span class="bar-goal">ما بقى شي!<svg class="flag" viewBox="0 0 12 14" aria-hidden="true"><path d="M2 1.5v11.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M2.8 1.6h8.2v5.6H2.8z" fill="#fff" stroke="currentColor" stroke-width="1"/><path d="M2.8 1.6h2.7v2.8H2.8zM5.5 4.4h2.8v2.8H5.5zM8.3 1.6h2.7v2.8H8.3z" fill="currentColor"/></svg></span>`;
@@ -178,5 +181,5 @@ window.UI = (function () {
     document.body.prepend(b);
   });
 
-  return { $, $$, esc, arDate, when, itemsLeft, twoTone, byDate, tally, icon, toast, GOAL, ride, face, look, sameName, summary, friendsWord, piecesWord, safeUrl, whatsapp };
+  return { $, $$, esc, arDate, when, itemsLeft, twoTone, byDate, tally, icon, toast, GOAL, ride, face, look, sameName, summary, friendsWord, piecesWord, BOX, safeUrl, whatsapp };
 })();

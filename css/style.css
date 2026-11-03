@@ -194,7 +194,7 @@ a.info-chip:active { transform: translateY(3px); box-shadow: none; }
 
 /* the chef asks */
 .prompt { display: flex; align-items: flex-end; gap: 12px; margin: 14px 0 20px; }
-.prompt-char { flex: none; width: 110px; height: auto; animation: bob 4.5s ease-in-out infinite; }
+.prompt-char { flex: none; width: 110px; height: auto; }
 .bubble { position: relative; user-select: none; margin-bottom: 26px; padding: 12px 18px; border: 2px solid var(--line); border-radius: 16px; background: #fff; font-size: 1.15rem; font-weight: 700; animation: pop .45s var(--spring) .15s both; }
 .bubble::before { content: ""; position: absolute; top: 50%; right: -9px; width: 16px; height: 16px; margin-top: -8px; border-top: 2px solid var(--line); border-right: 2px solid var(--line); background: #fff; transform: rotate(45deg); }
 
@@ -395,7 +395,7 @@ body.brand-bg { background: var(--brand) url(../img/crayon.svg) 0 0 / 200px 200p
 
 /* the chef cheers when you pick something */
 @keyframes hop { 40% { transform: translateY(-16px) rotate(-5deg); } 70% { transform: translateY(0) rotate(2deg); } }
-.prompt-char.cheer { animation: hop .55s var(--spring); }
+.holder.cheer { animation: hop .55s var(--spring); }
 .bubble.cheer { animation: pop .4s var(--spring); }
 .spark-pop { position: fixed; z-index: 25; height: auto; pointer-events: none; }
 
@@ -504,6 +504,37 @@ body.has-basket .live-pop { bottom: calc(96px + env(safe-area-inset-bottom)); }
 .empty.soon { display: flex; align-items: center; justify-content: center; gap: 12px; border: 2px solid #fff; border-radius: 40px 14px 34px 16px / 14px 36px 16px 32px; background: #fff; box-shadow: 0 5px 0 var(--brand-dark); color: var(--blue-dark); font-size: 1.15rem; }
 .empty.soon img { width: 58px; height: auto; transform-origin: 50% 100%; animation: sway 3.4s ease-in-out infinite; }
 
+/* the gift box (box events) */
+.kbox { display: block; width: 100%; height: auto; overflow: visible; }
+.kbox-lid { transform-box: view-box; transform-origin: 100px 57px; transition: transform .5s var(--spring); }
+.kbox.open .kbox-lid { transform: translate(-58px, -30px) rotate(-22deg); }
+.kbox-thumbs { display: none; }
+.held .kbox-thumbs { display: inline; }
+/* the friend holding it, in the event page's hero */
+.holder { position: relative; flex: none; width: 110px; animation: bob 4.5s ease-in-out infinite; }
+.holder .prompt-char { display: block; width: 100%; }
+.hero-box { position: absolute; left: 6%; right: 6%; top: 50%; cursor: pointer; filter: drop-shadow(0 4px 0 rgba(0, 0, 0, .12)); -webkit-tap-highlight-color: transparent; animation: wiggle 5s ease-in-out 2s infinite; }
+/* a little wiggle now and then: tap me! */
+@keyframes wiggle { 0%, 84%, 100% { transform: none; } 88% { transform: rotate(-7deg) scale(1.05); } 92% { transform: rotate(6deg) scale(1.05); } 96% { transform: rotate(-3deg); } }
+.sticker ~ .ev-main .ev-title { margin-top: 10px; }
+
+.box-intro { position: fixed; inset: 0; z-index: 55; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 24px 16px calc(24px + env(safe-area-inset-bottom)); background: var(--brand) url(../img/crayon.svg) 0 0 / 200px 200px; text-align: center; overflow: hidden; }
+.bi-title { margin: 0; font-size: clamp(1.6rem, 6vw, 2.1rem); }
+.bi-items { display: grid; grid-template-columns: repeat(3, 84px); gap: 12px 14px; margin: 0; padding: 0; list-style: none; }
+.bi-item { position: relative; display: grid; place-items: center; width: 84px; height: 84px; border-radius: 24px 10px 22px 12px / 10px 22px 12px 24px; background: #fff; box-shadow: 0 4px 0 var(--brand-dark); }
+.bi-item img { width: 78px; height: 78px; }
+.bi-item b { position: absolute; top: -9px; inset-inline-start: -9px; min-width: 34px; padding: 1px 8px; border: 3px solid #fff; border-radius: 999px; background: var(--sun); color: #5a3a00; font-size: .95rem; box-shadow: 0 3px 0 var(--sun-dark); }
+.bi-box { width: min(180px, 48vw); transform-origin: 0 0; }
+.bi-count { margin: 0; color: #fff; font-size: 1.25rem; font-weight: 800; text-shadow: 0 3px 0 var(--brand-dark); }
+.bi-count b { color: var(--sun); font-size: 1.7rem; }
+@media (max-height: 700px) {
+  .box-intro { gap: 10px; }
+  .bi-items { grid-template-columns: repeat(3, 70px); }
+  .bi-item { width: 70px; height: 70px; }
+  .bi-item img { width: 64px; height: 64px; }
+  .bi-box { width: 140px; }
+}
+
 /* ---------- smaller screens ---------- */
 
 @media (max-width: 820px) {
@@ -534,7 +565,7 @@ body.has-basket .live-pop { bottom: calc(96px + env(safe-area-inset-bottom)); }
   .admin-page .logo-official { display: none; }
   .extra-form { grid-template-columns: 1fr 70px auto; }
   .extra-form .btn { padding: 11px 16px; }
-  .prompt-char { width: 92px; }
+  .prompt-char, .holder { width: 92px; }
   .foot-form .btn { min-width: 100px; }
 }
 @media (prefers-reduced-motion: reduce) {
