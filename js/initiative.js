@@ -164,7 +164,7 @@
     li.classList.toggle('is-full', full);
     li.classList.toggle('is-picked', mineQty > 0);
     li.querySelector('.choice-name').textContent = it.name;
-    li.querySelector('.choice-unit').textContent = it.unit || '';
+    li.querySelector('.choice-unit').textContent = [it.unit, +ini.boxes > 0 ? `${perBox(it)} بكل صندوق` : ''].filter(Boolean).join(' · ');
     const img = li.querySelector('.choice-img img'), src = it.img || 'img/logo-180.png';
     if (img.getAttribute('src') !== src) img.src = src;
     img.classList.toggle('placeholder', !it.img);
@@ -590,6 +590,8 @@
     try { localStorage.setItem(introKey(), '1'); } catch (e) {}
   }
   const perBox = it => Math.max(1, Math.round((+it.needed || 0) / (+ini.boxes || 1)));
+  // "1 حبة", "حبتين", "6 حبات": make it clear these are pieces in each box
+  const pieces = n => (n === 1 ? '1 حبة' : n === 2 ? 'حبتين' : n <= 10 ? `${n} حبات` : `${n} حبة`);
   const wait = ms => new Promise(r => setTimeout(r, ms));
   let introBusy = false;
 
@@ -599,7 +601,7 @@
     const intro = $('#boxIntro'), who = $('#biWho'), holder = $('#holder');
     $('#biCount').textContent = ini.boxes;
     $('#biItems').innerHTML = (ini.items || []).map(it =>
-      `<li class="bi-item"><img src="${esc(it.img || 'img/logo-180.png')}" alt="${esc(it.name)}"><b dir="ltr">×${perBox(it)}</b></li>`).join('');
+      `<li class="bi-item"><span class="bi-pic"><img src="${esc(it.img || 'img/logo-180.png')}" alt="${esc(it.name)}"></span><b>${pieces(perBox(it))}</b></li>`).join('');
     who.src = $('#iniPhoto').getAttribute('src');
     const extras = [$('.bi-title', intro), $('.bi-count', intro), $('#biGo')];
     const tiles = [...intro.querySelectorAll('.bi-item')];
@@ -616,16 +618,19 @@
       : 'translate(0, 60vh) scale(.6)';
     await who.animate([{ transform: from }, { transform: 'none' }], { duration: 650, easing: 'cubic-bezier(.3, 1.3, .6, 1)' }).finished;
     // everything that goes in a box flies out of his box, one by one
-    const c = who.getBoundingClientRect(), cx = c.left + c.width * .5, cy = c.top + c.height * .62;
+    const c = who.getBoundingClientRect(), cx = c.left + c.width * .52, cy = c.top + c.height * .6;
     tiles.forEach((li, i) => {
-      const r = li.getBoundingClientRect();
+      const r = li.getBoundingClientRect(), dx = cx - (r.left + r.width / 2), dy = cy - (r.top + r.height / 2);
       li.style.opacity = '';
       li.animate([
-        { transform: `translate(${cx - (r.left + r.width / 2)}px, ${cy - (r.top + r.height / 2)}px) scale(.15)`, opacity: 0 },
+        { transform: `translate(${dx}px, ${dy}px) scale(.1)`, opacity: 0 },
+        { transform: `translate(${dx}px, ${dy - 40}px) scale(.45)`, opacity: 1, offset: .3 },
         { transform: 'none', opacity: 1 }
-      ], { duration: 540, delay: i * 90, easing: 'cubic-bezier(.3, 1.4, .6, 1)', fill: 'backwards' });
+      ], { duration: 650, delay: i * 110, easing: 'cubic-bezier(.3, 1.2, .6, 1)', fill: 'backwards' });
+      // his box gives a little bounce as each one comes out
+      setTimeout(() => who.animate([{ transform: 'none' }, { transform: 'scale(1.04, .96)' }, { transform: 'none' }], { duration: 220 }), i * 110);
     });
-    await wait(tiles.length * 90 + 300);
+    await wait(tiles.length * 110 + 400);
     extras.forEach((el, i) => {
       el.style.opacity = '';
       el.animate([{ opacity: 0, transform: 'translateY(10px)' }, { opacity: 1, transform: 'none' }], { duration: 350, delay: i * 120, fill: 'backwards' });
@@ -645,7 +650,7 @@
     };
     if (!motionOK()) return done();
     // everything drops back into the box, then he goes back to the top of the page
-    const c = who.getBoundingClientRect(), cx = c.left + c.width * .5, cy = c.top + c.height * .62;
+    const c = who.getBoundingClientRect(), cx = c.left + c.width * .52, cy = c.top + c.height * .6;
     const tiles = [...intro.querySelectorAll('.bi-item')];
     tiles.forEach((li, i) => {
       const r = li.getBoundingClientRect();

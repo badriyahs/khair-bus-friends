@@ -25,7 +25,7 @@ window.Store = (function () {
 
   /* ---------- preview mode ---------- */
 
-  const KEY = 'kbf-preview-v8';
+  const KEY = 'kbf-preview-v9';
   const listeners = new Set();
   let mem = null;
 
@@ -56,7 +56,7 @@ window.Store = (function () {
   // Preview data: Thursday's sandwich initiative (their poster + checklist), no sign-ups yet
   function seed() {
     const item = (id, name, unit, needed) => ({ id, name, unit, needed, img: `img/items/${id}.jpg` });
-    const box = (id, name, unit, needed) => ({ id, name, unit, needed, img: `img/items/${id}.png` });
+    const box = (id, name, unit, needed) => ({ id, name, unit, needed, img: `img/items/box-${id}.jpg` });
     return {
       initiatives: {
         'sandwiches-oct': {
@@ -77,11 +77,12 @@ window.Store = (function () {
         'boxes-dec': {
           id: 'boxes-dec', title: 'مبادرة الصناديق', date: '2026-12-26', time: '', place: 'ديوان العيسى',
           map: 'https://maps.app.goo.gl/ABWvC2uvC4fWWJve7', phone: '94725505', status: 'open', createdAt: Date.now(),
-          photo: 'img/events/box-friend.png', boxes: 35,
+          photo: 'img/events/box-friend.png', boxes: 30,
           items: [
-            box('rice', 'رز', 'أكياس', 35), box('lentils', 'عدس', 'علب', 105), box('pasta', 'معكرونة', 'أكياس', 35),
-            box('tea', 'شاي', 'علب', 35), box('oil', 'زيت', 'قناني كبيرة', 35), box('canned', 'معلبات منوعة', 'علب', 105),
-            box('dates', 'تمر', 'علب', 35), box('sugar', 'سكر', 'أكياس', 35), box('flour', 'طحين', 'أكياس', 35)
+            box('rice', 'رز', 'أكياس', 30), box('lentils', 'عدس', 'أكياس', 30), box('pasta', 'معكرونة', 'أكياس', 30),
+            box('tea', 'شاي', 'علب', 30), box('oil', 'زيت', 'قناني', 30), box('fool', 'فول', 'علب', 90),
+            box('tomato', 'معجون طماطم', 'علب', 180), box('dates', 'تمر', 'علب', 30), box('sugar', 'سكر', 'أكياس', 30),
+            box('flour', 'طحين', 'أكياس', 30)
           ]
         }
       },
