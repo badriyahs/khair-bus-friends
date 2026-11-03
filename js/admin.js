@@ -122,7 +122,7 @@
     if (dirty) return saveFirst();
     stopWatching();
     sel = null; current = null; pledges = []; people = []; tab = 'details';
-    draft = { title: '', date: '', time: '', place: '', map: '', phone: '', boxes: '', photo: '', status: 'open', items: [blankItem(), blankItem(), blankItem()] };
+    draft = { title: '', date: '', time: '', place: '', map: '', phone: '', photo: '', status: 'open', items: [blankItem(), blankItem(), blankItem()] };
     dirty = true;
     renderList();
     renderPanel();
@@ -158,7 +158,7 @@
 
   function toDraft(d) {
     return {
-      title: d.title || '', date: d.date || '', time: d.time || '', place: d.place || '', map: d.map || '', phone: d.phone || '', boxes: d.boxes ? String(d.boxes) : '', photo: d.photo || '',
+      title: d.title || '', date: d.date || '', time: d.time || '', place: d.place || '', map: d.map || '', phone: d.phone || '', photo: d.photo || '',
       status: d.status === 'closed' ? 'closed' : 'open',
       items: (d.items || []).map(it => ({ id: it.id, name: it.name || '', unit: it.unit || '', needed: String(it.needed || ''), img: it.img || '' }))
     };
@@ -212,8 +212,6 @@
           <input class="input" id="fMap" data-f="map" value="${esc(d.map)}" maxlength="500" type="url" inputmode="url" dir="ltr" placeholder="https://maps.app.goo.gl/…"></div>
         <div class="field"><label for="fPhone">رقم التواصل</label>
           <input class="input" id="fPhone" data-f="phone" value="${esc(d.phone)}" maxlength="30" inputmode="tel" dir="ltr"></div>
-        <div class="field"><label for="fBoxes">عدد الصناديق</label>
-          <input class="input" id="fBoxes" data-f="boxes" value="${esc(d.boxes)}" type="number" min="0" inputmode="numeric" placeholder="اختياري"></div>
         <div class="field"><span class="label">الصورة</span>
           <div class="photo-field">
             <img class="photo-preview" id="photoPreview" src="${esc(d.photo)}" alt="" ${d.photo ? '' : 'hidden'}>
@@ -421,7 +419,7 @@
       return;
     }
     const data = {
-      title, date: draft.date, time: draft.time.trim(), place: draft.place.trim(), map: safeUrl(draft.map), phone: draft.phone.trim(), boxes: Math.max(0, parseInt(draft.boxes, 10) || 0), photo: draft.photo || '', status: draft.status,
+      title, date: draft.date, time: draft.time.trim(), place: draft.place.trim(), map: safeUrl(draft.map), phone: draft.phone.trim(), photo: draft.photo || '', status: draft.status,
       items: rows.map(it => ({ id: it.id, name: it.name.trim(), unit: String(it.unit).trim(), needed: parseInt(it.needed, 10), img: it.img || '' }))
     };
     const btn = $('#saveBtn');

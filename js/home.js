@@ -109,7 +109,7 @@
         ${s.friends ? `<span class="done-stats"><span class="faces">${faces.join('')}</span>
           <span class="done-text"><b>${s.friends}</b> ${UI.friendsWord(s.friends)} · <b>${s.pieces.toLocaleString('en')}</b> ${UI.piecesWord(s.pieces)}</span></span>` : ''}`;
     };
-    return `<li style="--i:${i}" data-sig="${esc(sig(ini, past))}"><a class="ev-card${past ? ' done-card' : ''}" href="initiative.html?id=${encodeURIComponent(ini.id)}${Store.forced ? '&demo' : ''}">
+    return `<li style="--i:${i}" data-sig="${esc(sig(ini, past))}"><a class="ev-card${past ? ' done-card' : ''}" href="initiative.html?id=${encodeURIComponent(ini.id)}">
       ${soon ? `<span class="sticker">${soon}</span>` : ''}
       ${past ? '<span class="sticker sticker-done">تسلم ايدكم!</span>' : ''}
       <span class="ev-icon"><img src="${esc(ini.photo || 'img/logo-180.png')}" alt=""></span>
