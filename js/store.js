@@ -8,7 +8,9 @@
    initiatives/{id}/people/{pid}    name                                  (team only) */
 window.Store = (function () {
   const cfg = (window.KBF_CONFIG || {}).firebase;
-  const demo = !cfg;
+  // ?demo shows sample events (nothing saved anywhere but this phone), for trying new designs
+  const forced = /[?&]demo\b/.test(location.search);
+  const demo = !cfg || forced;
   const FB = 'https://www.gstatic.com/firebasejs/10.14.1/';
 
   const clone = o => JSON.parse(JSON.stringify(o));
@@ -23,7 +25,7 @@ window.Store = (function () {
 
   /* ---------- preview mode ---------- */
 
-  const KEY = 'kbf-preview-v7';
+  const KEY = 'kbf-preview-v8';
   const listeners = new Set();
   let mem = null;
 
@@ -54,6 +56,7 @@ window.Store = (function () {
   // Preview data: Thursday's sandwich initiative (their poster + checklist), no sign-ups yet
   function seed() {
     const item = (id, name, unit, needed) => ({ id, name, unit, needed, img: `img/items/${id}.jpg` });
+    const box = (id, name, unit, needed) => ({ id, name, unit, needed, img: `img/items/${id}.png` });
     return {
       initiatives: {
         'sandwiches-oct': {
@@ -69,6 +72,16 @@ window.Store = (function () {
             item('crackers', 'بسكوت', 'حبات', 300),
             item('fruit', 'تفاح أو برتقال', 'حبات', 300),
             item('juice', 'عصير', 'علب', 300)
+          ]
+        },
+        'boxes-dec': {
+          id: 'boxes-dec', title: 'مبادرة الصناديق', date: '2026-12-26', time: '', place: 'ديوان العيسى',
+          map: 'https://maps.app.goo.gl/ABWvC2uvC4fWWJve7', phone: '94725505', status: 'open', createdAt: Date.now(),
+          photo: 'img/events/box-friend.png', boxes: 35,
+          items: [
+            box('rice', 'رز', 'أكياس', 35), box('lentils', 'عدس', 'علب', 105), box('pasta', 'معكرونة', 'أكياس', 35),
+            box('tea', 'شاي', 'علب', 35), box('oil', 'زيت', 'قناني كبيرة', 35), box('canned', 'معلبات منوعة', 'علب', 105),
+            box('dates', 'تمر', 'علب', 35), box('sugar', 'سكر', 'أكياس', 35), box('flour', 'طحين', 'أكياس', 35)
           ]
         }
       },
@@ -218,5 +231,5 @@ window.Store = (function () {
     async signOut() { await ready; await firebase.auth().signOut(); }
   };
 
-  return { demo, ready, ...(demo ? previewApi : liveApi) };
+  return { demo, forced, ready, ...(demo ? previewApi : liveApi) };
 })();

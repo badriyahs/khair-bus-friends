@@ -506,8 +506,15 @@ body.has-basket .live-pop { bottom: calc(96px + env(safe-area-inset-bottom)); }
 
 /* the gift box (box events) */
 .kbox { display: block; width: 100%; height: auto; overflow: visible; }
-.kbox-lid { transform-box: view-box; transform-origin: 100px 57px; transition: transform .5s var(--spring); }
-.kbox.open .kbox-lid { transform: translate(-58px, -30px) rotate(-22deg); }
+.kbox .kbox-open { opacity: 0; transition: opacity .15s; }
+.kbox.open .kbox-open { opacity: 1; }
+.kbox.open .kbox-closed { opacity: 0; }
+.kbox .flap { transform-box: fill-box; transition: transform .5s var(--spring); }
+.kbox .flap-back { transform-origin: bottom; transform: scaleY(0); }
+.kbox .flap-left { transform-origin: right; transform: scaleX(0); }
+.kbox .flap-right { transform-origin: left; transform: scaleX(0); }
+.kbox .flap-front { transform-origin: top; transform: scaleY(0); }
+.kbox.open .flap { transform: none; }
 .kbox-thumbs { display: none; }
 .held .kbox-thumbs { display: inline; }
 /* the friend holding it, in the event page's hero */

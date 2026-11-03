@@ -2,6 +2,7 @@
 (function () {
   const { $, $$, esc, tally, arDate, twoTone, icon, toast, safeUrl, whatsapp } = UI;
   const iid = new URLSearchParams(location.search).get('id');
+  if (Store.forced) $('.close-btn').href = 'index.html?demo';
   $('#goal').outerHTML = UI.GOAL;
   const done = $('#thanks');
   const cards = new Map();
