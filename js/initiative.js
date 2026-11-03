@@ -72,13 +72,13 @@
     const wa = whatsapp(ini.phone, `السلام عليكم، بخصوص ${ini.title}`);
     if (wa) info.push(`<a class="info-chip" href="${esc(wa)}" target="_blank" rel="noopener">${icon('chat', 18)}<span dir="ltr">${esc(ini.phone)}</span></a>`);
     setHTML($('#iniInfo'), info.join(''));
-    // box events: the heart friend holds the gift box (tap it to see what's inside)
-    const boxy = +ini.boxes > 0;
-    const photo = $('#iniPhoto'), src = boxy ? 'img/deco/friend.png' : (ini.photo || 'img/logo.png');
+    const photo = $('#iniPhoto'), src = ini.photo || 'img/logo.png';
     if (photo.getAttribute('src') !== src) photo.src = src;
-    const heroBox = $('#heroBox');
-    heroBox.hidden = !boxy;
-    if (boxy && !heroBox.firstChild) heroBox.innerHTML = UI.BOX;
+    // box events: he's holding the box; tap him to see what goes in it (shown by itself the first time)
+    const boxy = +ini.boxes > 0;
+    const holder = $('#holder');
+    holder.classList.toggle('tappable', boxy);
+    if (boxy) { holder.setAttribute('role', 'button'); holder.tabIndex = 0; holder.setAttribute('aria-label', 'شنو في الصندوق؟'); }
     if (boxy && isOpen() && !introSeen()) { markIntroSeen(); setTimeout(() => openBoxIntro(false), 700); }
     $('#prompt').hidden = !isOpen();
     $('#stickyTitle').textContent = ini.title;
@@ -596,37 +596,34 @@
   async function openBoxIntro(fromHero) {
     if (!ini || !(+ini.boxes > 0) || introBusy) return;
     introBusy = true;
-    const intro = $('#boxIntro'), biBox = $('#biBox');
+    const intro = $('#boxIntro'), who = $('#biWho'), holder = $('#holder');
     $('#biCount').textContent = ini.boxes;
     $('#biItems').innerHTML = (ini.items || []).map(it =>
       `<li class="bi-item"><img src="${esc(it.img || 'img/logo-180.png')}" alt="${esc(it.name)}"><b dir="ltr">×${perBox(it)}</b></li>`).join('');
-    if (!biBox.firstChild) biBox.innerHTML = UI.BOX;
-    const lid = biBox.querySelector('.kbox');
-    lid.classList.remove('open');
+    who.src = $('#iniPhoto').getAttribute('src');
     const extras = [$('.bi-title', intro), $('.bi-count', intro), $('#biGo')];
     const tiles = [...intro.querySelectorAll('.bi-item')];
     intro.hidden = false;
     document.body.classList.add('no-scroll');
-    $('#heroBox').style.visibility = 'hidden';
-    if (!motionOK()) { lid.classList.add('open'); introBusy = false; return; }
+    holder.style.visibility = 'hidden';
+    if (!motionOK()) { introBusy = false; return; }
     [...extras, ...tiles].forEach(el => { el.style.opacity = 0; });
-    // the box comes out of his arms (or drops in the first time)
-    const bb = biBox.getBoundingClientRect(), hr = $('#heroBox').getBoundingClientRect();
+    if (!who.complete) await new Promise(r => { who.onload = r; who.onerror = r; });
+    // he comes over from the top of the page (or pops up from below the first time)
+    const wb = who.getBoundingClientRect(), hr = holder.getBoundingClientRect();
     const from = fromHero && hr.width
-      ? `translate(${hr.left - bb.left}px, ${hr.top - bb.top}px) scale(${hr.width / bb.width})`
-      : 'translate(0, -70vh) rotate(-10deg)';
-    await biBox.animate([{ transform: from }, { transform: 'none' }], { duration: 700, easing: 'cubic-bezier(.3, 1.35, .6, 1)' }).finished;
-    lid.classList.add('open');
-    await wait(260);
-    // what's inside pops out of the box, one by one
-    const c = biBox.getBoundingClientRect(), cx = c.left + c.width / 2, cy = c.top + c.height * .45;
+      ? `translate(${hr.left - wb.left}px, ${hr.top - wb.top}px) scale(${hr.width / wb.width})`
+      : 'translate(0, 60vh) scale(.6)';
+    await who.animate([{ transform: from }, { transform: 'none' }], { duration: 650, easing: 'cubic-bezier(.3, 1.3, .6, 1)' }).finished;
+    // everything that goes in a box flies out of his box, one by one
+    const c = who.getBoundingClientRect(), cx = c.left + c.width * .5, cy = c.top + c.height * .62;
     tiles.forEach((li, i) => {
       const r = li.getBoundingClientRect();
       li.style.opacity = '';
       li.animate([
-        { transform: `translate(${cx - (r.left + r.width / 2)}px, ${cy - (r.top + r.height / 2)}px) scale(.2)`, opacity: 0 },
+        { transform: `translate(${cx - (r.left + r.width / 2)}px, ${cy - (r.top + r.height / 2)}px) scale(.15)`, opacity: 0 },
         { transform: 'none', opacity: 1 }
-      ], { duration: 520, delay: i * 90, easing: 'cubic-bezier(.3, 1.4, .6, 1)', fill: 'backwards' });
+      ], { duration: 540, delay: i * 90, easing: 'cubic-bezier(.3, 1.4, .6, 1)', fill: 'backwards' });
     });
     await wait(tiles.length * 90 + 300);
     extras.forEach((el, i) => {
@@ -639,42 +636,46 @@
   async function closeBoxIntro() {
     if (introBusy) return;
     introBusy = true;
-    const intro = $('#boxIntro'), biBox = $('#biBox'), lid = biBox.querySelector('.kbox');
+    const intro = $('#boxIntro'), who = $('#biWho'), holder = $('#holder');
     const done = () => {
       intro.hidden = true;
       document.body.classList.remove('no-scroll');
-      $('#heroBox').style.visibility = '';
+      holder.style.visibility = '';
       introBusy = false;
     };
     if (!motionOK()) return done();
-    // everything goes back in, the lid closes, and the box flies back into his arms
-    const c = biBox.getBoundingClientRect(), cx = c.left + c.width / 2, cy = c.top + c.height * .45;
+    // everything drops back into the box, then he goes back to the top of the page
+    const c = who.getBoundingClientRect(), cx = c.left + c.width * .5, cy = c.top + c.height * .62;
     const tiles = [...intro.querySelectorAll('.bi-item')];
     tiles.forEach((li, i) => {
       const r = li.getBoundingClientRect();
       li.animate([{ transform: 'none', opacity: 1 },
-        { transform: `translate(${cx - (r.left + r.width / 2)}px, ${cy - (r.top + r.height / 2)}px) scale(.2)`, opacity: 0 }],
+        { transform: `translate(${cx - (r.left + r.width / 2)}px, ${cy - (r.top + r.height / 2)}px) scale(.15)`, opacity: 0 }],
         { duration: 320, delay: (tiles.length - i) * 35, easing: 'ease-in', fill: 'forwards' });
     });
     [$('.bi-title', intro), $('.bi-count', intro), $('#biGo')].forEach(el => el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 200, fill: 'forwards' }));
-    await wait(tiles.length * 35 + 340);
-    lid.classList.remove('open');
-    await wait(380);
-    const bb = biBox.getBoundingClientRect(), hr = $('#heroBox').getBoundingClientRect();
-    const bg = intro.animate([{ backgroundColor: 'rgba(28, 176, 246, 1)' }, { backgroundColor: 'rgba(28, 176, 246, 0)' }], { duration: 600, fill: 'forwards' });
+    await wait(tiles.length * 35 + 380);
+    const wb = who.getBoundingClientRect(), hr = holder.getBoundingClientRect();
     intro.style.backgroundImage = 'none';
-    await biBox.animate([{ transform: 'none' }, { transform: `translate(${hr.left - bb.left}px, ${hr.top - bb.top}px) scale(${hr.width / bb.width})` }],
+    const bg = intro.animate([{ backgroundColor: 'rgba(28, 176, 246, 1)' }, { backgroundColor: 'rgba(28, 176, 246, 0)' }], { duration: 600, fill: 'forwards' });
+    await who.animate([{ transform: 'none' }, { transform: `translate(${hr.left - wb.left}px, ${hr.top - wb.top}px) scale(${hr.width / wb.width})` }],
       { duration: 600, easing: 'cubic-bezier(.5, 0, .3, 1)', fill: 'forwards' }).finished;
     intro.getAnimations({ subtree: true }).forEach(a => a.cancel());
     bg.cancel();
     intro.style.backgroundImage = '';
     done();
-    replay($('#holder'), 'cheer');
+    replay(holder, 'cheer');
   }
 
   $('#biGo').addEventListener('click', closeBoxIntro);
-  $('#heroBox').addEventListener('click', () => { window.scrollTo({ top: 0, behavior: 'smooth' }); openBoxIntro(true); });
-  $('#heroBox').addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openBoxIntro(true); } });
+  $('#holder').addEventListener('click', () => {
+    if (!$('#holder').classList.contains('tappable')) return;
+    window.scrollTo({ top: 0, behavior: 'instant' });
+    openBoxIntro(true);
+  });
+  $('#holder').addEventListener('keydown', e => {
+    if ($('#holder').classList.contains('tappable') && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); openBoxIntro(true); }
+  });
 
   function notFound() {
     $('#loader').hidden = true;
