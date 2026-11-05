@@ -515,17 +515,22 @@ body.has-basket .live-pop { bottom: calc(96px + env(safe-area-inset-bottom)); }
 
 .box-intro { position: fixed; inset: 0; z-index: 55; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 24px 16px calc(24px + env(safe-area-inset-bottom)); background: var(--brand) url(../img/crayon.svg) 0 0 / 200px 200px; text-align: center; overflow: hidden; }
 .bi-title { margin: 0; font-size: clamp(1.6rem, 6vw, 2.1rem); }
-.bi-items { position: relative; z-index: 2; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; width: min(100%, 380px); margin: 0; padding: 0; list-style: none; }
-.bi-item { display: flex; align-items: center; gap: 7px; min-width: 0; min-height: 50px; padding: 4px 6px; border-radius: 16px 7px 14px 8px / 7px 14px 8px 16px; background: #fff; box-shadow: 0 3px 0 var(--brand-dark); text-align: start; }
-.bi-pic { flex: none; display: grid; place-items: center; width: 40px; height: 40px; }
-.bi-pic img { width: 40px; height: 40px; object-fit: contain; }
-.bi-item b { min-width: 0; color: var(--ink); font-size: .84rem; font-weight: 800; line-height: 1.2; }
+.bi-items { position: relative; z-index: 2; display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 1px; width: min(100%, 345px); margin: 0; padding: 0; list-style: none; }
+/* sticker cutouts with a little label stuck on, each at a slight tilt */
+.bi-item { display: flex; flex-direction: column; align-items: center; width: 83px; rotate: -3deg; }
+.bi-item:nth-child(even) { rotate: 3deg; }
+.bi-item:nth-child(3n) { rotate: -1deg; }
+.bi-sticker { width: 78px; height: 78px; object-fit: contain; filter: drop-shadow(0 3px 0 var(--brand-dark)); }
+.bi-item b { position: relative; width: max-content; max-width: 96px; margin-top: -13px; padding: 2px 6px; border: 2px solid #fff; border-radius: 10px 6px 10px 6px; background: var(--sun); color: #5a3a00; font-size: .72rem; font-weight: 800; line-height: 1.15; text-align: center; box-shadow: 0 2px 0 var(--sun-dark); }
 .bi-who { width: min(140px, 38vw); height: auto; transform-origin: 0 0; filter: drop-shadow(0 6px 0 var(--brand-dark)); }
 .bi-count { margin: 0; color: #fff; font-size: 1.25rem; font-weight: 800; text-shadow: 0 3px 0 var(--brand-dark); }
 .bi-count b { color: var(--sun); font-size: 1.7rem; }
 @media (max-height: 700px) {
   .box-intro { gap: 10px; }
-  .bi-who { width: 96px; }
+  .bi-item { width: 78px; }
+  .bi-item b { font-size: .68rem; }
+  .bi-sticker { width: 60px; height: 60px; }
+  .bi-who { width: 84px; }
 }
 
 /* ---------- smaller screens ---------- */

@@ -75,7 +75,7 @@ window.Store = (function () {
           ]
         },
         'boxes-dec': {
-          id: 'boxes-dec', title: 'مبادرة الصناديق', date: '2026-12-26', time: '', place: 'ديوان العيسى',
+          id: 'boxes-dec', title: 'مبادرة الصناديق', date: '2026-11-26', time: '', place: 'ديوان العيسى',
           map: 'https://maps.app.goo.gl/ABWvC2uvC4fWWJve7', phone: '94725505', status: 'open', createdAt: Date.now(),
           photo: 'img/events/box-friend.png', boxes: 30,
           items: [

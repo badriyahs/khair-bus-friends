@@ -600,6 +600,8 @@
     return `${n} ${n >= 3 && n <= 10 ? unit : ONE[unit]}`;
   }
   const inBox = it => `${amount(it)} ${it.name}`;
+  // the white-outlined cutout of a product photo, when there is one
+  const sticker = it => (/^img\/items\/box-.*\.jpg$/.test(it.img || '') ? it.img.replace(/\.jpg$/, '-cut.webp') : it.img || 'img/logo-180.png');
   const wait = ms => new Promise(r => setTimeout(r, ms));
   let introBusy = false;
 
@@ -609,7 +611,7 @@
     const intro = $('#boxIntro'), who = $('#biWho'), holder = $('#holder');
     $('#biCount').textContent = ini.boxes;
     $('#biItems').innerHTML = (ini.items || []).map(it =>
-      `<li class="bi-item"><span class="bi-pic"><img src="${esc(it.img || 'img/logo-180.png')}" alt=""></span><b>${esc(inBox(it))}</b></li>`).join('');
+      `<li class="bi-item"><img class="bi-sticker" src="${esc(sticker(it))}" alt=""><b>${esc(inBox(it))}</b></li>`).join('');
     who.src = $('#iniPhoto').getAttribute('src');
     const extras = [$('.bi-title', intro), $('.bi-count', intro), $('#biGo')];
     const tiles = [...intro.querySelectorAll('.bi-item')];
