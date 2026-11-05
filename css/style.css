@@ -515,17 +515,17 @@ body.has-basket .live-pop { bottom: calc(96px + env(safe-area-inset-bottom)); }
 
 .box-intro { position: fixed; inset: 0; z-index: 55; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 24px 16px calc(24px + env(safe-area-inset-bottom)); background: var(--brand) url(../img/crayon.svg) 0 0 / 200px 200px; text-align: center; overflow: hidden; }
 .bi-title { margin: 0; font-size: clamp(1.6rem, 6vw, 2.1rem); }
-.bi-items { position: relative; z-index: 2; display: flex; flex-wrap: wrap; justify-content: center; gap: 12px 8px; max-width: 360px; margin: 0; padding: 0; list-style: none; }
-.bi-item { display: flex; flex-direction: column; align-items: center; gap: 5px; width: 62px; }
-.bi-pic { display: grid; place-items: center; width: 62px; height: 62px; overflow: hidden; border-radius: 20px 8px 18px 10px / 8px 18px 10px 20px; background: #fff; box-shadow: 0 4px 0 var(--brand-dark); }
-.bi-pic img { width: 56px; height: 56px; object-fit: contain; }
-.bi-item b { padding: 1px 7px; border: 2px solid #fff; border-radius: 999px; background: var(--sun); color: #5a3a00; font-size: .78rem; font-weight: 800; white-space: nowrap; box-shadow: 0 2px 0 var(--sun-dark); }
-.bi-who { width: min(180px, 46vw); height: auto; transform-origin: 0 0; filter: drop-shadow(0 6px 0 var(--brand-dark)); }
+.bi-items { position: relative; z-index: 2; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; width: min(100%, 380px); margin: 0; padding: 0; list-style: none; }
+.bi-item { display: flex; align-items: center; gap: 7px; min-width: 0; min-height: 50px; padding: 4px 6px; border-radius: 16px 7px 14px 8px / 7px 14px 8px 16px; background: #fff; box-shadow: 0 3px 0 var(--brand-dark); text-align: start; }
+.bi-pic { flex: none; display: grid; place-items: center; width: 40px; height: 40px; }
+.bi-pic img { width: 40px; height: 40px; object-fit: contain; }
+.bi-item b { min-width: 0; color: var(--ink); font-size: .84rem; font-weight: 800; line-height: 1.2; }
+.bi-who { width: min(140px, 38vw); height: auto; transform-origin: 0 0; filter: drop-shadow(0 6px 0 var(--brand-dark)); }
 .bi-count { margin: 0; color: #fff; font-size: 1.25rem; font-weight: 800; text-shadow: 0 3px 0 var(--brand-dark); }
 .bi-count b { color: var(--sun); font-size: 1.7rem; }
 @media (max-height: 700px) {
   .box-intro { gap: 10px; }
-  .bi-who { width: 140px; }
+  .bi-who { width: 96px; }
 }
 
 /* ---------- smaller screens ---------- */

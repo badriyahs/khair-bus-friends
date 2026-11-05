@@ -164,7 +164,7 @@
     li.classList.toggle('is-full', full);
     li.classList.toggle('is-picked', mineQty > 0);
     li.querySelector('.choice-name').textContent = it.name;
-    li.querySelector('.choice-unit').textContent = [it.unit, +ini.boxes > 0 ? `${perBox(it)} بكل صندوق` : ''].filter(Boolean).join(' · ');
+    li.querySelector('.choice-unit').textContent = +ini.boxes > 0 ? `${amount(it)} بكل صندوق` : (it.unit || '');
     const img = li.querySelector('.choice-img img'), src = it.img || 'img/logo-180.png';
     if (img.getAttribute('src') !== src) img.src = src;
     img.classList.toggle('placeholder', !it.img);
@@ -590,8 +590,16 @@
     try { localStorage.setItem(introKey(), '1'); } catch (e) {}
   }
   const perBox = it => Math.max(1, Math.round((+it.needed || 0) / (+ini.boxes || 1)));
-  // "1 حبة", "حبتين", "6 حبات": make it clear these are pieces in each box
-  const pieces = n => (n === 1 ? '1 حبة' : n === 2 ? 'حبتين' : n <= 10 ? `${n} حبات` : `${n} حبة`);
+  // what goes in one box, in words: "1 كيس رز", "3 علب فول", "6 علب معجون طماطم"
+  const ONE = { 'أكياس': 'كيس', 'علب': 'علبة', 'قناني': 'قنينة', 'حبات': 'حبة' };
+  const TWO = { 'أكياس': 'كيسين', 'علب': 'علبتين', 'قناني': 'قنينتين', 'حبات': 'حبتين' };
+  function amount(it) {
+    const n = perBox(it), unit = String(it.unit || '').trim();
+    if (!ONE[unit]) return `${n} ${unit}`.trim();
+    if (n === 2) return TWO[unit];
+    return `${n} ${n >= 3 && n <= 10 ? unit : ONE[unit]}`;
+  }
+  const inBox = it => `${amount(it)} ${it.name}`;
   const wait = ms => new Promise(r => setTimeout(r, ms));
   let introBusy = false;
 
@@ -601,7 +609,7 @@
     const intro = $('#boxIntro'), who = $('#biWho'), holder = $('#holder');
     $('#biCount').textContent = ini.boxes;
     $('#biItems').innerHTML = (ini.items || []).map(it =>
-      `<li class="bi-item"><span class="bi-pic"><img src="${esc(it.img || 'img/logo-180.png')}" alt="${esc(it.name)}"></span><b>${pieces(perBox(it))}</b></li>`).join('');
+      `<li class="bi-item"><span class="bi-pic"><img src="${esc(it.img || 'img/logo-180.png')}" alt=""></span><b>${esc(inBox(it))}</b></li>`).join('');
     who.src = $('#iniPhoto').getAttribute('src');
     const extras = [$('.bi-title', intro), $('.bi-count', intro), $('#biGo')];
     const tiles = [...intro.querySelectorAll('.bi-item')];
