@@ -591,8 +591,8 @@
   }
   const perBox = it => Math.max(1, Math.round((+it.needed || 0) / (+ini.boxes || 1)));
   // what goes in one box, in words: "1 كيس رز", "3 علب فول", "6 علب معجون طماطم"
-  const ONE = { 'أكياس': 'كيس', 'علب': 'علبة', 'قناني': 'قنينة', 'حبات': 'حبة' };
-  const TWO = { 'أكياس': 'كيسين', 'علب': 'علبتين', 'قناني': 'قنينتين', 'حبات': 'حبتين' };
+  const ONE = { 'أكياس': 'كيس', 'علب': 'علبة', 'غراش': 'غرشة', 'حبات': 'حبة' };
+  const TWO = { 'أكياس': 'كيسين', 'علب': 'علبتين', 'غراش': 'غرشتين', 'حبات': 'حبتين' };
   function amount(it) {
     const n = perBox(it), unit = String(it.unit || '').trim();
     if (!ONE[unit]) return `${n} ${unit}`.trim();

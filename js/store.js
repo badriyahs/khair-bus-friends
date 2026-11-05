@@ -79,8 +79,8 @@ window.Store = (function () {
           map: 'https://maps.app.goo.gl/ABWvC2uvC4fWWJve7', phone: '94725505', status: 'open', createdAt: Date.now(),
           photo: 'img/events/box-friend.png', boxes: 30,
           items: [
-            box('rice', 'رز', 'أكياس', 30), box('lentils', 'عدس', 'أكياس', 30), box('pasta', 'معكرونة', 'أكياس', 30),
-            box('tea', 'شاي', 'علب', 30), box('oil', 'زيت', 'قناني', 30), box('fool', 'فول', 'علب', 90),
+            box('rice', 'عيش', 'أكياس', 30), box('lentils', 'عدس', 'أكياس', 30), box('pasta', 'معكرونة', 'أكياس', 30),
+            box('tea', 'شاي', 'علب', 30), box('oil', 'زيت', 'غراش', 30), box('fool', 'فول', 'علب', 90),
             box('tomato', 'معجون طماطم', 'علب', 180), box('dates', 'تمر', 'علب', 30), box('sugar', 'سكر', 'أكياس', 30),
             box('flour', 'طحين', 'أكياس', 30)
           ]
