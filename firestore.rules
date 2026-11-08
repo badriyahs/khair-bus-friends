@@ -1,6 +1,8 @@
 rules_version = '2';
 
 // Paste these into Firebase console → Firestore Database → Rules → Publish.
+// One Firebase project serves both sites: `initiatives` is Khair Bus Friends (kids, friends.khairbus.com),
+// `events` is the original Khair Bus (adults, khairbus.com/home). Same rules for both.
 service cloud.firestore {
   match /databases/{database}/documents {
 
@@ -10,6 +12,7 @@ service cloud.firestore {
       return request.auth != null && request.auth.token.firebase.sign_in_provider == 'password';
     }
 
+    // ---------- Khair Bus Friends (kids) ----------
     match /initiatives/{iid} {
       allow read: if true;
       allow write: if isTeam();
@@ -39,6 +42,38 @@ service cloud.firestore {
           && request.resource.data.name.size() > 0 && request.resource.data.name.size() <= 80
           && request.resource.data.createdAt == request.time
           && existsAfter(/databases/$(database)/documents/initiatives/$(iid)/pledges/$(pid));
+        allow update, delete: if isTeam();
+      }
+    }
+
+    // ---------- Khair Bus (adults) ----------
+    match /events/{eid} {
+      allow read: if true;
+      allow write: if isTeam();
+
+      function isOpenEvent() {
+        return get(/databases/$(database)/documents/events/$(eid)).data.status == 'open';
+      }
+
+      match /pledges/{pid} {
+        allow read: if true;
+        allow create: if isOpenEvent()
+          && request.resource.data.keys().hasOnly(['items', 'extras', 'createdAt'])
+          && request.resource.data.items is list && request.resource.data.items.size() <= 100
+          && request.resource.data.extras is list && request.resource.data.extras.size() <= 20
+          && request.resource.data.createdAt == request.time
+          && existsAfter(/databases/$(database)/documents/events/$(eid)/people/$(pid));
+        allow update, delete: if isTeam();
+      }
+
+      match /people/{pid} {
+        allow read: if true;
+        allow create: if isOpenEvent()
+          && request.resource.data.keys().hasOnly(['name', 'createdAt'])
+          && request.resource.data.name is string
+          && request.resource.data.name.size() > 0 && request.resource.data.name.size() <= 80
+          && request.resource.data.createdAt == request.time
+          && existsAfter(/databases/$(database)/documents/events/$(eid)/pledges/$(pid));
         allow update, delete: if isTeam();
       }
     }
