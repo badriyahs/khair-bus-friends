@@ -72,6 +72,7 @@
     const wa = whatsapp(ini.phone, `السلام عليكم، بخصوص ${ini.title}`);
     if (wa) info.push(`<a class="info-chip" href="${esc(wa)}" target="_blank" rel="noopener">${icon('chat', 18)}<span dir="ltr">${esc(ini.phone)}</span></a>`);
     setHTML($('#iniInfo'), info.join(''));
+    setHTML($('#iniPartner'), UI.partner(ini));
     const photo = $('#iniPhoto'), src = ini.photo || 'img/logo.png';
     if (photo.getAttribute('src') !== src) photo.src = src;
     // box events: he's holding the box; tap him to see what goes in it (shown by itself the first time)

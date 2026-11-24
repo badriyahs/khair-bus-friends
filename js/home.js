@@ -49,7 +49,7 @@
   // Same cards as before? Just move the buses along. Otherwise rebuild the list.
   const sig = (ini, past) => {
     const s = past ? UI.summary(pledgesFor[ini.id], peopleFor[ini.id]) : {};
-    return JSON.stringify([ini.id, ini.title, ini.date, ini.time, ini.photo, past, countdown(ini.date), s.friends, s.pieces]);
+    return JSON.stringify([ini.id, ini.title, ini.date, ini.time, ini.photo, ini.partner, past, countdown(ini.date), s.friends, s.pieces]);
   };
   function paint(list, arr, past, empty) {
     const lis = [...list.children];
@@ -116,6 +116,7 @@
       <span class="ev-main">
         <b class="ev-title">${esc(ini.title)}</b>
         ${chips ? `<span class="ev-chips">${chips}</span>` : ''}
+        ${UI.partner(ini)}
         ${past ? done(ini) : progress}
       </span>
     </a></li>`;

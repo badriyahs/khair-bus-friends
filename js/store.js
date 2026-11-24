@@ -25,7 +25,7 @@ window.Store = (function () {
 
   /* ---------- preview mode ---------- */
 
-  const KEY = 'kbf-preview-v9';
+  const KEY = 'kbf-preview-v10';
   const listeners = new Set();
   let mem = null;
 
@@ -83,6 +83,17 @@ window.Store = (function () {
             box('tea', 'شاي', 'علب', 30), box('oil', 'زيت', 'غراش', 30), box('fool', 'فول', 'علب', 90),
             box('tomato', 'معجون طماطم', 'علب', 180), box('dates', 'تمر', 'علب', 30), box('sugar', 'سكر', 'أكياس', 30),
             box('flour', 'طحين', 'أكياس', 30)
+          ]
+        },
+        'boxes-iise': {
+          id: 'boxes-iise', title: 'مبادرة الصناديق', date: '2026-12-05', time: '', place: 'نعمتي', map: '', phone: '94725505',
+          status: 'open', createdAt: Date.now(), photo: 'img/events/box-friend.png', boxes: 55,
+          partner: { name: 'IISE Kuwait University Chapter', logo: 'img/partners/iise.png' },
+          items: [
+            box('rice', 'عيش', 'أكياس', 55), box('lentils', 'عدس', 'أكياس', 55), box('pasta', 'معكرونة', 'أكياس', 55),
+            box('tea', 'شاي', 'علب', 55), box('oil', 'زيت', 'غراش', 110), box('fool', 'فول', 'علب', 165),
+            box('tomato', 'معجون طماطم', 'علب', 330), box('dates', 'تمر', 'علب', 55), box('sugar', 'سكر', 'أكياس', 55),
+            box('flour', 'طحين', 'أكياس', 55)
           ]
         }
       },

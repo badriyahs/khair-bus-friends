@@ -155,6 +155,10 @@ window.UI = (function () {
     return { friends: names.length, pieces, names: (people || []).map(p => p.name) };
   }
 
+  // an event held together with another group: "بالتعاون مع" and their logo
+  const partner = ini => (ini && ini.partner && ini.partner.logo
+    ? `<span class="partner">بالتعاون مع<img src="${esc(ini.partner.logo)}" alt="${esc(ini.partner.name || '')}"></span>` : '');
+
   let toastTimer;
   function toast(msg) {
     let el = $('#toast');
@@ -178,5 +182,5 @@ window.UI = (function () {
     document.body.prepend(b);
   });
 
-  return { $, $$, esc, arDate, when, itemsLeft, twoTone, byDate, tally, icon, toast, GOAL, ride, face, look, sameName, summary, friendsWord, piecesWord, safeUrl, whatsapp };
+  return { $, $$, esc, arDate, when, itemsLeft, twoTone, byDate, tally, icon, toast, GOAL, ride, face, look, sameName, summary, friendsWord, piecesWord, partner, safeUrl, whatsapp };
 })();

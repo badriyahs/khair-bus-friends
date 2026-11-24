@@ -533,6 +533,13 @@ body.has-basket .live-pop { bottom: calc(96px + env(safe-area-inset-bottom)); }
   .bi-who { width: 84px; }
 }
 
+/* held together with another group */
+.partner { display: inline-flex; align-items: center; gap: 10px; color: var(--ink-soft); font-weight: 700; }
+.partner img { width: auto; height: 42px; }
+.ini-hero .partner { margin-top: 8px; padding: 8px 16px; border-radius: 18px 8px 16px 10px / 10px 16px 8px 18px; background: #fff; box-shadow: 0 3px 0 var(--brand-dark); animation: pop .4s var(--spring) .2s both; }
+.ev-card .partner { gap: 8px; margin: 2px 0 4px; font-size: .86rem; }
+.ev-card .partner img { height: 32px; }
+
 /* ---------- smaller screens ---------- */
 
 @media (max-width: 820px) {
