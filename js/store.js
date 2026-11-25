@@ -82,7 +82,7 @@ window.Store = (function () {
           partner: { name: 'IISE Kuwait University Chapter', logo: 'img/partners/iise.png' },
           items: [
             { ...box('rice', 'عيش', 'أكياس', 60), star: true },
-            box('flour', 'طحين', 'أكياس', 120), box('fool', 'فول', 'علب', 180), box('chickpeas', 'حمص', 'أكياس', 180),
+            box('flour', 'طحين', 'أكياس', 120), box('fool', 'فول', 'علب', 180), box('chickpeas', 'نخي', 'أكياس', 180),
             box('tomato', 'معجون طماطم', 'علب', 480), { ...box('lentils', 'عدس', 'أكياس', 120), size: '900 جرام' },
             box('pasta', 'معكرونة', 'أكياس', 120), box('tea', 'شاي', 'علب', 60), box('dates', 'تمر', 'علب', 60),
             { ...box('oil', 'زيت', 'غراش', 120), size: '1 لتر' }, box('sugar', 'سكر', 'أكياس', 60)
