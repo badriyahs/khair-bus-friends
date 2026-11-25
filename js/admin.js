@@ -160,7 +160,7 @@
     return {
       title: d.title || '', date: d.date || '', time: d.time || '', place: d.place || '', map: d.map || '', phone: d.phone || '', boxes: d.boxes ? String(d.boxes) : '', photo: d.photo || '',
       status: d.status === 'closed' ? 'closed' : 'open',
-      items: (d.items || []).map(it => ({ id: it.id, name: it.name || '', unit: it.unit || '', needed: String(it.needed || ''), img: it.img || '', size: it.size || '', star: !!it.star }))
+      items: (d.items || []).map(it => ({ id: it.id, name: it.name || '', unit: it.unit || '', needed: String(it.needed || ''), img: it.img || '', size: it.size || '' }))
     };
   }
 
@@ -423,7 +423,7 @@
     const data = {
       title, date: draft.date, time: draft.time.trim(), place: draft.place.trim(), map: safeUrl(draft.map), phone: draft.phone.trim(), boxes: Math.max(0, parseInt(draft.boxes, 10) || 0), photo: draft.photo || '', status: draft.status,
       items: rows.map(it => ({ id: it.id, name: it.name.trim(), unit: String(it.unit).trim(), needed: parseInt(it.needed, 10), img: it.img || '',
-        ...(it.size ? { size: it.size } : {}), ...(it.star ? { star: true } : {}) }))
+        ...(it.size ? { size: it.size } : {}) }))
     };
     const btn = $('#saveBtn');
     btn.disabled = true;
