@@ -79,7 +79,7 @@
     const boxy = +ini.boxes > 0;
     const holder = $('#holder');
     holder.classList.toggle('tappable', boxy);
-    if (boxy) { holder.setAttribute('role', 'button'); holder.tabIndex = 0; holder.setAttribute('aria-label', 'شنو في الصندوق؟'); }
+    if (boxy) { holder.setAttribute('role', 'button'); holder.tabIndex = 0; holder.setAttribute('aria-label', 'شنو في السلة؟'); }
     if (boxy && isOpen() && !introSeen()) { markIntroSeen(); setTimeout(() => openBoxIntro(false), 700); }
     $('#prompt').hidden = !isOpen();
     $('#stickyTitle').textContent = ini.title;
@@ -170,7 +170,7 @@
     li.classList.toggle('is-full', full);
     li.classList.toggle('is-picked', mineQty > 0);
     li.querySelector('.choice-name').textContent = it.name;
-    li.querySelector('.choice-unit').textContent = +ini.boxes > 0 ? `${amount(it)} بكل صندوق` : (it.unit || '');
+    li.querySelector('.choice-unit').textContent = +ini.boxes > 0 ? `${amount(it)} بكل سلة` : (it.unit || '');
     const size = li.querySelector('.choice-size');
     size.hidden = !it.size;
     size.textContent = it.size || '';

@@ -212,7 +212,7 @@
           <input class="input" id="fMap" data-f="map" value="${esc(d.map)}" maxlength="500" type="url" inputmode="url" dir="ltr" placeholder="https://maps.app.goo.gl/…"></div>
         <div class="field"><label for="fPhone">رقم التواصل</label>
           <input class="input" id="fPhone" data-f="phone" value="${esc(d.phone)}" maxlength="30" inputmode="tel" dir="ltr"></div>
-        <div class="field"><label for="fBoxes">عدد الصناديق</label>
+        <div class="field"><label for="fBoxes">عدد السلل</label>
           <input class="input" id="fBoxes" data-f="boxes" value="${esc(d.boxes)}" type="number" min="0" inputmode="numeric" placeholder="اختياري"></div>
         <div class="field"><span class="label">الصورة</span>
           <div class="photo-field">
