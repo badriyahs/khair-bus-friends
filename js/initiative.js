@@ -130,6 +130,9 @@
     for (const [id, card] of cards) if (!seen.has(id)) { card.remove(); cards.delete(id); }
   }
 
+  // the most important food gets a big gold star
+  const STAR = '<svg class="star" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 4.5c1.6 0 2.7 1 3.5 2.6l4 8.1 9 1.3c3.5.5 4.7 4 2.2 6.5l-6.5 6.3 1.5 8.9c.6 3.5-2.5 5.7-5.6 4L24 38l-8.1 4.2c-3.1 1.7-6.2-.5-5.6-4l1.5-8.9L5.3 23c-2.5-2.5-1.3-6 2.2-6.5l9-1.3 4-8.1C21.300 5.500 22.400 4.500 24 4.500Z"/></svg>';
+
   function makeCard(id, i) {
     const li = document.createElement('li');
     li.className = 'choice';
@@ -140,8 +143,10 @@
         <span class="choice-img"><img alt=""><span class="full-stamp" hidden>${icon('check', 36)}</span></span>
         <span class="choice-name"></span>
         <span class="choice-unit"></span>
+        <span class="choice-size" hidden></span>
       </button>
       <span class="mine-badge" dir="ltr" hidden></span>
+      <span class="star-tag" hidden>${STAR}<b>أهم شي!</b></span>
       <div class="choice-foot">
         <div class="bar"><span class="bar-fill"></span><span class="bar-mine"></span></div>
         <p class="choice-left"></p>
@@ -166,6 +171,11 @@
     li.classList.toggle('is-picked', mineQty > 0);
     li.querySelector('.choice-name').textContent = it.name;
     li.querySelector('.choice-unit').textContent = +ini.boxes > 0 ? `${amount(it)} بكل صندوق` : (it.unit || '');
+    const size = li.querySelector('.choice-size');
+    size.hidden = !it.size;
+    size.textContent = it.size || '';
+    li.classList.toggle('is-star', !!it.star);
+    li.querySelector('.star-tag').hidden = !it.star;
     const img = li.querySelector('.choice-img img'), src = it.img || 'img/logo-180.png';
     if (img.getAttribute('src') !== src) img.src = src;
     img.classList.toggle('placeholder', !it.img);
@@ -235,7 +245,7 @@
     renderItems();
     renderBasket();
     bump(id);
-    if (more) { cheer(); sparkle(cards.get(id)); }
+    if (more) { cheer(); sparkle(cards.get(id), it.star ? 14 : 7); }
   }
 
   /* ---------- the chef cheers you on ---------- */
@@ -393,7 +403,7 @@
     const left = items.filter(it => remaining(it) > 0);
     setHTML($('#leftList'), left.length
       ? left.map(it => `<li class="row">
-          <span class="row-main"><b>${esc(it.name)}</b>${it.unit ? `<span class="row-sub">${esc(it.unit)}</span>` : ''}</span>
+          <span class="row-main"><b>${it.star ? STAR : ''}${esc(it.name)}</b>${it.unit ? `<span class="row-sub">${esc(it.unit)}</span>` : ''}</span>
           <span class="count">${remaining(it)}</span>
         </li>`).join('')
       : `<li class="row all-done">${icon('check', 18)} اكتملت كل الأصناف</li>`);
@@ -615,7 +625,7 @@
     const intro = $('#boxIntro'), who = $('#biWho'), holder = $('#holder');
     $('#biCount').textContent = ini.boxes;
     $('#biItems').innerHTML = (ini.items || []).map(it =>
-      `<li class="bi-item"><img class="bi-sticker" src="${esc(sticker(it))}" alt=""><b>${esc(inBox(it))}</b></li>`).join('');
+      `<li class="bi-item${it.star ? ' is-star' : ''}">${it.star ? STAR : ''}<img class="bi-sticker" src="${esc(sticker(it))}" alt=""><b>${esc(inBox(it))}</b></li>`).join('');
     who.src = $('#iniPhoto').getAttribute('src');
     const extras = [$('.bi-title', intro), $('.bi-count', intro), $('#biGo')];
     const tiles = [...intro.querySelectorAll('.bi-item')];

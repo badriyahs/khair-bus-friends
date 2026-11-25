@@ -210,6 +210,8 @@ a.info-chip:active { transform: translateY(3px); box-shadow: none; }
 .choice-img img.placeholder { max-width: 60%; opacity: .5; }
 .choice-name { font-size: 1.1rem; font-weight: 800; line-height: 1.25; }
 .choice-unit { color: var(--ink-soft); font-size: .85rem; }
+.choice-size { color: var(--muted); font-size: .8rem; line-height: 1.2; }
+.choice-size[hidden] { display: none; }
 .choice-foot { display: flex; flex-direction: column; gap: 8px; padding: 2px 12px 12px; }
 .choice .bar { height: 10px; }
 .choice-left { margin: 0; color: var(--ink-soft); font-size: .92rem; font-weight: 700; text-align: center; }
@@ -539,6 +541,26 @@ body.has-basket .live-pop { bottom: calc(96px + env(safe-area-inset-bottom)); }
 .ini-hero .partner { margin-top: 8px; padding: 8px 16px; border-radius: 18px 8px 16px 10px / 10px 16px 8px 18px; background: #fff; box-shadow: 0 3px 0 var(--brand-dark); animation: pop .4s var(--spring) .2s both; }
 .ev-card .partner { gap: 8px; margin: 2px 0 4px; font-size: .86rem; }
 .ev-card .partner img { height: 32px; }
+
+/* the most important food: a wide gold card with a big star */
+.star { fill: var(--sun); stroke: #fff; stroke-width: 3.5; paint-order: stroke; stroke-linejoin: round; overflow: visible; filter: drop-shadow(0 3px 0 var(--sun-dark)); }
+.choice.is-star { grid-column: 1 / -1; margin-top: 14px; rotate: -.5deg; }
+.choice.is-star, .brand-bg .choice.is-star { border: 4px solid var(--sun); background: #fffbe8; box-shadow: 0 5px 0 var(--sun-dark); }
+.brand-bg .choice.is-star.is-picked { border-color: var(--sun); background: #fff6cf; }
+.choice.is-star .choice-hit { display: grid; grid-template-columns: 44% 1fr; align-items: center; justify-items: center; gap: 0 4px; padding: 20px 12px 6px; }
+.choice.is-star .choice-img { grid-row: 1 / 3; max-width: 190px; background: none; }
+.choice.is-star .choice-img img { max-width: 100%; max-height: 100%; mix-blend-mode: multiply; }
+.choice.is-star .choice-name { align-self: end; font-size: 2rem; }
+.choice.is-star .choice-unit { align-self: start; font-size: 1rem; }
+.choice.is-star .bar { height: 14px; }
+.star-tag { position: absolute; top: -24px; inset-inline-start: 10px; z-index: 2; display: inline-flex; align-items: center; pointer-events: none; }
+.star-tag[hidden] { display: none; }
+.star-tag .star { position: relative; z-index: 1; width: 58px; height: 58px; animation: pop .5s var(--spring) .35s both, star-sway 3.6s ease-in-out 1s infinite; }
+.star-tag b { margin-inline-start: -14px; padding: 3px 14px 3px 14px; padding-inline-start: 22px; border: 3px solid #fff; border-radius: 8px 14px 10px 16px / 14px 10px 16px 8px; background: var(--sun); color: #5a3a00; font-size: 1.1rem; box-shadow: 0 4px 0 var(--sun-dark); rotate: -3deg; }
+@keyframes star-sway { 0%, 100% { transform: rotate(-7deg); } 50% { transform: rotate(7deg) scale(1.05); } }
+.row-main .star { width: 20px; height: 20px; margin-inline-end: 5px; vertical-align: -4px; stroke: none; filter: none; }
+.bi-item.is-star { position: relative; }
+.bi-item.is-star .star { position: absolute; top: -10px; inset-inline-start: 2px; z-index: 1; width: 34px; height: 34px; }
 
 /* ---------- smaller screens ---------- */
 

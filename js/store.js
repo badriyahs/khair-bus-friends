@@ -3,7 +3,8 @@
    with sample data, so the site can be tried straight away.
    Live mode (Firebase config in js/config.js): Firestore, updating live for everyone.
 
-   initiatives/{id}                 title, date, time, place, phone, photo (small image data URL), status, items[{id,name,unit,needed,img}]
+   initiatives/{id}                 title, date, time, place, phone, photo (small image data URL), status, boxes, partner{name,logo},
+                                    items[{id,name,unit,needed,img,size?,star?}]  (star = the most important one)
    initiatives/{id}/pledges/{pid}   items[{id,qty}], extras[{name,qty}]   (public, no names)
    initiatives/{id}/people/{pid}    name                                  (team only) */
 window.Store = (function () {
@@ -25,7 +26,7 @@ window.Store = (function () {
 
   /* ---------- preview mode ---------- */
 
-  const KEY = 'kbf-preview-v10';
+  const KEY = 'kbf-preview-v11';
   const listeners = new Set();
   let mem = null;
 
@@ -75,25 +76,16 @@ window.Store = (function () {
           ]
         },
         'boxes-dec': {
-          id: 'boxes-dec', title: 'مبادرة الصناديق', date: '2026-11-26', time: '', place: 'ديوان العيسى',
-          map: 'https://maps.app.goo.gl/ABWvC2uvC4fWWJve7', phone: '94725505', status: 'open', createdAt: Date.now(),
-          photo: 'img/events/box-friend.png', boxes: 30,
-          items: [
-            box('rice', 'عيش', 'أكياس', 30), box('lentils', 'عدس', 'أكياس', 30), box('pasta', 'معكرونة', 'أكياس', 30),
-            box('tea', 'شاي', 'علب', 30), box('oil', 'زيت', 'غراش', 30), box('fool', 'فول', 'علب', 90),
-            box('tomato', 'معجون طماطم', 'علب', 180), box('dates', 'تمر', 'علب', 30), box('sugar', 'سكر', 'أكياس', 30),
-            box('flour', 'طحين', 'أكياس', 30)
-          ]
-        },
-        'boxes-iise': {
-          id: 'boxes-iise', title: 'مبادرة الصناديق', date: '2026-12-05', time: '', place: 'نعمتي', map: '', phone: '94725505',
-          status: 'open', createdAt: Date.now(), photo: 'img/events/box-friend.png', boxes: 55,
+          id: 'boxes-dec', title: 'مبادرة الصناديق', date: '2026-12-05', time: '', place: 'نعمتي',
+          map: 'https://maps.app.goo.gl/Q7sXsiZjRTsmjeUE7', phone: '94725505', status: 'open', createdAt: Date.now(),
+          photo: 'img/events/box-friend.png', boxes: 60,
           partner: { name: 'IISE Kuwait University Chapter', logo: 'img/partners/iise.png' },
           items: [
-            box('rice', 'عيش', 'أكياس', 55), box('lentils', 'عدس', 'أكياس', 55), box('pasta', 'معكرونة', 'أكياس', 55),
-            box('tea', 'شاي', 'علب', 55), box('oil', 'زيت', 'غراش', 110), box('fool', 'فول', 'علب', 165),
-            box('tomato', 'معجون طماطم', 'علب', 330), box('dates', 'تمر', 'علب', 55), box('sugar', 'سكر', 'أكياس', 55),
-            box('flour', 'طحين', 'أكياس', 55)
+            { ...box('rice', 'عيش', 'أكياس', 60), star: true },
+            box('flour', 'طحين', 'أكياس', 120), box('fool', 'فول', 'علب', 180), box('chickpeas', 'حمص', 'أكياس', 180),
+            box('tomato', 'معجون طماطم', 'علب', 480), { ...box('lentils', 'عدس', 'أكياس', 120), size: '900 جرام' },
+            box('pasta', 'معكرونة', 'أكياس', 120), box('tea', 'شاي', 'علب', 60), box('dates', 'تمر', 'علب', 60),
+            { ...box('oil', 'زيت', 'غراش', 120), size: '1 لتر' }, box('sugar', 'سكر', 'أكياس', 60)
           ]
         }
       },
