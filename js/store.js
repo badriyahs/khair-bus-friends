@@ -76,7 +76,7 @@ window.Store = (function () {
           ]
         },
         'boxes-dec': {
-          id: 'boxes-dec', title: 'مبادرة الصناديق', date: '2026-12-05', time: '', place: 'نعمتي',
+          id: 'boxes-dec', title: 'مبادرة الصناديق', date: '2026-12-05', time: '10:30 صباحاً', place: 'نعمتي',
           map: 'https://maps.app.goo.gl/Q7sXsiZjRTsmjeUE7', phone: '94725505', status: 'open', createdAt: Date.now(),
           photo: 'img/events/box-friend.png', boxes: 60,
           partner: { name: 'IISE Kuwait University Chapter', logo: 'img/partners/iise.png' },
